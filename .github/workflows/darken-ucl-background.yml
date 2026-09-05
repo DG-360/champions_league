@@ -1,0 +1,40 @@
+name: Darken UCL background
+
+on:
+  push:
+    paths:
+      - '.github/workflows/darken-ucl-background.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Increase page contrast
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('assets/ucl-theme.css')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('--ucl-deep:#07113D;','--ucl-deep:#050B2A;')
+          s=s.replace('--ucl-deep2:#091442;','--ucl-deep2:#07113D;')
+          old='''body{\n  background:\n    radial-gradient(76% 38% at 2% -12%,rgba(106,189,244,.12),transparent 68%),\n    radial-gradient(60% 32% at 102% 2%,rgba(180,100,241,.08),transparent 68%),\n    linear-gradient(180deg,#0B174B 0%,var(--ucl-deep) 46%,#050C2D 100%)!important;\n  color:var(--ucl-text)!important;\n}\nbody::before{background:linear-gradient(180deg,rgba(60,115,238,.035),transparent 22%)!important}'''
+          new='''body{\n  background:linear-gradient(180deg,#07123A 0%,#050B2A 46%,#03071C 100%)!important;\n  color:var(--ucl-text)!important;\n}\nbody::before{background:none!important}'''
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+
+          idx=Path('index.html')
+          html=idx.read_text(encoding='utf-8')
+          html=html.replace('assets/ucl-theme.css?v=7','assets/ucl-theme.css?v=8')
+          html=html.replace('<meta name="theme-color" content="#0B164B">','<meta name="theme-color" content="#050B2A">')
+          idx.write_text(html,encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/ucl-theme.css index.html
+          git commit -m 'Darken UCL page background for stronger contrast' || exit 0
+          git push
