@@ -1,0 +1,287 @@
+/* UCL EXPERIENCE LAYER · 2026/27 */
+:root {
+  --ucl-navy:#07133f;
+  --ucl-blue:#1237a6;
+  --ucl-electric:#38a8ff;
+  --ucl-cyan:#74e4ff;
+  --ucl-violet:#6d3dce;
+  --ucl-purple:#9728d8;
+  --ucl-silver:#dce7ff;
+  --ucl-gold:#d8bd72;
+  --ucl-ink:#050c29;
+}
+
+html,body{background:#050b24}
+body{
+  background:
+    radial-gradient(1000px 520px at 86% -8%,rgba(85,57,207,.30),transparent 64%),
+    radial-gradient(780px 420px at 8% 4%,rgba(25,106,255,.20),transparent 67%),
+    linear-gradient(180deg,#06103a 0%,#050a23 46%,#050819 100%) !important;
+  color:#f7f9ff;
+}
+body::before{
+  background:
+    radial-gradient(ellipse 80% 55% at 88% 0%,rgba(64,99,255,.16),transparent 66%),
+    radial-gradient(ellipse 65% 50% at 0% 8%,rgba(95,54,205,.12),transparent 68%),
+    linear-gradient(180deg,rgba(6,16,58,.42),rgba(4,8,26,.78)) !important;
+}
+::selection{background:#7edbff;color:#05102e}
+
+.wrap{max-width:1240px;padding-top:18px}
+.hdr{display:none !important}
+
+.ucl-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:330px;
+  margin:4px 0 16px;
+  border-radius:26px;
+  border:1px solid rgba(180,205,255,.18);
+  background:
+    linear-gradient(90deg,rgba(4,14,58,.98) 0%,rgba(6,20,76,.94) 39%,rgba(7,21,81,.72) 64%,rgba(11,16,67,.38) 100%),
+    linear-gradient(135deg,#081d68 0%,#10308e 45%,#351676 72%,#6f188e 100%);
+  box-shadow:0 34px 90px -48px rgba(40,86,255,.85),inset 0 1px rgba(255,255,255,.08);
+}
+.ucl-hero::before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 69% 22%,rgba(112,226,255,.16),transparent 30%),
+    radial-gradient(circle at 92% 74%,rgba(185,36,237,.28),transparent 33%),
+    linear-gradient(115deg,transparent 42%,rgba(101,191,255,.06) 60%,transparent 72%);
+}
+.ucl-hero::after{
+  content:"";
+  position:absolute;inset:auto -9% -58% 42%;height:94%;
+  border:1px solid rgba(145,193,255,.12);border-radius:50%;
+  transform:rotate(-10deg);
+}
+.ucl-hero-inner{
+  position:relative;z-index:1;min-height:330px;
+  padding:46px 42px 36px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  max-width:690px;
+}
+.ucl-eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font:600 11px/1.2 'Be Vietnam Pro',Inter,sans-serif;
+  letter-spacing:.28em;text-transform:uppercase;color:#9ec9ff;margin-bottom:14px;
+}
+.ucl-eyebrow::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,#78dfff,transparent)}
+.ucl-hero-title{
+  margin:0;color:#fff;
+  font-family:'Be Vietnam Pro',Inter,sans-serif;
+  font-weight:500;font-size:clamp(35px,5.8vw,66px);line-height:.98;
+  letter-spacing:.02em;text-transform:uppercase;
+}
+.ucl-hero-title strong{display:block;font-weight:700;letter-spacing:.07em}
+.ucl-hero-sub{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;
+  color:#c7d9ff;font-size:13px;letter-spacing:.05em;
+}
+.ucl-season{font-family:'JetBrains Mono',monospace;color:white;font-size:13px;letter-spacing:.14em}
+.ucl-live-dot{width:7px;height:7px;border-radius:50%;background:#6ee7ff;box-shadow:0 0 16px #5bd8ff}
+
+.ucl-dashboard-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:13px;margin-bottom:14px}
+.ucl-card{
+  position:relative;overflow:hidden;
+  background:linear-gradient(150deg,rgba(15,30,87,.88),rgba(8,15,50,.94));
+  border:1px solid rgba(159,194,255,.14);border-radius:19px;
+  box-shadow:0 20px 50px -38px rgba(37,85,229,.85);
+}
+.ucl-card::after{
+  content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-150px;top:-150px;
+  border:1px solid rgba(120,177,255,.10);pointer-events:none;
+}
+.ucl-card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px 11px}
+.ucl-card-h span{font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:#8da8da;font-weight:700}
+.ucl-card-h b{font-size:11px;color:#bcd0fb;font-weight:600}
+.ucl-stat-row{display:grid;grid-template-columns:repeat(3,1fr);padding:3px 17px 17px}
+.ucl-stat{padding:12px 12px 10px;border-left:1px solid rgba(255,255,255,.07)}
+.ucl-stat:first-child{border-left:none;padding-left:0}
+.ucl-stat strong{display:block;font:600 28px/1 'Be Vietnam Pro',sans-serif;color:#fff;letter-spacing:-.04em}
+.ucl-stat small{display:block;margin-top:6px;color:#7f9bcf;font-size:9px;letter-spacing:.13em;text-transform:uppercase}
+.ucl-next{padding:0 17px 16px}
+.ucl-next-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;gap:10px;padding:14px 0;border-top:1px solid rgba(255,255,255,.065)
+}
+.ucl-next-team{display:flex;align-items:center;gap:8px;min-width:0;font-size:12px;font-weight:650}
+.ucl-next-team.a{justify-content:flex-end;text-align:right}
+.ucl-next-team span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ucl-next-mid{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#8faddf;white-space:nowrap}
+.ucl-next-mid b{display:block;color:#fff;font-size:11px;margin-top:2px}
+.ucl-cta-row{display:flex;gap:8px;flex-wrap:wrap;padding:0 17px 17px}
+.ucl-cta{
+  min-height:40px;padding:0 14px;border-radius:10px;border:1px solid rgba(135,190,255,.24);
+  color:#eaf3ff;background:rgba(74,119,255,.09);font-size:11px;font-weight:750;letter-spacing:.025em
+}
+.ucl-cta.primary{background:linear-gradient(135deg,#2675ff,#7039d7);border-color:rgba(160,205,255,.42);box-shadow:0 11px 25px -17px #337cff}
+.ucl-cta:hover{background:rgba(92,145,255,.17)}
+
+.ucl-road{padding:14px 16px 17px;margin-bottom:14px}
+.ucl-road-top{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:15px}
+.ucl-road-top h2{font:600 20px/1.15 'Be Vietnam Pro',sans-serif;letter-spacing:.01em}
+.ucl-road-top small{font-size:10px;color:#8099c8;letter-spacing:.08em;text-transform:uppercase}
+.ucl-road-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:relative;gap:8px}
+.ucl-road-track::before{
+  content:"";position:absolute;left:6%;right:6%;top:18px;height:1px;
+  background:linear-gradient(90deg,#36a3ff,#6950e2 50%,#bca45f);
+}
+.ucl-stage{position:relative;text-align:center;z-index:1;min-width:0}
+.ucl-stage-dot{
+  width:37px;height:37px;border-radius:50%;display:grid;place-items:center;margin:0 auto 8px;
+  background:#0a1645;border:1px solid rgba(139,180,255,.26);
+  color:#7894c7;font:700 10px/1 'JetBrains Mono',monospace;
+  box-shadow:0 0 0 5px #08123a;
+}
+.ucl-stage.active .ucl-stage-dot{background:linear-gradient(135deg,#1d81ff,#7841df);color:white;border-color:#a8d4ff;box-shadow:0 0 0 5px #08123a,0 0 28px rgba(62,138,255,.44)}
+.ucl-stage.done .ucl-stage-dot{background:#122f70;color:#9fe4ff}
+.ucl-stage.final .ucl-stage-dot{border-color:rgba(216,189,114,.44)}
+.ucl-stage.final.active .ucl-stage-dot{background:linear-gradient(135deg,#173c82,#9c7d35);box-shadow:0 0 0 5px #08123a,0 0 28px rgba(216,189,114,.28)}
+.ucl-stage-name{display:block;font-size:9px;color:#8299c4;line-height:1.25;white-space:normal}
+.ucl-stage.active .ucl-stage-name{color:#fff;font-weight:700}
+
+.nav{
+  background:rgba(5,13,45,.76)!important;border-color:rgba(134,178,255,.13)!important;
+  backdrop-filter:blur(15px);border-radius:14px!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+}
+.nav button{color:#8ca6d4!important;text-transform:none!important;letter-spacing:.02em!important;font-weight:650!important}
+.nav button.on{
+  color:#fff!important;background:linear-gradient(135deg,rgba(38,117,255,.95),rgba(104,56,211,.94))!important;
+  box-shadow:0 8px 28px -18px #4f85ff!important;
+}
+.ubar{
+  background:linear-gradient(145deg,rgba(10,24,74,.92),rgba(8,15,49,.95))!important;
+  border-color:rgba(142,185,255,.15)!important;
+}
+.ubar .tot b{color:#78dfff!important}
+.ico:hover{background:rgba(70,128,255,.12)!important;border-color:rgba(108,172,255,.35)!important;color:#a9d8ff!important}
+.dl{background:linear-gradient(100deg,rgba(30,105,255,.14),rgba(84,56,205,.07))!important;border-color:rgba(96,160,255,.25)!important}
+.dl .pip{background:#65ddff!important;box-shadow:0 0 14px #65ddff!important}
+.dl .cd{color:#8be6ff!important}
+.sb-card{background:linear-gradient(145deg,rgba(12,27,79,.9),rgba(7,14,45,.92))!important;border-color:rgba(126,171,255,.13)!important}
+.sb-card .up{background:rgba(69,155,255,.15)!important;color:#8bdfff!important}
+
+.panel{
+  background:linear-gradient(155deg,rgba(12,27,78,.91),rgba(7,14,45,.95) 72%)!important;
+  border-color:rgba(139,183,255,.13)!important;border-radius:18px!important;
+}
+.panel-h{border-bottom-color:rgba(139,183,255,.09)!important}
+.panel-h h3{font-family:'Be Vietnam Pro',Inter,sans-serif!important;font-weight:600!important;font-size:18px!important;letter-spacing:.015em!important}
+.panel-h small{color:#7892c1!important}
+
+.mc{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 88% 5%,rgba(91,53,210,.17),transparent 35%),
+    radial-gradient(circle at 7% 95%,rgba(30,117,255,.12),transparent 34%),
+    linear-gradient(145deg,rgba(13,30,88,.97),rgba(7,14,48,.985))!important;
+  border-color:rgba(143,188,255,.15)!important;
+  border-radius:20px!important;
+  box-shadow:0 25px 60px -45px rgba(45,93,238,.85)!important;
+}
+.mc::before{
+  content:"";position:absolute;right:-54px;top:-86px;width:220px;height:220px;border-radius:50%;
+  border:1px solid rgba(135,186,255,.08);box-shadow:inset 0 0 0 30px rgba(115,161,255,.015);pointer-events:none
+}
+.mc.open:hover{border-color:rgba(100,177,255,.36)!important}
+.mc-top{min-height:42px;padding:11px 16px!important;background:rgba(2,10,38,.22)!important;border-bottom:1px solid rgba(255,255,255,.045)}
+.mc-top .t{font-size:10px!important;color:#a8c2ec!important;letter-spacing:.045em}
+.mc-body{padding:23px 17px 22px!important;gap:16px!important;min-height:138px}
+.side .nm{font-size:12.5px!important;letter-spacing:.01em!important;max-width:170px!important}
+.crest{width:55px!important;height:55px!important;border-radius:15px!important;border-color:rgba(181,207,255,.19)!important;background:#08143f}
+.crest.sm{width:26px!important;height:26px!important;border-radius:8px!important}
+.crest.lg{width:31px!important;height:31px!important;border-radius:9px!important}
+.sin{width:58px!important;height:64px!important;border-radius:13px!important;background:rgba(3,11,39,.72)!important;border-color:rgba(152,190,255,.20)!important;font-size:23px!important}
+.sin:focus{border-color:#69cfff!important;box-shadow:0 0 0 3px rgba(70,174,255,.16)!important}
+.sin.has{border-color:rgba(111,212,255,.54)!important;background:rgba(32,105,218,.12)!important}
+.mc-foot{border-top-color:rgba(139,183,255,.08)!important;background:rgba(3,10,35,.14)!important}
+.tag.op{background:rgba(67,166,255,.12)!important;color:#91dcff!important;border-color:rgba(86,176,255,.22)!important}
+.tag.soon{background:rgba(120,73,225,.14)!important;color:#c3a8ff!important;border-color:rgba(154,107,255,.25)!important}
+.tag.ft{background:rgba(137,160,203,.10)!important;color:#aabada!important}
+.prog .bar i{background:linear-gradient(90deg,#3198ff,#7544d8)!important}
+.now{color:#a8ddff!important;border-color:rgba(104,177,255,.28)!important;background:rgba(51,126,255,.08)!important}
+
+.ucl-comp-intro{padding:20px 19px 18px;margin-bottom:13px}
+.ucl-comp-intro .ey{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#73bfff;font-weight:700}
+.ucl-comp-intro h2{margin-top:7px;font:600 clamp(24px,4vw,38px)/1.08 'Be Vietnam Pro',sans-serif;letter-spacing:.01em}
+.ucl-comp-intro p{margin-top:9px;max-width:760px;color:#8fa8d4;font-size:12px;line-height:1.6}
+
+.ucl-table-wrap{overflow:auto}
+.ucl-table{min-width:760px}
+.ucl-table tbody tr{transition:background .15s}
+.ucl-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.ucl-zone-head td{padding:9px 13px!important;font-size:9px!important;letter-spacing:.14em;text-transform:uppercase;font-weight:750;text-align:left!important}
+.ucl-zone-head.direct td{color:#7edfff;background:rgba(47,151,255,.10);border-top:1px solid rgba(73,170,255,.20)}
+.ucl-zone-head.playoff td{color:#c1a7ff;background:rgba(112,65,215,.10);border-top:1px solid rgba(139,92,231,.20)}
+.ucl-zone-head.out td{color:#98a7c2;background:rgba(133,149,177,.06);border-top:1px solid rgba(139,153,181,.13)}
+.ucl-row-direct{box-shadow:inset 4px 0 #36a8ff;background:linear-gradient(90deg,rgba(41,151,255,.055),transparent 30%)}
+.ucl-row-playoff{box-shadow:inset 4px 0 #7d51df;background:linear-gradient(90deg,rgba(111,71,216,.05),transparent 30%)}
+.ucl-row-out{box-shadow:inset 4px 0 #65708a;opacity:.74}
+.ucl-key{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 13px;border-top:1px solid rgba(255,255,255,.06)}
+.ucl-key span{padding:10px;border-radius:10px;background:rgba(255,255,255,.025);font-size:10px;color:#93a8ce}
+.ucl-key b{display:block;color:#fff;margin-bottom:3px;font-size:11px}
+
+.ucl-bracket{padding:18px 14px 16px}
+.ucl-bracket-scroll{overflow-x:auto;padding:3px 2px 10px}
+.ucl-bracket-grid{display:grid;grid-template-columns:repeat(5,minmax(190px,1fr));gap:18px;min-width:1040px;align-items:start}
+.ucl-br-col{position:relative}
+.ucl-br-col:not(:last-child)::after{
+  content:"";position:absolute;right:-12px;top:30px;bottom:12px;width:1px;
+  background:linear-gradient(180deg,transparent,#365997 12%,#633fb9 62%,transparent);
+  opacity:.48
+}
+.ucl-br-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 3px}
+.ucl-br-title b{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#b7c9e9}
+.ucl-br-title span{font:700 9px/1 'JetBrains Mono',monospace;color:#627da9}
+.ucl-tie{
+  position:relative;padding:9px 10px;margin-bottom:9px;border-radius:12px;
+  background:linear-gradient(145deg,rgba(18,38,99,.86),rgba(8,17,53,.92));
+  border:1px solid rgba(142,184,255,.13)
+}
+.ucl-tie.empty{min-height:61px;display:flex;align-items:center;justify-content:center;color:#6079a7;font-size:10px;border-style:dashed;background:rgba(9,19,57,.48)}
+.ucl-tie-team{display:flex;align-items:center;gap:7px;min-width:0;padding:4px 0}
+.ucl-tie-team span.name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;font-weight:650}
+.ucl-tie-score{font:700 10px/1 'JetBrains Mono',monospace;color:#e6f1ff}
+.ucl-tie-meta{font-size:8.5px;color:#637ca9;border-top:1px solid rgba(255,255,255,.055);padding-top:5px;margin-top:3px}
+.ucl-br-final .ucl-tie{border-color:rgba(216,189,114,.22);background:linear-gradient(145deg,rgba(25,41,91,.9),rgba(36,27,44,.9))}
+
+body[data-ucl-phase="playoffs"],
+body[data-ucl-phase="r16"]{background:radial-gradient(900px 500px at 80% -10%,rgba(116,58,208,.34),transparent 65%),linear-gradient(180deg,#071241,#080b2d 60%,#06091e 100%)!important}
+body[data-ucl-phase="quarter"],
+body[data-ucl-phase="semi"]{background:radial-gradient(900px 520px at 84% 0%,rgba(158,42,211,.30),transparent 62%),radial-gradient(750px 430px at 4% 8%,rgba(46,179,255,.18),transparent 65%),linear-gradient(180deg,#0b1040,#090927 65%,#060819)!important}
+body[data-ucl-phase="final"]{background:radial-gradient(780px 460px at 85% -4%,rgba(197,171,90,.16),transparent 61%),linear-gradient(180deg,#07133c,#060a22 64%,#040715)!important}
+
+@media(max-width:760px){
+  .wrap{padding-left:10px!important;padding-right:10px!important;padding-top:8px}
+  .ucl-hero{min-height:286px;border-radius:21px}
+  .ucl-hero-inner{min-height:286px;padding:36px 22px 27px;max-width:82%}
+  .ucl-hero-title{font-size:clamp(31px,10vw,48px)}
+  .ucl-dashboard-grid{grid-template-columns:1fr}
+  .ucl-road{padding:13px 10px 14px}
+  .ucl-road-track{overflow-x:auto;display:flex;gap:5px;padding-bottom:4px}
+  .ucl-road-track::before{left:27px;right:27px}
+  .ucl-stage{min-width:86px}
+  .nav{display:flex!important;overflow-x:auto!important;gap:4px!important;padding:4px!important;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav button{flex:0 0 auto!important;width:auto!important;min-width:72px!important;padding:10px 9px!important;font-size:9px!important}
+  .mc-body{padding:20px 9px!important;gap:7px!important;min-height:125px}
+  .crest{width:48px!important;height:48px!important}
+  .side .nm{font-size:10.5px!important;max-width:105px!important}
+  .sin{width:48px!important;height:58px!important;font-size:21px!important}
+  .ucl-key{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+  .ucl-hero{min-height:255px}
+  .ucl-hero-inner{min-height:255px;padding:30px 17px 22px;max-width:92%}
+  .ucl-eyebrow{font-size:8.5px;letter-spacing:.19em}
+  .ucl-hero-title{font-size:34px}
+  .ucl-hero-sub{font-size:10.5px;margin-top:13px}
+  .ucl-stat strong{font-size:23px}
+  .ucl-stat small{font-size:7.5px}
+  .ucl-next-row{gap:5px}
+  .ucl-next-team{font-size:10px}
+  .ucl-next-mid{font-size:8px}
+}
