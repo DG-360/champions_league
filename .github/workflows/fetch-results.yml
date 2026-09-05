@@ -1,0 +1,39 @@
+name: Sync Champions League fixtures and results
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'Dry run (look, do not write)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: champions-league-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Sync fixtures, teams and results
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
+          FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
+          DRY_RUN: ${{ inputs.dry || false }}
+        run: node scripts/fetch-results.mjs
