@@ -53,18 +53,20 @@ jobs:
           python -m py_compile scripts/bettable_model.py
           grep -q 'const ROOT.*cl2627' index.html
           grep -q 'football-data.org' index.html
-      - name: Test real Champions League sync
+      - name: Initial Champions League sync
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
           FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
-          DRY_RUN: 'true'
+          DRY_RUN: 'false'
         run: node scripts/fetch-results.mjs
-      - name: Commit published site
+      - name: Commit site files
         shell: bash
         run: |
-          rm -rf _payload .github/workflows/bootstrap.yml app-01.js style-01.css style-02.css style-03.css style-04.css style-05.css bet_pl_model.py
+          rm -rf _payload app-01.js style-01.css style-02.css style-03.css style-04.css style-05.css bet_pl_model.py scripts/__pycache__
+          rm -f .github/workflows/bettable-model.yml .github/workflows/fetch-results.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add README.md index.html .nojekyll scripts
+          git add -u _payload app-01.js style-01.css style-02.css style-03.css style-04.css style-05.css bet_pl_model.py
           git commit -m 'Publish Champions League predictor' || exit 0
           git push
