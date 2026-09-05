@@ -38,23 +38,103 @@
   .ucl-page-hero__art{right:-40px;width:330px}
   .ucl-page-hero--home .ucl-page-hero__art{right:-25px;width:360px}
 }
+
 @media(max-width:700px){
-  .ucl-page-hero{min-height:152px;padding:20px 18px 18px;border-radius:16px;margin-bottom:16px}
-  .ucl-page-hero--home{min-height:188px;padding:22px 18px 19px;margin-bottom:18px}
-  .ucl-page-hero__copy{max-width:82%}
-  .ucl-page-hero__kicker{font-size:8.8px;letter-spacing:.15em;gap:9px}
-  .ucl-page-hero__kicker::before{width:24px}
-  .ucl-page-hero h1{font-size:clamp(32px,9.8vw,43px)}
-  .ucl-page-hero--home h1{font-size:clamp(38px,11vw,50px)}
-  .ucl-page-hero__meta{margin-top:13px;font-size:10.5px}
-  .ucl-page-hero__season{font-size:9.5px}
-  .ucl-page-hero__art{right:-72px;width:270px;opacity:.78}
-  .ucl-page-hero--home .ucl-page-hero__art{right:-55px;width:300px}
-  .ucl-page-hero__art img{opacity:.17}
-  .ucl-page-hero--home .ucl-page-hero__art img{opacity:.20}
+  /* The hero is moved above the profile bar on mobile by ucl-page-hero-v14.js. */
+  #app>.ucl-page-hero{order:-3}
+  #app>.ubar{order:-2}
+  #app>.sbar{display:none!important}
+
+  .ucl-page-hero{
+    min-height:168px;
+    padding:16px 16px 15px;
+    border-radius:17px;
+    margin:0 0 12px;
+  }
+  .ucl-page-hero--home{
+    min-height:196px;
+    padding:18px 16px 16px;
+    margin-bottom:12px;
+  }
+  .ucl-page-hero__copy{max-width:68%}
+  .ucl-page-hero__kicker{font-size:8.5px;letter-spacing:.14em;gap:8px;margin-bottom:8px}
+  .ucl-page-hero__kicker::before{width:22px}
+  .ucl-page-hero h1{font-size:clamp(30px,8.9vw,40px)}
+  .ucl-page-hero--home h1{font-size:clamp(34px,9.7vw,45px)}
+  .ucl-page-hero__meta{margin-top:12px;font-size:10px;gap:8px}
+  .ucl-page-hero__season{font-size:9px}
+  .ucl-page-hero__art{
+    right:2px;
+    top:50%;
+    width:44vw;
+    max-width:178px;
+    min-width:142px;
+    opacity:1;
+  }
+  .ucl-page-hero--home .ucl-page-hero__art{
+    right:3px;
+    width:48vw;
+    max-width:192px;
+  }
+  .ucl-page-hero__art img{opacity:.32}
+  .ucl-page-hero--home .ucl-page-hero__art img{opacity:.38}
+
+  /* Keep the signed-in profile compact directly below the ball/hero. */
+  #app>.ubar{margin-bottom:10px!important}
+
+  /* Home mini fixtures: identical crest/name alignment for both clubs. */
+  .ucl-next-row{
+    grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr)!important;
+    align-items:center!important;
+    column-gap:8px!important;
+  }
+  .ucl-next-team{
+    display:grid!important;
+    grid-template-columns:32px minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:7px!important;
+    min-width:0!important;
+    text-align:left!important;
+  }
+  .ucl-next-team.a{
+    grid-template-columns:minmax(0,1fr) 32px!important;
+    text-align:right!important;
+  }
+  .ucl-next-team .crest{
+    width:32px!important;
+    height:32px!important;
+    margin:0!important;
+    align-self:center!important;
+  }
+  .ucl-next-team span{
+    min-width:0!important;
+    line-height:1.2!important;
+  }
+  .ucl-next-team.a .crest{grid-column:2!important;grid-row:1!important}
+  .ucl-next-team.a span{grid-column:1!important;grid-row:1!important}
+  .ucl-next-mid{min-width:0!important;text-align:center!important}
 }
+
+@media(max-width:480px){
+  .ucl-page-hero__copy{max-width:62%}
+  .ucl-page-hero h1{font-size:29px}
+  .ucl-page-hero--home h1{font-size:33px}
+  .ucl-page-hero__art{right:0;width:46vw;min-width:136px}
+  .ucl-page-hero--home .ucl-page-hero__art{right:0;width:50vw}
+
+  .ucl-next-row{
+    grid-template-columns:minmax(0,1fr) 86px minmax(0,1fr)!important;
+    column-gap:5px!important;
+  }
+  .ucl-next-team{grid-template-columns:28px minmax(0,1fr)!important;gap:5px!important;font-size:10.5px!important}
+  .ucl-next-team.a{grid-template-columns:minmax(0,1fr) 28px!important}
+  .ucl-next-team .crest{width:28px!important;height:28px!important}
+  .ucl-next-mid{font-size:8.5px!important}
+  .ucl-next-mid b{font-size:9px!important}
+}
+
 @media(max-width:410px){
-  .ucl-page-hero__copy{max-width:90%}
-  .ucl-page-hero__art{right:-95px}
-  .ucl-page-hero--home .ucl-page-hero__art{right:-82px}
+  .ucl-page-hero__copy{max-width:60%}
+  .ucl-page-hero__art{right:-2px}
+  .ucl-page-hero--home .ucl-page-hero__art{right:-2px}
 }
