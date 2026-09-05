@@ -60,11 +60,7 @@ Qualification/preliminary rounds are excluded so the predictor begins with the m
 
 The sync never overwrites a result that an admin entered manually. Automatically imported results may be refreshed if the API corrects them.
 
-## Club logos
 
-No official club crest files are bundled. Sign in, enable **Admin mode**, open the **League** tab, then use the crest uploader. Uploaded images are resized and stored under the Champions League Firebase root so every player sees them on every device.
-
-## Betable model
 
 The Champions League version does not reuse the Premier-League-only training data. `scripts/bettable_model.py` trains an independent UCL Elo/form model from recent historical Champions League result files, advances the team state with the current season, and publishes probabilities to `cl2627/modelPredictions`.
 
