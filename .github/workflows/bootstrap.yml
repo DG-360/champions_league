@@ -39,7 +39,9 @@ jobs:
           p = Path('scripts/fetch-results.mjs')
           s = p.read_text()
           old = 'const token = (process.env.FOOTBALL_DATA_TOKEN || "").trim();'
-          new = 'const token = (process.env.FOOTBALL_DATA_TOKEN || "").replace(/\\s+/g, "").trim();'
+          new = '''const rawToken = process.env.FOOTBALL_DATA_TOKEN || "";
+          const tokenMatches = rawToken.match(/[A-Za-z0-9_-]{20,}/g) || [];
+          const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\\s+/g, "")).trim();'''
           if old not in s:
               raise SystemExit('Token normalization target not found')
           p.write_text(s.replace(old, new, 1))
