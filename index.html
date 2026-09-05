@@ -8,10 +8,3394 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  --bg:#12001a; --bg1:#1a0424; --bg2:#22072e; --bg3:#2c0e3a; --bg4:#38154a;
+  --line:rgba(255,255,255,.075); --line2:rgba(255,255,255,.16); --line3:rgba(255,255,255,.28);
+  --green:#00ff87; --cyan:#04f5ff; --pink:#e90052; --amber:#ffb020; --violet:#b07cff;
+  --txt:#f5eef7; --txt2:#ab95b5; --txt3:#755f80;
+  --r:14px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:Inter,system-ui,-apple-system,sans-serif; font-size:14px; line-height:1.45;
+  min-height:100dvh; overflow-x:hidden; overflow-wrap:break-word;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% -10%, rgba(233,0,82,.20), transparent 60%),
+    radial-gradient(ellipse 90% 50% at 100% 0%, rgba(4,245,255,.10), transparent 55%),
+    radial-gradient(ellipse 90% 50% at 0% 10%, rgba(176,124,255,.10), transparent 55%);
+}
+::selection{background:var(--green);color:#0b0010}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.disp{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.02em;font-weight:400}
+
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 12px calc(56px + var(--safe-b))}
+
+/* ══ overlays ══ */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(6,0,10,.86);backdrop-filter:blur(14px);
+    display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto}
+.ov[hidden]{display:none}
+.sheet{width:100%;max-width:430px;background:linear-gradient(165deg,var(--bg3),var(--bg1));
+  border:1px solid var(--line2);border-radius:20px;padding:26px 22px;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.03) inset;
+  animation:rise .32s cubic-bezier(.16,1,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.sheet .mark{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--green);margin-bottom:8px;font-weight:600}
+.sheet h2{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;margin-bottom:6px}
+.sheet .lede{font-size:13px;color:var(--txt2);margin-bottom:20px}
+.seg{display:flex;gap:4px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:11px;padding:4px;margin-bottom:18px}
+.seg button{flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:600;color:var(--txt2);transition:.16s}
+.seg button.on{background:var(--green);color:#0b0010}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt3);margin-bottom:5px;font-weight:600}
+.fld input,.fld select{width:100%;padding:12px 13px;background:rgba(0,0,0,.34);border:1px solid var(--line2);
+  border-radius:10px;outline:none;transition:.16s;font-size:15px}
+.fld input:focus,.fld select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,255,135,.14)}
+.fld input::placeholder{color:var(--txt3)}
+.btn{width:100%;padding:13px;border-radius:11px;background:var(--green);color:#0b0010;font-weight:700;font-size:14.5px;
+  transition:.16s;letter-spacing:.01em}
+.btn:hover{filter:brightness(1.09)}
+.btn:active{transform:scale(.985)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:none;border:1px solid var(--line2);color:var(--txt2)}
+.btn.ghost:hover{border-color:var(--line3);color:var(--txt)}
+.err{font-size:12.5px;color:#ff6b8a;margin-top:9px;display:flex;gap:6px;align-items:flex-start}
+.err[hidden]{display:none}
+.who{display:flex;flex-direction:column;gap:6px;max-height:230px;overflow-y:auto;margin-bottom:14px;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.who-b{display:flex;align-items:center;gap:11px;background:rgba(0,0,0,.28);border:1px solid var(--line);
+  border-radius:11px;padding:9px 12px;transition:.14s;text-align:left;width:100%}
+.who-b:hover{border-color:var(--line3);background:rgba(255,255,255,.045)}
+.hint{font-size:11.5px;color:var(--txt3);margin-top:12px;line-height:1.5}
+
+.av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0;
+  background:var(--c,#888);color:#0b0010;letter-spacing:.02em}
+.av.sm{width:22px;height:22px;border-radius:7px;font-size:9px}
+.av.lg{width:40px;height:40px;border-radius:11px;font-size:14px}
+.avpick{cursor:pointer;border:1px solid rgba(255,255,255,.24);transition:.16s;box-shadow:0 0 0 0 rgba(255,255,255,0)}
+.avpick:hover{transform:translateY(-1px);box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.avpick:active{transform:scale(.96)}
+.color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:7px}
+.color-swatch{aspect-ratio:1;border-radius:11px;background:var(--c);border:2px solid transparent;position:relative;transition:.14s;min-width:0}
+.color-swatch:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3)}
+.color-swatch.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.16)}
+.color-swatch.on::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:#100016;font-size:17px;font-weight:900;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.color-swatch:disabled{opacity:.22;cursor:not-allowed;filter:grayscale(.35)}
+.color-swatch:disabled::after{content:'×';position:absolute;inset:0;display:grid;place-items:center;color:#100016;font-size:18px;font-weight:900}
+.color-note{font-size:10.5px;color:var(--txt3);margin-top:8px;line-height:1.45}
+@media(max-width:400px){.color-grid{grid-template-columns:repeat(6,1fr);gap:7px}}
+
+/* ══ header ══ */
+.hdr{padding:26px 2px 14px;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.hdr .lockup{flex:1;min-width:210px}
+.hdr .kick{display:flex;align-items:center;gap:7px;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--txt2);font-weight:600;margin-bottom:5px}
+.hdr .kick i{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 9px var(--green);font-style:normal}
+.hdr h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,10.5vw,62px);line-height:.86;letter-spacing:.005em}
+.hdr h1 em{font-style:normal;background:linear-gradient(96deg,var(--green),var(--cyan) 55%,var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ══ user bar ══ */
+.ubar{display:flex;align-items:center;gap:10px;background:linear-gradient(120deg,var(--bg2),var(--bg1));
+  border:1px solid var(--line);border-radius:var(--r);padding:9px 11px;margin-bottom:11px}
+.ubar .idn{flex:1;min-width:0}
+.ubar .idn b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ubar .idn small{display:block;font-size:10.5px;color:var(--txt3);margin-top:1px}
+.ubar .tot{text-align:right;line-height:1;padding-right:4px}
+.ubar .tot b{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green);display:block}
+.ubar .tot small{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt3)}
+.ico{width:33px;height:33px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;
+  font-size:14px;color:var(--txt2);transition:.15s;flex-shrink:0}
+.ico:hover{border-color:var(--line3);color:var(--txt);background:rgba(255,255,255,.05)}
+.ico.act{border-color:var(--amber);color:var(--amber);background:rgba(255,176,32,.1)}
+
+/* ══ live scoreboard strip ══ */
+.sbar{display:flex;gap:6px;overflow-x:auto;padding:2px 1px 8px;margin-bottom:4px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sbar::-webkit-scrollbar{display:none}
+.sbar:empty{display:none}
+.sb-card{display:flex;align-items:center;gap:8px;flex-shrink:0;padding:7px 11px 7px 8px;border-radius:11px;
+  background:linear-gradient(140deg,var(--bg2),var(--bg1));border:1px solid var(--line);transition:.15s}
+.sb-card.me{border-color:var(--c);background:linear-gradient(140deg,rgba(255,255,255,.06),rgba(0,0,0,.2))}
+.sb-card .rkn2{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--txt3);font-weight:700}
+.sb-card .nm2{font-size:12px;font-weight:600;white-space:nowrap;max-width:88px;overflow:hidden;text-overflow:ellipsis}
+.sb-card .pt2{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;color:var(--c)}
+.sb-card .up{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--green);
+  background:rgba(0,255,135,.14);padding:1px 4px;border-radius:4px}
+
+/* ══ latest points feed ══ */
+.feed{display:flex;flex-direction:column}
+.fd-row{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap}
+.fd-row:last-child{border-bottom:none}
+.fd-mt{display:flex;align-items:center;gap:7px;flex:1;min-width:200px}
+.fd-mt .fn{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fd-sc{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--txt);
+  background:rgba(255,255,255,.06);padding:2px 7px;border-radius:6px;flex-shrink:0}
+.fd-pts{display:flex;gap:4px;flex-wrap:wrap}
+.fd-mw{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt3);font-weight:700;flex-shrink:0}
+
+/* ══ deadline strip ══ */
+.dl{display:flex;align-items:center;gap:10px;border-radius:var(--r);padding:10px 13px;margin-bottom:11px;
+  border:1px solid rgba(0,255,135,.26);background:linear-gradient(100deg,rgba(0,255,135,.11),rgba(0,255,135,.02))}
+.dl.live{border-color:rgba(233,0,82,.4);background:linear-gradient(100deg,rgba(233,0,82,.15),rgba(233,0,82,.02))}
+.dl .pip{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2.1s infinite}
+.dl.live .pip{background:var(--pink);animation-name:pulseP}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,255,135,.5)}70%{box-shadow:0 0 0 8px rgba(0,255,135,0)}100%{box-shadow:0 0 0 0 rgba(0,255,135,0)}}
+@keyframes pulseP{0%{box-shadow:0 0 0 0 rgba(233,0,82,.55)}70%{box-shadow:0 0 0 8px rgba(233,0,82,0)}100%{box-shadow:0 0 0 0 rgba(233,0,82,0)}}
+.dl .txt{flex:1;min-width:0}
+.dl .txt small{display:block;font-size:9px;letter-spacing:.19em;text-transform:uppercase;color:var(--txt2);font-weight:600}
+.dl .txt b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.dl .cd{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--green);white-space:nowrap;letter-spacing:-.02em}
+.dl.live .cd{color:var(--pink)}
+.dl[hidden]{display:none}
+
+/* ══ nav ══ */
+.nav{display:flex;gap:4px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:13px}
+.nav button{flex:1;padding:9px 2px;border-radius:9px;font-size:11.5px;font-weight:600;color:var(--txt2);transition:.16s;white-space:nowrap}
+.nav button:hover{color:var(--txt)}
+.nav button.on{background:linear-gradient(160deg,var(--bg4),var(--bg3));color:var(--txt);box-shadow:0 1px 0 rgba(255,255,255,.09) inset}
+
+/* ══ round pager ══ */
+.pager{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.pager button.arw{width:38px;height:38px;border-radius:10px;border:1px solid var(--line2);display:grid;place-items:center;
+  font-size:16px;color:var(--txt2);flex-shrink:0;transition:.15s}
+.pager button.arw:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.pager button.arw:disabled{opacity:.28;cursor:not-allowed}
+.pager .mwsel{flex:1;position:relative}
+.pager select{width:100%;height:38px;padding:0 30px 0 13px;background:linear-gradient(120deg,var(--bg2),var(--bg1));
+  border:1px solid var(--line2);border-radius:10px;outline:none;font-size:13.5px;font-weight:600;
+  appearance:none;cursor:pointer;text-overflow:ellipsis}
+.pager select:focus{border-color:var(--green)}
+.pager .mwsel::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:11px}
+.pager .now{height:38px;padding:0 13px;border-radius:10px;border:1px solid rgba(0,255,135,.3);color:var(--green);
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;flex-shrink:0;background:rgba(0,255,135,.07);transition:.15s}
+.pager .now:hover{background:rgba(0,255,135,.15)}
+
+/* ══ progress ══ */
+.prog{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:0 3px}
+.prog .bar{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.prog .bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .5s cubic-bezier(.16,1,.3,1)}
+.prog small{font-size:10.5px;color:var(--txt3);white-space:nowrap;font-weight:600;letter-spacing:.04em}
+
+/* ══ date divider ══ */
+.dday{display:flex;align-items:center;gap:10px;margin:18px 2px 9px}
+.dday:first-child{margin-top:2px}
+.dday span{font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--txt2);font-weight:700;white-space:nowrap}
+.dday hr{flex:1;border:none;border-top:1px solid var(--line)}
+
+/* ══ match card ══ */
+.mc{background:linear-gradient(150deg,var(--bg2),var(--bg1) 65%);border:1px solid var(--line);
+  border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .2s}
+.mc.open{border-color:rgba(0,255,135,.2)}
+.mc.done{background:linear-gradient(150deg,rgba(255,255,255,.028),rgba(0,0,0,.16))}
+.mc-top{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);min-height:34px}
+.mc-top .t{font-size:11px;color:var(--txt2);font-weight:500;font-variant-numeric:tabular-nums}
+.mc-top .sp{flex:1}
+.tag{font-size:9px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.tag.lk{background:rgba(255,255,255,.06);color:var(--txt3)}
+.tag.op{background:rgba(0,255,135,.13);color:var(--green)}
+.tag.lv{background:rgba(233,0,82,.18);color:#ff5c8d}
+.tag.ft{background:rgba(4,245,255,.12);color:var(--cyan)}
+.tag.soon{background:rgba(255,176,32,.14);color:var(--amber)}
+
+.mc-body{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:13px 11px}
+.side{display:flex;align-items:center;gap:8px;min-width:0}
+.side.a{flex-direction:row-reverse}
+.crest{width:34px;height:34px;border-radius:10px;flex-shrink:0;position:relative;overflow:hidden;
+  display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 -9px 12px -6px rgba(0,0,0,.45)}
+.crest .bg{position:absolute;inset:0}
+.crest .lbl{position:relative;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
+  letter-spacing:-.02em;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+.crest.dk .lbl{color:#10131a;text-shadow:0 1px 1px rgba(255,255,255,.35)}
+.crest.sm{width:24px;height:24px;border-radius:7px;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.crest.sm .lbl{font-size:7.5px}
+/* real crest overlay */
+.crest .cimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}
+.crest.img{background:none;border-color:transparent;box-shadow:none;overflow:visible}
+.crest.img .bg,.crest.img .lbl{opacity:0}
+.crest.img .cimg{opacity:1}
+/* league table rows: number · crest · full name */
+.crest.lg{width:30px;height:30px;border-radius:9px}
+.crest.lg .lbl{font-size:9px}
+.side .nm{font-size:12.5px;font-weight:600;line-height:1.18;min-width:0;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.side.a .nm{text-align:right}
+
+.mid{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.sin{width:42px;height:44px;text-align:center;border-radius:10px;border:1.5px solid var(--line2);
+  background:rgba(0,0,0,.35);font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;outline:none;transition:.15s;padding:0}
+.sin::placeholder{color:var(--txt3);font-weight:400}
+.sin:focus{border-color:var(--green);background:rgba(0,255,135,.09);box-shadow:0 0 0 3px rgba(0,255,135,.13)}
+.sin.has{border-color:rgba(0,255,135,.42);color:var(--green)}
+.sin:disabled{opacity:1;background:rgba(0,0,0,.22);border-color:var(--line);color:var(--txt2);border-style:dashed}
+.sin.saved{animation:flash .55s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(0,255,135,.5)}100%{box-shadow:0 0 0 9px rgba(0,255,135,0)}}
+.dash{color:var(--txt3);font-size:13px;font-weight:700}
+.ft-score{display:flex;align-items:center;gap:7px;font-family:'Bebas Neue',sans-serif;font-size:31px;line-height:1;padding:0 3px}
+.ft-score i{font-style:normal;color:var(--txt3);font-size:19px;position:relative;top:-2px}
+
+.mc-foot{border-top:1px solid var(--line);padding:8px 11px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;background:rgba(0,0,0,.16)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:3px 7px;border-radius:7px;
+  background:rgba(255,255,255,.045);border:1px solid var(--line);white-space:nowrap}
+.chip .cn{
+  background:var(--c,var(--txt2));
+  color:#12001a;
+  font-size:9.5px;
+  font-weight:800;
+  padding:3px 7px;
+  border-radius:5px;
+}
+.chip .cs{font-family:'JetBrains Mono',monospace;color:var(--txt2);font-size:10px}
+.chip .cp{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;padding-left:3px;border-left:1px solid var(--line2)}
+.chip.p3{background:rgba(0,255,135,.13);border-color:rgba(0,255,135,.3)} .chip.p3 .cp{color:var(--green)}
+.chip.p2{background:rgba(4,245,255,.11);border-color:rgba(4,245,255,.27)} .chip.p2 .cp{color:var(--cyan)}
+.chip.p1{background:rgba(255,176,32,.11);border-color:rgba(255,176,32,.27)} .chip.p1 .cp{color:var(--amber)}
+.chip.p0{opacity:.5} .chip.p0 .cp{color:var(--txt3)}
+.chip.me{box-shadow:0 0 0 1px var(--line3)}
+.foot-note{font-size:10.5px;color:var(--txt3);display:flex;align-items:center;gap:5px}
+
+/* admin row */
+.adm{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 11px;border-top:1px dashed rgba(255,176,32,.28);background:rgba(255,176,32,.045)}
+.adm .lb{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700}
+.adm input[type=number]{width:38px;height:29px;text-align:center;border-radius:7px;border:1px solid var(--line2);
+  background:rgba(0,0,0,.35);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;outline:none}
+.adm input[type=number]:focus{border-color:var(--amber)}
+.adm input[type=datetime-local]{height:29px;border-radius:7px;border:1px solid var(--line2);background:rgba(0,0,0,.35);
+  padding:0 7px;font-size:11px;outline:none;color:var(--txt2);min-width:0;flex:1}
+.abtn{height:29px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,176,32,.42);color:var(--amber);
+  font-size:11px;font-weight:700;transition:.15s;white-space:nowrap}
+.abtn:hover{background:rgba(255,176,32,.16)}
+.abtn.red{border-color:rgba(255,90,120,.45);color:#ff7a95}
+.abtn.red:hover{background:rgba(255,90,120,.14)}
+
+/* ══ player admin ══ */
+.pa-grid{display:flex;flex-direction:column}
+.pa-row{display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.pa-row:last-child{border-bottom:none}
+.pa-nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:60px}
+.pa-you{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-weight:700}
+.pa-pts{font-size:11px;color:var(--txt3);flex:1;text-align:right;min-width:24px}
+.pa-row input{width:130px;height:30px;border-radius:7px;border:1px solid var(--line2);
+  background:rgba(0,0,0,.35);padding:0 9px;font-size:12px;outline:none}
+.pa-row input:focus{border-color:var(--amber)}
+
+/* ══ crest uploader ══ */
+.cu-grid{display:flex;flex-direction:column}
+.cu-row{display:flex;align-items:center;gap:10px;padding:7px 13px;border-bottom:1px solid rgba(255,255,255,.04)}
+.cu-row:last-child{border-bottom:none}
+.cu-nm{flex:1;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cu-code{font-size:10px;color:var(--txt3);letter-spacing:.04em}
+.cu-lbl{position:relative;overflow:hidden;display:inline-block;line-height:27px;cursor:pointer}
+.cu-lbl input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0;width:100%;height:100%}
+
+/* ══ tables ══ */
+.panel{background:linear-gradient(150deg,var(--bg2),var(--bg1) 70%);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.panel-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.panel-h h3{font-family:'Bebas Neue',sans-serif;font-size:20px;flex:1;letter-spacing:.03em}
+.panel-h small{font-size:10.5px;color:var(--txt3)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt3);font-weight:700;
+  padding:9px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap;background:rgba(0,0,0,.2)}
+th:first-child,td:first-child{text-align:left;padding-left:13px}
+th:last-child,td:last-child{padding-right:13px}
+td{padding:9px 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.045);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.mine{background:rgba(0,255,135,.055)}
+.tm-cell{display:flex;align-items:center;gap:9px}
+.tm-cell .dotc{width:3px;height:17px;border-radius:2px;background:var(--c);flex-shrink:0}
+.pos{color:var(--txt3);font-family:'JetBrains Mono',monospace;font-size:11px;width:22px}
+.zone-ucl{box-shadow:inset 3px 0 0 var(--cyan)}
+.zone-uel{box-shadow:inset 3px 0 0 var(--violet)}
+.zone-rel{box-shadow:inset 3px 0 0 var(--pink)}
+.key{display:flex;flex-wrap:wrap;gap:12px;padding:9px 13px;font-size:10px;color:var(--txt3);border-top:1px solid var(--line)}
+.key i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* ══ leaderboard ══ */
+.lb-row{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.05)}
+.lb-row:last-child{border-bottom:none}
+.lb-row.mine{background:rgba(0,255,135,.055)}
+.lb-row .rk{font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--txt3);width:26px;text-align:center;flex-shrink:0}
+.lb-row.top .rk{color:var(--green)}
+.lb-row .who2{flex:1;min-width:0}
+.lb-row .who2 b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-row .who2 small{font-size:10.5px;color:var(--txt3);display:block;margin-top:2px}
+.lb-row .pts{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;text-align:right}
+.lb-row .pts small{display:block;font-family:Inter,sans-serif;font-size:8.5px;letter-spacing:.15em;color:var(--txt3);font-weight:600}
+.tri{display:inline-flex;gap:3px;margin-top:4px}
+.tri span{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
+.tri .t3{background:rgba(0,255,135,.14);color:var(--green)}
+.tri .t2{background:rgba(4,245,255,.12);color:var(--cyan)}
+.tri .t1{background:rgba(255,176,32,.12);color:var(--amber)}
+.tri .t0{background:rgba(255,255,255,.05);color:var(--txt3)}
+
+/* ══ streak badges ══ */
+.bdg-set{display:inline-flex;gap:3px;margin-left:6px;vertical-align:1px}
+.bdg{display:inline-grid;place-items:center;width:19px;height:22px;font-size:9.5px;font-weight:800;
+  font-family:'JetBrains Mono',monospace;color:#0b0010;
+  clip-path:polygon(50% 0,100% 22%,100% 72%,50% 100%,0 72%,0 22%)}
+.bdg.b5{background:linear-gradient(160deg,#04f5ff,#0a9fb8)}
+.bdg.b10{background:linear-gradient(160deg,#ffd54a,#e0921b);width:22px;height:25px;font-size:10px}
+.bdg-grid{display:flex;flex-direction:column}
+.bdg-row{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.045)}
+.bdg-row:last-child{border-bottom:none}
+.bdg-who{flex:1;min-width:0}
+.bdg-who b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bdg-run{display:block;font-size:10.5px;color:var(--green);margin-top:2px}
+.bdg-run.cold{color:var(--txt3)}
+.bdg-none{font-size:11px;color:var(--txt3)}
+
+/* ══ betable ══ */
+.bt-hero{padding:14px 13px;background:linear-gradient(130deg,rgba(0,255,135,.10),rgba(4,245,255,.04));
+  border-bottom:1px solid var(--line)}
+.bt-hero h2{font-family:'Bebas Neue',sans-serif;font-size:29px;line-height:1;margin-bottom:5px}
+.bt-hero p{font-size:11.5px;color:var(--txt2);line-height:1.55}
+.bt-note{font-size:10.5px;color:var(--txt3);line-height:1.5;margin-top:7px}
+.bt-good,.bt-risk{margin:12px;border-radius:12px;padding:12px 13px;border:1px solid var(--line2)}
+.bt-good{background:rgba(0,255,135,.075);border-color:rgba(0,255,135,.28)}
+.bt-risk{background:rgba(255,176,32,.075);border-color:rgba(255,176,32,.30)}
+.bt-good b,.bt-risk b{display:block;font-size:13px;margin-bottom:3px}
+.bt-good b{color:var(--green)} .bt-risk b{color:var(--amber)}
+.bt-sub{font-size:11px;color:var(--txt2);line-height:1.5}
+.bt-combo{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.bt-leg{display:flex;align-items:center;gap:9px;padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.045)}
+.bt-leg:last-child{border-bottom:none}
+.bt-leg .num{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:800;background:rgba(0,255,135,.13);color:var(--green)}
+.bt-leg .main{flex:1;min-width:0}
+.bt-leg .game{font-size:12px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-leg .pick{font-size:13px;font-weight:700;margin-top:2px}
+.bt-conf{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;color:var(--green);white-space:nowrap}
+.bt-conf.mid{color:var(--amber)}
+.bt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px 12px}
+.bt-card{border:1px solid var(--line);border-radius:11px;padding:10px;background:rgba(0,0,0,.16);min-width:0}
+.bt-card.hot{border-color:rgba(0,255,135,.28);background:rgba(0,255,135,.045)}
+.bt-card .game{font-size:10.5px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-card .pick{font-size:13px;font-weight:700;margin-top:3px}
+.bt-card .meta{display:flex;gap:7px;align-items:center;margin-top:5px;font-size:10px;color:var(--txt3);flex-wrap:wrap}
+.bt-pill{font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:800;letter-spacing:.05em;padding:2px 5px;border-radius:4px;
+  background:rgba(0,255,135,.14);color:var(--green)}
+.bt-pill.watch{background:rgba(255,255,255,.06);color:var(--txt3)}
+.bt-meter{height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-top:7px}
+.bt-meter i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:3px}
+.bt-list{display:flex;flex-direction:column}
+.bt-row{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.045)}
+.bt-row:last-child{border-bottom:none}
+.bt-row .game{flex:1;min-width:0}
+.bt-row .game b{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-row .game small{font-size:10px;color:var(--txt3);display:block;margin-top:2px}
+.bt-empty{padding:18px 13px;color:var(--txt3);font-size:11.5px;line-height:1.6}
+@media(max-width:520px){.bt-grid{grid-template-columns:1fr}}
+
+
+.bt-model{margin:10px 12px;padding:10px 11px;border:1px solid rgba(4,245,255,.22);border-radius:11px;background:rgba(4,245,255,.045)}
+.bt-model b{font-size:11.5px;color:var(--cyan)}
+.bt-model .line{font-size:10.5px;color:var(--txt2);margin-top:3px;line-height:1.5}
+.bt-model-probs{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--txt3);margin-top:4px}
+.bt-gate{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:4px}
+.bt-gate.ok{background:rgba(0,255,135,.13);color:var(--green)}
+.bt-gate.no{background:rgba(255,176,32,.11);color:var(--amber)}
+.bt-context{display:flex;flex-direction:column}
+.bt-ctx-row{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.bt-ctx-row:last-child{border-bottom:none}
+.bt-ctx-game{font-size:12px;font-weight:700;margin-bottom:7px}
+.bt-ctx-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.bt-ctx-controls label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);font-weight:700}
+.bt-ctx-controls select,.bt-ctx-controls input{width:100%;height:32px;margin-top:3px;border:1px solid var(--line2);border-radius:8px;background:rgba(0,0,0,.3);padding:0 7px;font-size:10.5px;outline:none}
+.bt-ctx-controls input{grid-column:1/-1}
+.bt-ctx-actions{display:flex;gap:6px;margin-top:7px}
+.bt-ctx-actions .abtn{height:28px}
+@media(max-width:520px){.bt-ctx-controls{grid-template-columns:1fr}}
+
+/* ══ fanzone / fan battles ══ */
+.gb-note{font-size:11px;color:var(--txt3);padding-top:2px;line-height:1.45}
+.fz-match .panel-h h3{font-size:17px}
+.fz-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:start;padding:14px 12px}
+.fz-side{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.fz-tn{font-size:12px;font-weight:700;text-align:center;line-height:1.2}
+.fz-list{display:flex;flex-direction:column;gap:4px;width:100%;align-items:center}
+.fz-fan{font-size:11px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--c) 30%,transparent);padding:2px 8px;border-radius:6px;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fz-fan.me{box-shadow:0 0 0 1px var(--line3)}
+.fz-vs{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--txt3);align-self:center;padding-top:10px}
+
+.fz-thread{border-top:1px solid var(--line);background:rgba(0,0,0,.10)}
+.fz-posts{display:flex;flex-direction:column;gap:8px;padding:11px 12px;max-height:430px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.fz-empty{font-size:11.5px;color:var(--txt3);padding:7px 2px}
+.fz-post{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025)}
+.fz-post.mine{border-color:color-mix(in srgb,var(--c) 42%,var(--line))}
+.fz-post-top{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.fz-post-top .fz-name{font-size:11.5px;font-weight:700;color:var(--c);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fz-post-top .fz-team{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);white-space:nowrap}
+.fz-post-top .fz-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt3);margin-left:auto;white-space:nowrap}
+.fz-del{font-size:13px;color:var(--txt3);padding:1px 4px;border-radius:5px;line-height:1}
+.fz-del:hover{color:#ff7a95;background:rgba(255,90,120,.1)}
+.fz-text{font-size:13px;line-height:1.45;color:var(--txt);white-space:pre-wrap;overflow-wrap:anywhere}
+.fz-reacts{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.fz-react{height:26px;min-width:38px;padding:0 7px;border-radius:7px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;background:rgba(255,255,255,.025);
+  font-size:13px;transition:.13s}
+.fz-react:hover{border-color:var(--line3);background:rgba(255,255,255,.07)}
+.fz-react.on{border-color:rgba(0,255,135,.45);background:rgba(0,255,135,.10)}
+.fz-react b{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt2);font-weight:700}
+.fz-compose{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(0,0,0,.16)}
+.fz-compose textarea{flex:1;min-height:42px;max-height:94px;resize:vertical;padding:10px 11px;border-radius:10px;
+  border:1px solid var(--line2);background:rgba(0,0,0,.34);outline:none;font:inherit;font-size:12.5px;color:var(--txt);
+  line-height:1.35}
+.fz-compose textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,255,135,.12)}
+.fz-compose textarea::placeholder{color:var(--txt3)}
+.fz-send{align-self:flex-end;height:42px;padding:0 13px;border-radius:10px;background:var(--green);color:#0b0010;
+  font-size:11px;font-weight:800;letter-spacing:.05em}
+.fz-note{padding:9px 12px;border-top:1px solid var(--line);font-size:11px;color:var(--txt3);background:rgba(0,0,0,.14)}
+.fz-club{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.045);flex-wrap:wrap}
+.fz-club:last-child{border-bottom:none}
+.fz-cn{font-size:12.5px;font-weight:600;min-width:120px}
+.fz-fans{display:flex;flex-wrap:wrap;gap:4px;flex:1}
+
+/* launch-week scoring reset */
+.launch-note{padding:11px 13px;margin-bottom:12px;border:1px solid rgba(255,176,32,.28);border-radius:var(--r);
+  background:linear-gradient(100deg,rgba(255,176,32,.11),rgba(255,176,32,.025));font-size:12px;color:var(--txt2);line-height:1.5}
+.launch-note b{color:var(--amber)}
+.warmup-mid{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:800;letter-spacing:.12em;color:var(--amber);
+  border:1px dashed rgba(255,176,32,.35);border-radius:8px;padding:7px 8px;white-space:nowrap}
+.tag.warm{background:rgba(255,176,32,.14);color:var(--amber)}
+
+/* ══ rules ══ */
+.rule{display:flex;gap:12px;padding:13px;border-bottom:1px solid rgba(255,255,255,.05);align-items:flex-start}
+.rule:last-child{border-bottom:none}
+.rule .n{font-family:'Bebas Neue',sans-serif;font-size:25px;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;line-height:1}
+.rule.r3 .n{background:rgba(0,255,135,.14);color:var(--green)}
+.rule.r2 .n{background:rgba(4,245,255,.12);color:var(--cyan)}
+.rule.r1 .n{background:rgba(255,176,32,.12);color:var(--amber)}
+.rule.r0 .n{background:rgba(255,255,255,.05);color:var(--txt3)}
+.rule .bd{flex:1;min-width:0}
+.rule .bd h4{font-size:13.5px;font-weight:600;margin-bottom:3px}
+.rule .bd p{font-size:12px;color:var(--txt2);line-height:1.5}
+.eg{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.eg code{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(0,0,0,.34);border:1px solid var(--line);
+  padding:2px 7px;border-radius:5px;color:var(--txt2)}
+.prose{padding:13px;font-size:12.5px;color:var(--txt2);line-height:1.65}
+.prose b{color:var(--txt)}
+.prose ul{margin:7px 0 0 17px;display:flex;flex-direction:column;gap:5px}
+
+/* ══ Champions League bonus ══ */
+.tp{padding:12px 13px;display:flex;flex-direction:column;gap:9px}
+.tp-row{display:flex;align-items:center;gap:9px}
+.tp-rank{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+  font-family:'Bebas Neue',sans-serif;font-size:18px;line-height:1}
+.tp-row.g .tp-rank{background:rgba(255,176,32,.16);color:var(--amber);border:1px solid rgba(255,176,32,.3)}
+.tp-row.s .tp-rank{background:rgba(4,245,255,.13);color:var(--cyan);border:1px solid rgba(4,245,255,.28)}
+.tp-sel{flex:1;position:relative;min-width:0}
+.tp-sel select{width:100%;height:38px;padding:0 30px 0 12px;background:rgba(0,0,0,.34);
+  border:1px solid var(--line2);border-radius:10px;outline:none;font-size:13.5px;font-weight:600;
+  appearance:none;cursor:pointer;text-overflow:ellipsis;transition:.15s}
+.tp-sel select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,255,135,.13)}
+.tp-sel select:disabled{cursor:default;opacity:1;color:var(--txt2);border-style:dashed;background:rgba(0,0,0,.2)}
+.tp-sel select.set{border-color:rgba(0,255,135,.4);color:var(--green)}
+.tp-sel::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);
+  color:var(--txt3);pointer-events:none;font-size:11px}
+.tp-row.locked .tp-sel::after{content:''}
+.tp-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--txt3);
+  white-space:nowrap;width:44px;text-align:right}
+.tp-val.hit{color:var(--green)}
+.tp-val.miss{color:var(--txt3);text-decoration:line-through;opacity:.6}
+.tp-dl{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--txt2);padding-top:2px}
+.tp-dl b{font-family:'JetBrains Mono',monospace;color:var(--amber);font-weight:700}
+.tp-dl.shut{color:var(--txt3)}
+.tp-picks{display:flex;flex-wrap:wrap;gap:5px;padding-top:4px}
+.tp-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:3px 8px;
+  border-radius:6px;background:rgba(255,255,255,.045);border:1px solid var(--line);white-space:nowrap}
+.tp-chip .cn{
+  background:var(--c);
+  color:#12001a;
+  font-size:9.5px;
+  font-weight:800;
+  padding:3px 7px;
+  border-radius:5px;
+}
+.tp-chip .cs{color:var(--txt2);font-size:10px}
+.tp-chip .cp{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;color:var(--green);
+  padding-left:4px;border-left:1px solid var(--line2)}
+.bonus-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:1px 5px;
+  border-radius:4px;background:rgba(255,176,32,.15);color:var(--amber)}
+/* ══ top scorers ══ */
+.sc-nm{display:flex;align-items:center;gap:9px}
+.sc-nm .rkn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt3);width:16px}
+.sc-goals{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--green);line-height:1}
+.sc-edit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:9px 12px;border-top:1px solid rgba(255,255,255,.05)}
+.sc-edit input[type=text]{flex:1;min-width:110px;height:30px;border-radius:7px;border:1px solid var(--line2);
+  background:rgba(0,0,0,.35);padding:0 9px;font-size:12px;outline:none}
+.sc-edit input[type=number]{width:52px;height:30px;text-align:center;border-radius:7px;border:1px solid var(--line2);
+  background:rgba(0,0,0,.35);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;outline:none}
+.sc-edit select{height:30px;border-radius:7px;border:1px solid var(--line2);background:rgba(0,0,0,.35);
+  padding:0 7px;font-size:11px;outline:none;max-width:120px}
+.sc-edit input:focus,.sc-edit select:focus{border-color:var(--amber)}
+.empty{text-align:center;padding:44px 18px;color:var(--txt3);font-size:13px}
+.empty .big{font-size:34px;margin-bottom:10px;opacity:.55}
+.foot{text-align:center;font-size:10.5px;color:var(--txt3);padding:22px 10px 6px;line-height:1.7}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--safe-b));transform:translateX(-50%) translateY(70px);
+  background:var(--bg4);border:1px solid var(--line2);border-radius:11px;padding:10px 17px;font-size:13px;font-weight:600;
+  z-index:400;opacity:0;transition:.28s cubic-bezier(.16,1,.3,1);pointer-events:none;box-shadow:0 14px 34px rgba(0,0,0,.6);max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.good{border-color:rgba(0,255,135,.45);color:var(--green)}
+.toast.bad{border-color:rgba(255,90,120,.5);color:#ff7a95}
+
+@media(max-width:400px){
+  .mc-body{padding:11px 8px;gap:5px}
+  .side .nm{font-size:11.5px}
+  .crest{width:30px;height:30px}
+  .crest .lbl{font-size:8.5px}
+  .sin{width:38px;height:41px;font-size:17px}
+  .nav button{font-size:10.5px;padding:9px 1px}
+  .fz-grid{gap:4px;padding:12px 7px}
+  .fz-tn{font-size:11px}
+  .fz-posts{padding:9px 8px}
+  .fz-compose{padding:9px 8px}
+  .fz-send{padding:0 10px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SPORTS PULSE 2.0 · MODERN PRODUCT UI
+   Presentation-only refresh. Production Firebase/game logic is unchanged.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#110b1d;
+  --bg1:#171020;
+  --bg2:#1d1629;
+  --bg3:#271e36;
+  --bg4:#382d49;
+  --surface:#1c1528;
+  --surface2:#231a31;
+  --surface-hi:#332842;
+  --line:rgba(255,255,255,.075);
+  --line2:rgba(255,255,255,.14);
+  --line3:rgba(255,255,255,.24);
+  --green:#00ff87;
+  --cyan:#04f5ff;
+  --pink:#e90052;
+  --amber:#ffb020;
+  --violet:#b58cff;
+  --txt:#faf7fb;
+  --txt2:#c0b3c7;
+  --txt3:#94859e;
+  --r:16px;
+  --shadow:0 18px 48px -34px rgba(0,0,0,.9);
+  --shadow-hi:0 22px 58px -34px rgba(0,0,0,.95);
+  --focus:0 0 0 3px rgba(0,255,135,.16);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Be Vietnam Pro','Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  min-height:100dvh;
+  overflow-x:hidden;
+  overflow-wrap:break-word;
+  text-rendering:optimizeLegibility;
+}
+body::before{
+  background:
+    radial-gradient(72% 46% at 5% -8%,rgba(0,255,135,.10),transparent 68%),
+    radial-gradient(64% 46% at 104% 6%,rgba(4,245,255,.065),transparent 67%),
+    radial-gradient(68% 48% at 92% 104%,rgba(233,0,82,.075),transparent 66%),
+    linear-gradient(180deg,#110b1d 0%,#0e0918 100%);
+}
+::selection{background:var(--green);color:#09060f}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:none;
+  box-shadow:var(--focus);
+}
+button{touch-action:manipulation}
+.wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 18px calc(84px + var(--safe-b))}
+.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Consolas,monospace}
+.disp{font-family:'Bebas Neue',Impact,sans-serif}
+
+/* Authentication / sheets */
+.ov{background:rgba(5,3,10,.84);backdrop-filter:blur(18px) saturate(120%);padding:18px}
+.sheet{
+  max-width:450px;
+  padding:27px 23px;
+  background:linear-gradient(155deg,rgba(42,32,56,.98),rgba(24,18,35,.99));
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:22px;
+  box-shadow:0 34px 90px -32px rgba(0,0,0,.98),inset 0 1px rgba(255,255,255,.035);
+}
+.sheet .mark{font-size:9.5px;letter-spacing:.23em;color:var(--green)}
+.sheet h2{font-size:37px;line-height:.98;margin-bottom:9px}
+.sheet .lede{font-size:12.5px;color:var(--txt2);line-height:1.58;margin-bottom:19px}
+.seg{padding:4px;border-radius:13px;background:rgba(0,0,0,.25);border-color:var(--line)}
+.seg button{padding:10px;border-radius:9px;font-size:12.5px}
+.seg button.on{background:var(--green);color:#08050d;box-shadow:0 7px 20px -13px rgba(0,255,135,.9)}
+.fld{margin-bottom:13px}
+.fld label{font-size:9.5px;letter-spacing:.12em;color:var(--txt3)}
+.fld input,.fld select{
+  min-height:46px;
+  padding:12px 13px;
+  border-radius:11px;
+  background:rgba(4,3,8,.42);
+  border:1px solid var(--line2);
+}
+.fld input:focus,.fld select:focus{border-color:rgba(0,255,135,.7);box-shadow:var(--focus)}
+.who-b{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.025)}
+.who-b:hover{background:rgba(255,255,255,.055);border-color:var(--line2)}
+.who-last-label,.who-other-label{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt3);font-weight:700;padding:2px 2px 0}
+.who-last{border-color:rgba(0,255,135,.22);background:rgba(0,255,135,.045)}
+.who-last:hover{border-color:rgba(0,255,135,.48);background:rgba(0,255,135,.075)}
+.who-change{width:100%;padding:8px 10px;border-radius:9px;color:var(--txt2);font-size:11.5px;font-weight:700;border:1px dashed var(--line2);transition:.15s}
+.who-change:hover{color:var(--txt);border-color:var(--line3);background:rgba(255,255,255,.035)}
+.who-other-label{margin-top:3px}
+.hint,.color-note{color:var(--txt3);line-height:1.5}
+
+/* Buttons */
+.btn{
+  min-height:46px;
+  padding:13px 15px;
+  border-radius:12px;
+  background:var(--green);
+  color:#09060f;
+  font-weight:800;
+  letter-spacing:.015em;
+  box-shadow:0 10px 25px -18px rgba(0,255,135,.9);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease,border-color .16s ease;
+}
+.btn:hover{filter:none;transform:translateY(-1px);box-shadow:0 12px 30px -17px rgba(0,255,135,.95)}
+.btn:active{transform:translateY(0) scale(.99)}
+.btn.ghost{background:rgba(255,255,255,.025);border:1px solid var(--line2);color:var(--txt2);box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.055);border-color:var(--line3);color:var(--txt)}
+
+/* Shared-color picker */
+.color-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.color-swatch{border-radius:11px;border-width:2px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10)}
+.color-swatch:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 18px -12px rgba(0,0,0,.8)}
+.color-swatch.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.13)}
+.color-swatch:disabled{opacity:1;cursor:pointer;filter:none}
+.color-swatch:disabled::after{content:none}
+
+/* Header */
+.hdr{padding:31px 1px 18px;align-items:flex-end}
+.hdr .kick{font-size:9.5px;letter-spacing:.23em;color:var(--txt2);margin-bottom:7px}
+.hdr .kick i{background:var(--green);box-shadow:0 0 12px rgba(0,255,135,.7)}
+.hdr h1{
+  font-size:clamp(47px,10vw,68px);
+  line-height:.87;
+  letter-spacing:-.013em;
+  text-transform:uppercase;
+}
+.hdr h1 em{
+  background:linear-gradient(94deg,var(--green) 0%,var(--cyan) 72%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* User bar */
+.ubar{
+  gap:12px;
+  padding:12px 14px;
+  margin-bottom:13px;
+  background:linear-gradient(145deg,rgba(35,26,49,.96),rgba(23,17,34,.97));
+  border:1px solid rgba(255,255,255,.085);
+  border-radius:17px;
+  box-shadow:var(--shadow);
+}
+.ubar .av{width:42px;height:42px;border-radius:11px;font-family:'Bebas Neue',sans-serif;font-size:18px}
+.ubar .idn b{font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+.ubar .idn small{font-size:10.5px;color:var(--txt3)}
+.ubar .tot{padding-right:1px}
+.ubar .tot b{font-size:29px;line-height:.92;color:var(--green)}
+.ubar .tot small{font-size:8.5px;letter-spacing:.14em;color:var(--txt3)}
+.ico{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.022);border-color:var(--line)}
+.ico:hover{background:rgba(0,255,135,.055);border-color:rgba(0,255,135,.32);color:var(--green)}
+.ico.act{border-color:rgba(255,176,32,.42);background:rgba(255,176,32,.07)}
+
+/* Live leaderboard strip */
+.sbar{gap:7px;padding:1px 0 9px;margin-bottom:3px}
+.sb-card{
+  gap:8px;
+  padding:7px 10px 7px 7px;
+  border-radius:11px;
+  background:rgba(29,22,41,.9);
+  border:1px solid var(--line);
+  box-shadow:0 10px 28px -25px rgba(0,0,0,.9);
+}
+.sb-card.me{background:rgba(255,255,255,.04);border-color:color-mix(in srgb,var(--c) 45%,rgba(255,255,255,.08))}
+.sb-card .nm2{font-size:11.5px}
+.sb-card .pt2{font-size:20px}
+
+/* Deadline */
+.dl{
+  padding:10px 13px;
+  margin-bottom:13px;
+  border-radius:13px;
+  background:linear-gradient(100deg,rgba(0,255,135,.085),rgba(0,255,135,.012));
+  border-color:rgba(0,255,135,.20);
+}
+.dl.live{background:linear-gradient(100deg,rgba(233,0,82,.12),rgba(233,0,82,.015));border-color:rgba(233,0,82,.31)}
+.dl .txt small{font-size:8.5px}
+.dl .txt b{font-size:12.5px}
+.dl .cd{font-size:14px}
+
+/* Main nav */
+.nav{
+  gap:4px;
+  padding:4px;
+  margin-bottom:16px;
+  border-radius:13px;
+  background:rgba(5,3,10,.30);
+  border:1px solid var(--line);
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav button{
+  min-width:91px;
+  padding:10px 11px;
+  border-radius:9px;
+  font-size:10.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.025em;
+  color:var(--txt2);
+  transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+}
+.nav button:hover{background:rgba(255,255,255,.035);color:var(--txt)}
+.nav button.on{background:var(--green);color:#09060f;box-shadow:0 7px 18px -13px rgba(0,255,135,.95)}
+
+/* Round controls */
+.pager{gap:7px;margin-bottom:12px}
+.pager button.arw,.pager select,.pager .now{height:40px;border-radius:10px}
+.pager button.arw{width:40px;background:rgba(29,22,41,.85);border-color:var(--line)}
+.pager select{padding-left:12px;background:var(--surface);border-color:var(--line)}
+.pager .now{padding:0 13px;background:rgba(0,255,135,.06);border-color:rgba(0,255,135,.15)}
+.prog{margin-bottom:15px}
+.prog .bar{height:4px}
+.dday{margin:19px 2px 9px}
+.dday span{font-size:10px;color:var(--txt2)}
+
+/* Match cards */
+.mc{
+  margin-bottom:10px;
+  background:linear-gradient(150deg,rgba(32,24,45,.985),rgba(23,17,34,.99));
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:17px;
+  box-shadow:var(--shadow);
+  transition:border-color .17s ease,transform .17s ease,box-shadow .17s ease;
+}
+.mc:hover{border-color:rgba(0,255,135,.22);box-shadow:var(--shadow-hi)}
+.mc.open{border-color:rgba(0,255,135,.21)}
+.mc.done{background:linear-gradient(150deg,rgba(29,23,39,.94),rgba(18,14,27,.96))}
+.mc-top{padding:9px 13px;min-height:35px;background:rgba(0,0,0,.12)}
+.mc-top .t{font-family:'JetBrains Mono',monospace;font-size:9.75px;color:var(--txt2)}
+.tag{padding:3px 7px;border-radius:6px;font-size:8px;letter-spacing:.08em}
+.mc-body{padding:16px 14px;gap:10px}
+.side,.side.a{flex-direction:column;align-items:center;gap:7px;text-align:center}
+.side .nm{font-size:12px;font-weight:700;line-height:1.22;text-align:center;max-width:138px}
+.crest{width:46px;height:46px;border-radius:12px;border-color:rgba(255,255,255,.14)}
+.crest.sm{width:25px;height:25px;border-radius:7px}
+.crest .lbl{font-size:9.5px}
+.mid{gap:6px}
+.sin{
+  width:52px;height:58px;
+  border-radius:11px;
+  background:rgba(3,2,7,.62);
+  border:2px solid rgba(255,255,255,.105);
+  font-size:22px;
+  transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,color .15s ease;
+}
+.sin:hover{border-color:rgba(255,255,255,.2)}
+.sin:focus{border-color:rgba(0,255,135,.72);background:rgba(0,255,135,.045);box-shadow:var(--focus)}
+.sin.has{border-color:rgba(0,255,135,.48);color:var(--green)}
+.ft-score{font-size:32px}
+.mc-foot{padding:9px 10px;gap:6px;background:rgba(0,0,0,.10)}
+.foot-note{color:var(--txt3)}
+
+/* Full-name player chips. Palette is intentionally bright, so dark text stays readable. */
+.chip,.tp-chip{
+  gap:5px;
+  padding:3px 6px 3px 3px;
+  border-radius:8px;
+  background:rgba(255,255,255,.028);
+  border-color:rgba(255,255,255,.075);
+}
+.chip .cn,.tp-chip .cn{
+  display:inline-flex;
+  align-items:center;
+  min-height:23px;
+  max-width:145px;
+  padding:3px 7px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  border-radius:6px;
+  background:var(--c,var(--txt2));
+  color:#0a0710;
+  font-size:9.5px;
+  font-weight:800;
+  white-space:nowrap;
+  letter-spacing:.005em;
+}
+.chip .cs,.tp-chip .cs{font-size:10px;color:var(--txt)}
+.chip .cp,.tp-chip .cp{font-size:9px}
+.chip.me{border-color:color-mix(in srgb,var(--c) 42%,rgba(255,255,255,.08))}
+.adm{padding:9px 11px;background:rgba(255,176,32,.035)}
+
+/* Generic panels */
+.panel{
+  margin-bottom:16px;
+  background:linear-gradient(150deg,rgba(31,23,44,.98),rgba(23,17,34,.99));
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.panel-h{padding:14px 16px;gap:9px;background:rgba(0,0,0,.07)}
+.panel-h h3{font-size:23px;text-transform:uppercase;letter-spacing:.012em}
+.panel-h small{font-size:10px;color:var(--txt3)}
+.prose{color:var(--txt2);line-height:1.62}
+.empty,.bt-empty{padding:22px 16px;color:var(--txt3)}
+
+/* Tables / leaderboard */
+.scroller{scrollbar-width:thin;scrollbar-color:var(--surface-hi) transparent}
+table{font-variant-numeric:tabular-nums}
+th{padding:10px 13px;font-size:9px;color:var(--txt3);background:rgba(0,0,0,.14);letter-spacing:.09em}
+td{padding:12px 13px;border-bottom-color:rgba(255,255,255,.05)}
+tr.mine{background:rgba(0,255,135,.045)}
+tbody tr:hover{background:rgba(255,255,255,.018)}
+.lb-row,.pa-row,.tp-row,.cu-row{border-bottom-color:rgba(255,255,255,.05)}
+
+/* Betable — concise, professional, decision-first */
+.bt-hero{
+  padding:19px 18px 15px;
+  background:linear-gradient(132deg,rgba(0,255,135,.095),rgba(4,245,255,.025) 62%,transparent);
+  border-bottom-color:rgba(0,255,135,.13);
+}
+.bt-hero h2{font-size:31px;letter-spacing:.008em;margin-bottom:2px}
+.bt-hero p{font-size:10.5px;color:var(--txt2)}
+.bt-model{
+  margin:11px 14px;
+  padding:9px 11px;
+  border-radius:9px;
+  background:rgba(4,245,255,.028);
+  border-color:rgba(4,245,255,.13);
+}
+.bt-model b{font-family:'JetBrains Mono',monospace;font-size:9.75px;color:var(--cyan)}
+.bt-good,.bt-risk{margin:12px 14px;border-radius:11px;padding:10px 12px}
+.bt-good b,.bt-risk b{font-size:11px;letter-spacing:.055em}
+.bt-sub{font-size:10px;line-height:1.45;margin-top:3px}
+.bt-combo{border-top-color:rgba(255,255,255,.05)}
+.bt-leg{padding:10px 14px;gap:10px}
+.bt-leg .num{width:24px;height:24px;border-radius:7px;font-size:10px}
+.bt-leg .game{font-size:10.5px}
+.bt-leg .pick{font-size:13px}
+.bt-conf{font-size:11px}
+.bt-grid{gap:8px;padding:10px 14px 14px}
+.bt-card{border-radius:12px;padding:11px;background:rgba(0,0,0,.11)}
+.bt-card.hot{background:linear-gradient(145deg,rgba(0,255,135,.045),rgba(0,0,0,.09));border-color:rgba(0,255,135,.18)}
+.bt-card .game{font-size:10px}
+.bt-card .pick{font-size:13px}
+.bt-card .meta{font-size:9px}
+.bt-row{padding:9px 14px;gap:10px}
+.bt-row .game b{font-size:11.5px}
+.bt-row .game small{font-family:'JetBrains Mono',monospace;font-size:8.75px;color:var(--txt3)}
+.bt-gate{padding:3px 6px;border-radius:6px;font-size:8px;letter-spacing:.025em}
+.bt-context{background:rgba(0,0,0,.045)}
+.bt-ctx-row{padding:12px 14px}
+.bt-ctx-game{font-size:11.5px}
+.bt-ctx-controls{gap:7px}
+.bt-ctx-controls select,.bt-ctx-controls input{height:35px;border-radius:8px;background:rgba(3,2,7,.38)}
+
+/* Fanzone */
+.fz-match{border-radius:18px}
+.fz-grid{padding:15px 12px;gap:10px}
+.fz-side{gap:7px}
+.fz-tn{font-size:12px}
+.fz-fan{border-radius:7px;padding:3px 7px}
+.fz-thread{background:rgba(0,0,0,.055)}
+.fz-posts{padding:11px 12px;gap:8px}
+.fz-post{padding:10px 11px;border-radius:11px;background:rgba(255,255,255,.022)}
+.fz-post.mine{border-color:color-mix(in srgb,var(--c) 35%,rgba(255,255,255,.06))}
+.fz-text{font-size:12.5px;line-height:1.5}
+.fz-react{height:27px;border-radius:7px;background:rgba(255,255,255,.022)}
+.fz-compose{padding:10px 12px;gap:8px}
+.fz-compose textarea{min-height:44px;border-radius:10px;background:rgba(3,2,7,.38)}
+.fz-send{height:44px;border-radius:10px;padding:0 14px;font-weight:800}
+
+/* Rules / badges / admin */
+.rule{padding:13px 14px;gap:11px}
+.rule .n{width:39px;height:39px;border-radius:10px;font-size:25px}
+.rule .bd h4{font-size:13px}
+.rule .bd p{font-size:11px;line-height:1.55}
+.bdg,.bdg-row,.bdg-run,.bdg-set{border-radius:11px}
+.abtn{border-radius:8px}
+.abtn:hover{transform:translateY(-1px)}
+
+/* Toast + footer */
+.toast{
+  border-radius:11px;
+  background:rgba(25,19,36,.98);
+  border-color:var(--line2);
+  backdrop-filter:blur(14px);
+  box-shadow:0 20px 54px -26px rgba(0,0,0,.96);
+}
+.foot{color:var(--txt3);padding-top:14px}
+
+@media(hover:hover){
+  .mc:hover{transform:translateY(-1px)}
+  .sb-card:hover{border-color:var(--line2)}
+}
+
+@media(max-width:700px){
+  .wrap{padding-left:11px;padding-right:11px}
+  .hdr{padding:24px 1px 15px}
+  .hdr h1{font-size:clamp(44px,14vw,60px)}
+  .ubar{padding:11px 12px;gap:9px;border-radius:15px}
+  .ubar .av{width:39px;height:39px}
+  .ico{width:34px;height:34px}
+  .nav{margin-bottom:13px}
+  .nav button{min-width:84px;padding:9px 9px;font-size:9.75px}
+  .panel{border-radius:16px}
+  .panel-h{padding:12px 13px}
+  .panel-h h3{font-size:20px}
+  .mc{border-radius:15px}
+  .mc-body{padding:14px 9px;gap:6px}
+  .crest{width:40px;height:40px}
+  .side .nm{font-size:11px;max-width:104px}
+  .sin{width:47px;height:54px;font-size:20px}
+  .bt-grid{grid-template-columns:1fr}
+  .bt-ctx-controls{grid-template-columns:1fr}
+  .fz-grid{gap:6px;padding:13px 8px}
+}
+
+@media(max-width:410px){
+  .wrap{padding-left:8px;padding-right:8px}
+  .hdr h1{font-size:47px}
+  .hdr .kick{font-size:8.75px}
+  .nav button{min-width:78px;padding:9px 7px}
+  .ubar .idn b{font-size:13.5px}
+  .ubar .tot b{font-size:26px}
+  .ubar .tot small{font-size:8px}
+  .mc-body{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+  .side .nm{font-size:10px;max-width:86px}
+  .crest{width:37px;height:37px;border-radius:10px}
+  .sin{width:43px;height:51px;font-size:19px}
+  .chip .cn,.tp-chip .cn{max-width:118px;font-size:9px}
+  .bt-row{align-items:flex-start;flex-direction:column}
+  .bt-row>div:last-child{justify-content:flex-start!important}
+  .sheet{padding:24px 18px}
+  .color-grid{gap:7px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+
+/* ══ RESPONSIVE WIDTH + NAV FIX ══
+   - Uses more laptop/desktop width without becoming excessively wide.
+   - All six primary tabs always stay inside the navigation container.
+   - Phone view keeps the same single-row tab bar instead of pushing
+     Fanzone/Rules outside the right edge. */
+
+/* The later .wrap declaration above is the active desktop container.
+   Keep comfortable margins on large displays. */
+@media (min-width:1500px){
+  .wrap{max-width:1280px}
+}
+
+/* Navigation: six equal tracks, no fixed/minimum button width. */
+.nav{
+  display:grid !important;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  width:100%;
+  min-width:0;
+  overflow:hidden;
+}
+.nav button{
+  min-width:0 !important;
+  width:100%;
+  max-width:100%;
+  padding-left:4px;
+  padding-right:4px;
+  overflow:hidden;
+  text-overflow:clip;
+  white-space:nowrap;
+}
+
+@media (max-width:700px){
+  .wrap{padding-left:10px;padding-right:10px}
+  .nav{gap:3px;padding:3px}
+  .nav button{
+    min-width:0 !important;
+    padding:10px 1px;
+    font-size:clamp(7.9px,2.25vw,9.75px);
+    letter-spacing:0;
+    line-height:1.05;
+  }
+}
+
+@media (max-width:410px){
+  .wrap{padding-left:7px;padding-right:7px}
+  .nav{gap:2px;padding:3px}
+  .nav button{
+    min-width:0 !important;
+    padding:9px 0;
+    font-size:clamp(7.2px,2.18vw,8.7px);
+    letter-spacing:-.015em;
+  }
+}
+
+@media (max-width:340px){
+  .nav{gap:1px;padding:2px}
+  .nav button{
+    font-size:7px;
+    padding:9px 0;
+  }
+}
+
+</style>
 </head>
 <body>
-<div class="ov" id="ovAuth"><div class="sheet"><div class="mark">UEFA Champions League 2026/27</div><h2>Prediction League</h2><p class="lede" id="authLede">Sign in to lock in your scores before kick-off.</p><div class="seg"><button id="segIn" class="on" onclick="setAuthMode('in')">Sign in</button><button id="segUp" onclick="setAuthMode('up')">Create account</button></div><div id="paneIn"><div class="who" id="whoList"></div><div class="fld" id="fldInName" hidden><label>Name</label><input id="inName" autocomplete="username" placeholder="Your name"></div><div class="fld"><label>Password</label><input id="inPw" type="password" autocomplete="current-password" placeholder="Your password" onkeydown="if(event.key==='Enter')doSignIn()"></div><button class="btn" onclick="doSignIn()">Sign in</button><div class="err" id="errIn" hidden><span>⚠</span><span id="errInTxt"></span></div><p class="hint" id="authHint">Tap your name above, then enter the password you chose.</p></div><div id="paneUp" hidden><div class="fld"><label>Display name</label><input id="upName" autocomplete="username" maxlength="22" placeholder="e.g. Danial"></div><div class="fld"><label>Password</label><input id="upPw" type="password" autocomplete="new-password" placeholder="At least 4 characters"></div><div class="fld"><label>Confirm password</label><input id="upPw2" type="password" autocomplete="new-password" placeholder="Type it again" onkeydown="if(event.key==='Enter')doSignUp()"></div><div class="fld"><label>Your player color</label><div class="color-grid" id="upColorGrid"></div><div class="color-note">Choose any color you like. Your full name is always shown with it, so different players may use the same color.</div></div><button class="btn" onclick="doSignUp()">Create account &amp; play</button><div class="err" id="errUp" hidden><span>⚠</span><span id="errUpTxt"></span></div><p class="hint">Your password protects your predictions — nobody else can edit them. There is no reset, so pick something you'll remember.</p></div></div></div>
-<div class="ov" id="ovAdmin" hidden><div class="sheet" style="max-width:380px"><div class="mark" style="color:var(--amber)">Restricted</div><h2>Admin access</h2><p class="lede">Admins enter the final scores and adjust kick-off times when fixtures are moved.</p><div class="fld"><label>Admin key</label><input id="admPw" type="password" placeholder="Admin key" onkeydown="if(event.key==='Enter')doAdmin()"></div><button class="btn" onclick="doAdmin()">Unlock</button><div class="err" id="errAdm" hidden><span>⚠</span><span>That key is not correct.</span></div><button class="btn ghost" style="margin-top:8px" onclick="closeAdmin()">Cancel</button></div></div>
-<div class="ov" id="ovColor" hidden><div class="sheet" style="max-width:390px"><div class="mark">Player identity</div><h2>Choose your color</h2><p class="lede">Choose any color you like. Your full name identifies you, so colors can be shared by different players.</p><div class="color-grid" id="profileColorGrid"></div><button class="btn" style="margin-top:18px" onclick="saveMyColor()">Save color</button><button class="btn ghost" style="margin-top:8px" onclick="closeColorPicker()">Cancel</button></div></div>
-<div class="wrap" id="app" style="display:none"><header class="hdr"><div class="lockup"><div class="kick"><i></i><span id="hdrStatus">Connecting…</span></div><h1>CHAMPIONS<br><em>PREDICTOR</em></h1></div></header><div class="ubar"><button class="av lg avpick" id="uAv" type="button" title="Choose your player color" onclick="openColorPicker()">–</button><div class="idn"><b id="uName">–</b><small id="uSub">–</small></div><div class="tot"><b id="uPts">0</b><small>PTS</small></div><button class="ico" title="Choose your player color" onclick="openColorPicker()">🎨</button><button class="ico" id="btnAdmin" title="Admin" onclick="openAdmin()">🛡</button><button class="ico" title="Sign out" onclick="signOut()">⏻</button></div><div class="sbar" id="sbar"></div><div class="dl" id="dlStrip" hidden><span class="pip"></span><div class="txt"><small id="dlLbl">Next kick-off</small><b id="dlName">–</b></div><span class="cd" id="dlCd">–</span></div><nav class="nav"><button class="on" data-v="fx" onclick="go('fx')">Fixtures</button><button data-v="tb" onclick="go('tb')">League</button><button data-v="lb" onclick="go('lb')">Scoreboard</button><button data-v="bt" onclick="go('bt')">Betable</button><button data-v="fz" onclick="go('fz')">Fanzone</button><button data-v="ru" onclick="go('ru')">Rules</button></nav><main id="view"></main><p class="foot">Predictions lock automatically the moment a match kicks off.<br>Kick-off times shown in your local timezone · <span id="tzName"></span><br>Data provided by <a href="https://www.football-data.org/" target="_blank" rel="noopener noreferrer">football-data.org</a>.</p></div><div class="toast" id="toast"></div><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script><script src="app.js"></script></body></html>
+
+<!-- ═══ AUTH ═══ -->
+<div class="ov" id="ovAuth">
+  <div class="sheet">
+    <div class="mark">UEFA Champions League 2026/27</div>
+    <h2>Prediction League</h2>
+    <p class="lede" id="authLede">Sign in to lock in your scores before kick-off.</p>
+
+    <div class="seg">
+      <button id="segIn" class="on" onclick="setAuthMode('in')">Sign in</button>
+      <button id="segUp" onclick="setAuthMode('up')">Create account</button>
+    </div>
+
+    <!-- sign in -->
+    <div id="paneIn">
+      <div class="who" id="whoList"></div>
+      <div class="fld" id="fldInName" hidden>
+        <label>Name</label>
+        <input id="inName" autocomplete="username" placeholder="Your name">
+      </div>
+      <div class="fld">
+        <label>Password</label>
+        <input id="inPw" type="password" autocomplete="current-password" placeholder="Your password"
+               onkeydown="if(event.key==='Enter')doSignIn()">
+      </div>
+      <button class="btn" onclick="doSignIn()">Sign in</button>
+      <div class="err" id="errIn" hidden><span>⚠</span><span id="errInTxt"></span></div>
+      <p class="hint" id="authHint">Tap your name above, then enter the password you chose.</p>
+    </div>
+
+    <!-- sign up -->
+    <div id="paneUp" hidden>
+      <div class="fld">
+        <label>Display name</label>
+        <input id="upName" autocomplete="username" maxlength="22" placeholder="e.g. Danial">
+      </div>
+      <div class="fld">
+        <label>Password</label>
+        <input id="upPw" type="password" autocomplete="new-password" placeholder="At least 4 characters">
+      </div>
+      <div class="fld">
+        <label>Confirm password</label>
+        <input id="upPw2" type="password" autocomplete="new-password" placeholder="Type it again"
+               onkeydown="if(event.key==='Enter')doSignUp()">
+      </div>
+      <div class="fld">
+        <label>Your player color</label>
+        <div class="color-grid" id="upColorGrid"></div>
+        <div class="color-note">Choose any color you like. Your full name is always shown with it, so different players may use the same color.</div>
+      </div>
+      <button class="btn" onclick="doSignUp()">Create account &amp; play</button>
+      <div class="err" id="errUp" hidden><span>⚠</span><span id="errUpTxt"></span></div>
+      <p class="hint">Your password protects your predictions — nobody else can edit them. There is no reset, so pick something you'll remember.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN UNLOCK ═══ -->
+<div class="ov" id="ovAdmin" hidden>
+  <div class="sheet" style="max-width:380px">
+    <div class="mark" style="color:var(--amber)">Restricted</div>
+    <h2>Admin access</h2>
+    <p class="lede">Admins enter the final scores and adjust kick-off times when fixtures are moved.</p>
+    <div class="fld">
+      <label>Admin key</label>
+      <input id="admPw" type="password" placeholder="Admin key" onkeydown="if(event.key==='Enter')doAdmin()">
+    </div>
+    <button class="btn" onclick="doAdmin()">Unlock</button>
+    <div class="err" id="errAdm" hidden><span>⚠</span><span>That key is not correct.</span></div>
+    <button class="btn ghost" style="margin-top:8px" onclick="closeAdmin()">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══ PLAYER COLOR ═══ -->
+<div class="ov" id="ovColor" hidden>
+  <div class="sheet" style="max-width:390px">
+    <div class="mark">Player identity</div>
+    <h2>Choose your color</h2>
+    <p class="lede">Choose any color you like. Your full name identifies you, so colors can be shared by different players.</p>
+    <div class="color-grid" id="profileColorGrid"></div>
+    <button class="btn" style="margin-top:18px" onclick="saveMyColor()">Save color</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="closeColorPicker()">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div class="wrap" id="app" style="display:none">
+
+  <header class="hdr">
+    <div class="lockup">
+      <div class="kick"><i></i><span id="hdrStatus">Connecting…</span></div>
+      <h1>CHAMPIONS<br><em>PREDICTOR</em></h1>
+    </div>
+  </header>
+
+  <div class="ubar">
+    <button class="av lg avpick" id="uAv" type="button" title="Choose your player color" onclick="openColorPicker()">–</button>
+    <div class="idn">
+      <b id="uName">–</b>
+      <small id="uSub">–</small>
+    </div>
+    <div class="tot"><b id="uPts">0</b><small>PTS</small></div>
+    <button class="ico" title="Choose your player color" onclick="openColorPicker()">🎨</button>
+    <button class="ico" id="btnAdmin" title="Admin" onclick="openAdmin()">🛡</button>
+    <button class="ico" title="Sign out" onclick="signOut()">⏻</button>
+  </div>
+
+  <div class="sbar" id="sbar"></div>
+
+  <div class="dl" id="dlStrip" hidden>
+    <span class="pip"></span>
+    <div class="txt"><small id="dlLbl">Next kick-off</small><b id="dlName">–</b></div>
+    <span class="cd" id="dlCd">–</span>
+  </div>
+
+  <nav class="nav">
+    <button class="on" data-v="fx" onclick="go('fx')">Fixtures</button>
+    <button data-v="tb" onclick="go('tb')">League</button>
+    <button data-v="lb" onclick="go('lb')">Scoreboard</button>
+    <button data-v="bt" onclick="go('bt')">Betable</button>
+    <button data-v="fz" onclick="go('fz')">Fanzone</button>
+    <button data-v="ru" onclick="go('ru')">Rules</button>
+  </nav>
+
+  <main id="view"></main>
+
+  <p class="foot">
+    Predictions lock automatically the moment a match kicks off.<br>
+    Kick-off times shown in your local timezone · <span id="tzName"></span><br>
+    Data provided by <a href="https://www.football-data.org/" target="_blank" rel="noopener noreferrer">football-data.org</a>.
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   ⚙  SETUP — edit these two lines, nothing else
+   ══════════════════════════════════════════════════════════════════════════
+   DB_URL     your Firebase Realtime Database URL. The one below is the same
+              database your other predictor apps use; this app keeps all of its data
+              under a separate "cl2627" branch so it never collides with Premier League.
+   ADMIN_HASH a fingerprint of the admin key, NOT the key itself. Reading this
+              file tells you nothing about what to type. To change the key,
+              don't edit this line — sign in as admin, open the Scoreboard tab
+              and use "Change admin key". The new fingerprint is stored in the
+              database and takes over from the one below.
+   ══════════════════════════════════════════════════════════════════════════ */
+const DB_URL     = "https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com";
+const ADMIN_HASH = "9c4761fe6c5be15fb9f573b09d6d40e96f37f727d45df832bf2213e5759606f5";
+const ROOT      = "cl2627";
+
+/* ── CLUB CRESTS ───────────────────────────────────────────────────────────
+   Official crests are trademarked, so none are bundled here.  The best way
+   to add them is from inside the app: sign in, switch on admin mode, open
+   the League tab and use the "Club crests" panel to upload the 20 images.
+
+   They are stored in your database, so they appear for EVERY player on
+   EVERY browser and device automatically — no folders to share, nothing to
+   host, works even when the file is opened straight from a hard drive.
+
+   The two settings below are only a fallback for crest files sitting in a
+   folder beside this HTML (named ARS.png, NFO.png … by three-letter code).
+   Uploaded crests always win.  Any club with neither shows its kit-colour
+   badge instead.                                                           */
+const CREST_DIR = "crests";
+const CREST_EXT = "png";
+
+firebase.initializeApp({databaseURL:DB_URL});
+const db = firebase.database();
+const ref = p => db.ref(ROOT + "/" + p);
+
+/* ── tiny SHA-256 (works over file:// where crypto.subtle is unavailable) ── */
+function sha256(ascii){
+  function rr(v,a){return(v>>>a)|(v<<(32-a));}
+  const K=[],H=[];let p=2,i=0;
+  function isPrime(n){for(let f=2;f*f<=n;f++)if(n%f===0)return false;return true;}
+  for(;i<64;p++){if(!isPrime(p))continue;
+    if(i<8)H[i]=(Math.pow(p,.5)%1*4294967296)|0;
+    K[i]=(Math.pow(p,1/3)%1*4294967296)|0;i++;}
+  const h=H.slice(0,8);
+  ascii=unescape(encodeURIComponent(ascii));
+  const words=[],len=ascii.length*8;
+  for(let j=0;j<ascii.length;j++)words[j>>2]|=ascii.charCodeAt(j)<<((3-j%4)*8);
+  words[len>>5]|=0x80<<(24-len%32);
+  words[((len+64>>9)<<4)+15]=len;
+  const w=[];
+  for(let b=0;b<words.length;b+=16){
+    let a=h[0],bb=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],hh=h[7];
+    for(let t=0;t<64;t++){
+      if(t<16)w[t]=words[b+t]|0;
+      else{const s0=rr(w[t-15],7)^rr(w[t-15],18)^(w[t-15]>>>3),
+                 s1=rr(w[t-2],17)^rr(w[t-2],19)^(w[t-2]>>>10);
+           w[t]=(w[t-16]+s0+w[t-7]+s1)|0;}
+      const S1=rr(e,6)^rr(e,11)^rr(e,25), ch=(e&f)^(~e&g),
+            t1=(hh+S1+ch+K[t]+w[t])|0,
+            S0=rr(a,2)^rr(a,13)^rr(a,22), mj=(a&bb)^(a&c)^(bb&c),
+            t2=(S0+mj)|0;
+      hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=bb;bb=a;a=(t1+t2)|0;
+    }
+    h[0]=(h[0]+a)|0;h[1]=(h[1]+bb)|0;h[2]=(h[2]+c)|0;h[3]=(h[3]+d)|0;
+    h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0;
+  }
+  return h.map(x=>("00000000"+(x>>>0).toString(16)).slice(-8)).join("");
+}
+const hashPw    = pw => sha256("cl2627::" + pw);
+const hashAdmin = k  => sha256("pl2627-admin::" + k);
+
+/* ── player palette ───────────────────────────────────────────────────────
+   Player names are the unique identity; colors are visual preferences and may
+   be shared by multiple users. Existing accounts keep their saved ci. */
+const PAL=[
+  "#00ff87","#04f5ff","#ff8fb8","#ffb020","#b07cff","#5ce1a0",
+  "#ff7a5c","#7ab8ff","#ffe066","#ff6fd8","#66e0d0","#c4a5ff",
+  "#ff9f43","#a8ff60","#55c7ff","#ff6685","#45f0c1","#ffbe8a",
+  "#d7ff45","#9fa8ff","#ffd166","#3de2d0","#f783ff","#ff8f70"
+];
+const colr = i => PAL[((Number(i)||0) % PAL.length + PAL.length) % PAL.length];
+const colorIndex = p => Number.isInteger(Number(p && p.ci)) ? Number(p.ci) : 0;
+function usedColors(exceptPid){
+  const out = new Set();
+  Object.keys(players).forEach(pid => {
+    if (pid !== exceptPid) out.add(colorIndex(players[pid]));
+  });
+  return out;
+}
+function firstFreeColor(exceptPid){
+  const used = usedColors(exceptPid);
+  for (let i=0;i<PAL.length;i++) if (!used.has(i)) return i;
+  return 0;
+}
+const initials = n => (n||"?").trim().split(/\s+/).map(w=>w[0]||"").join("").toUpperCase().slice(0,2)||"?";
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ══ UEFA CHAMPIONS LEAGUE DATA ════════════════════════════════════════════
+   Fixtures and participating clubs are synced from football-data.org by the
+   GitHub Action in scripts/fetch-results.mjs. Nothing here needs manual fixture
+   editing: later knockout rounds appear when the API publishes them.
+
+   TEAMS keeps the same array shape used by the original Premier League UI:
+   [full name, short name, display colour, badge base, badge accent, pattern, dark label]
+   ════════════════════════════════════════════════════════════════════════ */
+let TEAMS = {};
+let MW = [];
+let ALL = [];
+let BY_ID = {};
+let TOTAL_MW = 0;
+let teamFeed = {};
+let fixtureFeed = {};
+
+const SCORING_START_MW = 1;
+
+function rebuildCompetition(){
+  TEAMS = teamFeed || {};
+  const list = Object.values(fixtureFeed || {}).filter(m => m && m.id && m.h && m.a && Number(m.k));
+  list.sort((a,b) => (+a.mw - +b.mw) || (+a.k - +b.k));
+  TOTAL_MW = list.reduce((mx,m) => Math.max(mx, Number(m.mw)||0), 0);
+  MW = Array.from({length:TOTAL_MW}, () => []);
+  list.forEach(m => {
+    m.mw = Number(m.mw)||1;
+    m.k = Number(m.k)||0;
+    if (!MW[m.mw-1]) MW[m.mw-1] = [];
+    MW[m.mw-1].push(m);
+  });
+  ALL = list;
+  BY_ID = Object.fromEntries(ALL.map(m => [m.id, m]));
+  if (TOTAL_MW && curMW > TOTAL_MW) curMW = TOTAL_MW;
+  if (me) paint();
+}
+
+function roundName(n){
+  const week = MW[n-1] || [];
+  return (week[0] && week[0].round) || (n <= 8 ? "League phase · Matchday " + n : "Round " + n);
+}
+
+function isLeaguePhase(m){
+  const st = String((m && m.stage) || "").toUpperCase();
+  return m && m.mw <= 8 && (st === "LEAGUE_STAGE" || st === "LEAGUE_PHASE" || st === "REGULAR_SEASON" || st === "GROUP_STAGE" || !st);
+}
+
+/* ══ live state ══════════════════════════════════════════════════════════ */
+let players = {}, preds = {}, results = {}, koFix = {};
+let titles = {}, finalTop = {};
+let scorers = {}, crestImgs = {}, meta = {}, officialStandings = {};
+let fans = {}, fanThreads = {};
+let modelPredictions = {}, modelMeta = {}, modelContext = {};
+let me = null, isAdmin = false, clockSkew = 0;
+let view = "fx", curMW = 1, ready = false, lastWrite = 0;
+
+const now = () => Date.now() + clockSkew;
+
+db.ref(".info/serverTimeOffset").on("value", s => { clockSkew = s.val() || 0; });
+db.ref(".info/connected").on("value", s => {
+  const el = document.getElementById("hdrStatus");
+  if (el) el.textContent = s.val() ? "Live · synced" : "Reconnecting…";
+});
+
+ref("players").on("value", s => {
+  players = s.val() || {};
+  renderWhoList();
+  renderSignupColors();
+  if (me) paint();
+});
+ref("preds").on("value",   s => { preds   = s.val() || {}; if (me) paint(); });
+ref("results").on("value", s => { results = s.val() || {}; if (me) paint(); });
+ref("kickoffs").on("value",s => { koFix   = s.val() || {}; if (me) paint(); });
+ref("titles").on("value",  s => { titles  = s.val() || {}; if (me) paint(); });
+ref("final").on("value",   s => { finalTop = s.val() || {}; if (me) paint(); });
+ref("scorers").on("value", s => { scorers = s.val() || {}; if (me) paint(); });
+ref("crests").on("value",  s => { crestImgs = s.val() || {}; if (me) paint(); });
+ref("fans").on("value",    s => { fans      = s.val() || {}; if (me) paint(); });
+ref("fanzone").on("value", s => { fanThreads = s.val() || {}; if (me) paint(); });
+ref("modelPredictions").on("value", s => { modelPredictions = s.val() || {}; if (me) paint(); });
+ref("modelMeta").on("value", s => { modelMeta = s.val() || {}; if (me) paint(); });
+ref("modelContext").on("value", s => { modelContext = s.val() || {}; if (me) paint(); });
+ref("officialStandings").on("value", s => { officialStandings = s.val() || {}; if (me) paint(); });
+ref("teams").on("value", s => { teamFeed = s.val() || {}; rebuildCompetition(); });
+ref("fixtures").on("value", s => { fixtureFeed = s.val() || {}; rebuildCompetition(); });
+
+ref("meta").on("value", s => {
+  meta = s.val() || {};
+  if (!meta.adminPasswordReset20260904){
+    const adminReset = {};
+    adminReset["meta/adminHash"] = ADMIN_HASH;
+    adminReset["meta/adminPasswordReset20260904"] = true;
+    db.ref(ROOT).update(adminReset).catch(err => console.warn("[admin reset]", err && err.message || err));
+  }
+});
+
+/* ══ helpers ═════════════════════════════════════════════════════════════ */
+const koOf   = m => (koFix[m.id] || m.k) * 1000;
+const isLive = m => { const t = koOf(m); return now() >= t && now() < t + 8100000 && !results[m.id]; };
+/* A match is closed once it kicks off — or as soon as a result exists, which
+   covers a fixture played earlier than the schedule says.                   */
+const locked = m => now() >= koOf(m) || !!results[m.id];
+const predOf = (mid, pid) => (preds[mid] && preds[mid][pid]) || null;
+const full   = p => p && Number.isInteger(p.h) && Number.isInteger(p.a);
+/* Clubs are always written out in full — "Nottingham Forest", not "Forest". */
+const teamNm   = c => TEAMS[c] ? TEAMS[c][0] : c;
+const teamFull = c => TEAMS[c] ? TEAMS[c][0] : c;
+const teamCol  = c => TEAMS[c] ? TEAMS[c][2] : "#888";
+
+/* ══ CLUB BADGES ══════════════════════════════════════════════════════════
+   Original kit-colour badges, not official club crests — those are
+   trademarked and can't be reproduced or hot-linked here.  Each badge uses
+   the club's real playing colours, striped for the clubs that play in
+   stripes, so they read at a glance without copying anyone's artwork.
+   ════════════════════════════════════════════════════════════════════════ */
+function crest(code, size){
+  /* size: falsy = default 34px, true/"sm" = 24px, "lg" = 30px */
+  const cls = size === "lg" ? " lg" : size ? " sm" : "";
+  const T = TEAMS[code];
+  if (!T) return '<span class="crest' + cls + '"><span class="lbl">?</span></span>';
+  const base = T[3], accent = T[4], pattern = T[5], darkLabel = T[6];
+  const bg = pattern === "stripes"
+    ? "repeating-linear-gradient(90deg," + base + " 0 5px," + accent + " 5px 10px)"
+    : "linear-gradient(150deg," + base + "," + shade(base, -18) + ")";
+  /* Preference: a crest uploaded to the database (everyone sees it), then a
+     crest file sitting beside this HTML, then the kit-colour badge.  The
+     image only hides the badge once it has actually loaded, so a missing or
+     broken file never leaves an empty square. */
+  const stored = crestImgs[code];
+  const src = stored || (CREST_DIR ? CREST_DIR + "/" + code + "." + CREST_EXT : "");
+  const img = src
+    ? '<img class="cimg" src="' + src + '" alt="" onload="this.parentNode.classList.add(\'img\')">'
+    : "";
+  return '<span class="crest' + cls + (darkLabel ? " dk" : "") + (stored ? " img" : "")
+    + '" title="' + esc(T[0]) + '" aria-label="' + esc(T[0]) + '">'
+    + '<span class="bg" style="background:' + bg + '"></span>'
+    + '<span class="lbl">' + code + "</span>" + img + "</span>";
+}
+/* nudge a hex colour lighter (+) or darker (-) by a percentage */
+function shade(hex, pct){
+  const n = parseInt(hex.slice(1), 16);
+  const f = (v) => Math.max(0, Math.min(255, Math.round(v + 255 * pct / 100)));
+  return "#" + [f(n >> 16 & 255), f(n >> 8 & 255), f(n & 255)]
+    .map(v => v.toString(16).padStart(2, "0")).join("");
+}
+const sortedPids = () => Object.keys(players).sort((a,b)=>(players[a].ci||0)-(players[b].ci||0));
+
+function fmtTime(ms){
+  return new Date(ms).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", hour12:false});
+}
+function fmtDay(ms){
+  return new Date(ms).toLocaleDateString([], {weekday:"long", day:"numeric", month:"long"});
+}
+function fmtShortDay(ms){
+  return new Date(ms).toLocaleDateString([], {weekday:"short", day:"numeric", month:"short"});
+}
+function countdown(ms){
+  if (ms <= 0) return "00:00";
+  const d = Math.floor(ms/86400000), h = Math.floor(ms%86400000/3600000),
+        m = Math.floor(ms%3600000/60000), s = Math.floor(ms%60000/1000);
+  const p = n => String(n).padStart(2,"0");
+  if (d > 0) return d + "d " + p(h) + "h";
+  return p(h) + ":" + p(m) + ":" + p(s);
+}
+function toast(msg, kind){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show " + (kind || "");
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.className = "toast " + (kind || ""); }, 2600);
+}
+
+/* ══ THE SCORING RULE ════════════════════════════════════════════════════
+   3  exact scoreline
+   2  right result AND right goal difference
+      (for draws: a draw within one goal of the real one, e.g. 0-0 or 2-2 on a 1-1)
+   1  right result only
+   0  wrong result, or no prediction submitted
+   ════════════════════════════════════════════════════════════════════════ */
+function scoreOf(ph, pa, ah, aa){
+  if (ph === ah && pa === aa) return 3;
+  const actualDraw = ah === aa, predDraw = ph === pa;
+  const outcomeOK = (ph > pa && ah > aa) || (ph < pa && ah < aa) || (predDraw && actualDraw);
+  if (!outcomeOK) return 0;
+  if (actualDraw) return Math.abs(ph - ah) === 1 ? 2 : 1;
+  return (ph - pa) === (ah - aa) ? 2 : 1;
+}
+function pointsFor(mid, pid){
+  const r = results[mid]; if (!r) return null;
+  const m = BY_ID[mid];
+  if (m && m.mw < SCORING_START_MW) return 0;
+  const p = predOf(mid, pid);
+  if (!full(p)) return 0;
+  return scoreOf(p.h, p.a, r.h, r.a);
+}
+
+/* ══ CHAMPIONS LEAGUE BONUS ═════════════════════════════════════════════════════
+   Before league-phase Matchday 3 kicks off, everyone calls the winner and runner-up.
+   Champion right = 20 points.  Runner-up right = 10 points.  Scored
+   independently, so calling one and missing the other still pays.
+   ════════════════════════════════════════════════════════════════════════ */
+const TITLE_POINTS = { first: 20, second: 10 };
+
+/* Deadline is the first kick-off of round 3, so it tracks any admin
+   reschedule of that fixture rather than being a hard-coded date. */
+const titleDeadline = () => {
+  const third = MW[2] || [];
+  return third.length ? Math.min.apply(null, third.map(koOf)) : Infinity;
+};
+const titleLocked   = () => now() >= titleDeadline();
+
+/* The Champions League winner and runner-up come from the final. Admin can
+   override them if a penalty-shootout winner is not represented in a manual score. */
+function actualTop2(){
+  if (finalTop && (finalTop.first || finalTop.second))
+    return { first: finalTop.first || null, second: finalTop.second || null };
+  const finalMatch = ALL.find(m => String(m.stage||"").toUpperCase() === "FINAL");
+  if (!finalMatch || !results[finalMatch.id]) return null;
+  const r = results[finalMatch.id];
+  let winner = r.winnerCode || null;
+  if (!winner && Number.isFinite(+r.h) && Number.isFinite(+r.a) && +r.h !== +r.a)
+    winner = +r.h > +r.a ? finalMatch.h : finalMatch.a;
+  if (!winner) return null;
+  return { first:winner, second:winner === finalMatch.h ? finalMatch.a : finalMatch.h };
+}
+function titleScore(pid){
+  const pick = titles[pid] || {}, act = actualTop2();
+  const out = { first: 0, second: 0, total: 0, settled: !!act };
+  if (!act) return out;
+  if (pick.first  && pick.first  === act.first)  out.first  = TITLE_POINTS.first;
+  if (pick.second && pick.second === act.second) out.second = TITLE_POINTS.second;
+  out.total = out.first + out.second;
+  return out;
+}
+
+/* ══ TOP SCORERS ══════════════════════════════════════════════════════════
+   Goal tallies are kept by an admin and shown on the Table tab.  Names are
+   compared loosely when checking for duplicates: case, accents, apostrophes
+   and hyphens are all ignored.
+   ════════════════════════════════════════════════════════════════════════ */
+const normName = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // é -> e
+  .replace(/['\u2019`.]/g, "")                        // O'Brien -> obrien
+  .replace(/[^a-z ]/g, " ")                            // Alexander-Arnold -> two words
+  .replace(/\s+/g, " ").trim();
+
+function scorerBoard(){
+  return Object.keys(scorers)
+    .map(sid => Object.assign({ sid }, scorers[sid]))
+    .filter(s => s.n)
+    .sort((a, b) => (b.g || 0) - (a.g || 0) || a.n.localeCompare(b.n));
+}
+
+/* ══ aggregate tallies ═══════════════════════════════════════════════════ */
+function tallies(){
+  const t = {};
+  Object.keys(players).forEach(pid => t[pid] = {pts:0, x3:0, x2:0, x1:0, x0:0, played:0, mw:{}, bonus:0});
+  ALL.forEach(m => {
+    if (m.mw < SCORING_START_MW || !results[m.id]) return;
+    Object.keys(players).forEach(pid => {
+      const v = pointsFor(m.id, pid), row = t[pid];
+      row.pts += v; row.played++;
+      row["x" + v]++;
+      row.mw[m.mw] = (row.mw[m.mw] || 0) + v;
+    });
+  });
+  Object.keys(players).forEach(pid => {
+    t[pid].bonus = titleScore(pid).total;
+    t[pid].pts  += t[pid].bonus;
+  });
+  return t;
+}
+function rankedPids(){
+  const t = tallies();
+  return sortedPids().sort((a,b) =>
+    (t[b].pts - t[a].pts) || (t[b].x3 - t[a].x3) || (t[b].x2 - t[a].x2) ||
+    players[a].name.localeCompare(players[b].name));
+}
+
+/* ══ STREAK BADGES ═══════════════════════════════════════════════════════
+   After every completed round we look at who is top of the scoreboard.
+   Lead it for 5 rounds running and you earn a (5) badge; keep going to
+   10 and that badge is replaced by a (10).  Lose top spot and the run resets,
+   so leading for 6 weeks, dropping off, then leading 7 more earns two (5)s.
+
+   Per unbroken run of length L:  floor(L/10) badges of (10), plus one (5)
+   if the remainder is 5 or more.
+   ════════════════════════════════════════════════════════════════════════ */
+const BADGE_SHORT = 5, BADGE_LONG = 10;
+
+/* Only rounds with every result in are judged, so a half-entered week
+   can't hand someone a phantom week at the top. */
+function completedMWs(){
+  const out = [];
+  for (let i = SCORING_START_MW; i <= TOTAL_MW; i++)
+    if ((MW[i-1]||[]).length && MW[i-1].every(m => results[m.id])) out.push(i);
+  return out;
+}
+
+/* Who led the scoreboard after each completed round, in order. */
+function leaderTimeline(){
+  const pids = Object.keys(players);
+  if (!pids.length) return [];
+  const cum = {};
+  pids.forEach(p => cum[p] = { pts: 0, x3: 0, x2: 0 });
+  const line = [];
+  completedMWs().forEach(n => {
+    MW[n-1].forEach(m => pids.forEach(p => {
+      const v = pointsFor(m.id, p) || 0;
+      cum[p].pts += v;
+      if (v === 3) cum[p].x3++;
+      if (v === 2) cum[p].x2++;
+    }));
+    /* same order the scoreboard itself uses, so "first" means what it looks like */
+    const sorted = pids.slice().sort((a, b) =>
+      (cum[b].pts - cum[a].pts) || (cum[b].x3 - cum[a].x3) || (cum[b].x2 - cum[a].x2) ||
+      players[a].name.localeCompare(players[b].name));
+    line.push({ mw: n, leader: cum[sorted[0]].pts > 0 ? sorted[0] : null });
+  });
+  return line;
+}
+
+function badgesForRun(L){
+  return { b10: Math.floor(L / BADGE_LONG), b5: (L % BADGE_LONG) >= BADGE_SHORT ? 1 : 0 };
+}
+
+/* -> { pid: {b5, b10, runs:[lengths], current:len, weeksLed} } */
+function badgeData(){
+  const out = {};
+  Object.keys(players).forEach(p => out[p] = { b5: 0, b10: 0, runs: [], current: 0, weeksLed: 0 });
+  const line = leaderTimeline();
+  let run = null;
+  const close = () => {
+    if (!run || !out[run.pid]) { run = null; return; }
+    const b = badgesForRun(run.len);
+    out[run.pid].b5 += b.b5;
+    out[run.pid].b10 += b.b10;
+    out[run.pid].runs.push(run.len);
+    run = null;
+  };
+  line.forEach(step => {
+    if (step.leader && out[step.leader]) out[step.leader].weeksLed++;
+    if (run && step.leader === run.pid) run.len++;
+    else { close(); if (step.leader) run = { pid: step.leader, len: 1 }; }
+  });
+  if (run && out[run.pid]) out[run.pid].current = run.len;   // still running
+  close();
+  return out;
+}
+
+/* how many more weeks at the top until the next badge */
+function nextBadgeIn(len){
+  if (!len) return BADGE_SHORT;
+  const r = len % BADGE_LONG;
+  return r < BADGE_SHORT ? BADGE_SHORT - r : BADGE_LONG - r;
+}
+
+/* ══ league table from entered results ═══════════════════════════════════ */
+function leagueTable(){
+  const T = {};
+  Object.keys(TEAMS).forEach(c => T[c] = {c, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0, form:[]});
+  ALL.filter(isLeaguePhase).slice().sort((a,b) => koOf(a) - koOf(b)).forEach(m => {
+    const r = results[m.id]; if (!r) return;
+    const H = T[m.h], A = T[m.a];
+    H.p++; A.p++; H.gf += r.h; H.ga += r.a; A.gf += r.a; A.ga += r.h;
+    if (r.h > r.a)      { H.w++; A.l++; H.pts += 3; H.form.push("W"); A.form.push("L"); }
+    else if (r.h < r.a) { A.w++; H.l++; A.pts += 3; A.form.push("W"); H.form.push("L"); }
+    else                { H.d++; A.d++; H.pts++; A.pts++; H.form.push("D"); A.form.push("D"); }
+  });
+  return Object.values(T).sort((a,b) => {
+    const oa = officialStandings[a.c], ob = officialStandings[b.c];
+    if (oa && ob && oa.position && ob.position) return oa.position - ob.position;
+    if (oa && oa.position) return -1;
+    if (ob && ob.position) return 1;
+    return (b.pts - a.pts) || ((b.gf-b.ga) - (a.gf-a.ga)) || (b.gf - a.gf) ||
+      teamFull(a.c).localeCompare(teamFull(b.c));
+  });
+}
+
+/* ══ BETABLE ═════════════════════════════════════════════════════════════
+   Two independent signals must agree before a recommendation is shown:
+
+   1) CROWD GATE
+      - every registered player has predicted the match;
+      - the effective vote reaches unanimity;
+      - Scoreboard #1 counts twice once official scoring has started.
+
+   2) FOOTBALL MODEL GATE
+      - calibrated historical model independently predicts the same H/D/A;
+      - its probability and separation from the second outcome exceed thresholds
+        learned from the validation season rather than invented in the UI.
+
+   M0 = Elo
+   M1 = Elo + form + venue
+   M2 = M1 + compact attack/defence form
+   M3 = a deliberately bounded live layer for important absences and
+        manager/tactical/formation news. Until historically validated, M3 is
+        veto-only: it may downgrade/remove a pick but may never create one.
+   ════════════════════════════════════════════════════════════════════════ */
+const BET_COMBO_MIN = 3;
+const BET_COMBO_MAX = 5;
+const BET_MIN_PLAYERS = 3;
+
+function betOutcome(p){
+  if (!full(p)) return null;
+  if (p.h > p.a) return "H";
+  if (p.h < p.a) return "A";
+  return "D";
+}
+function betActualOutcome(r){
+  if (!r) return null;
+  if (r.h > r.a) return "H";
+  if (r.h < r.a) return "A";
+  return "D";
+}
+function betPickLabel(m, outcome){
+  if (outcome === "H") return teamNm(m.h) + " to win";
+  if (outcome === "A") return teamNm(m.a) + " to win";
+  return "Draw";
+}
+function betLeaderPid(){
+  const rk = rankedPids(), t = tallies();
+  if (!rk.length) return null;
+  const first = t[rk[0]];
+  return first && first.played > 0 ? rk[0] : null;
+}
+function betHistory(pid){
+  let picks = 0, hits = 0;
+  ALL.forEach(m => {
+    if (m.mw < SCORING_START_MW || !results[m.id]) return;
+    const p = predOf(m.id, pid);
+    if (!full(p)) return;
+    picks++;
+    if (betOutcome(p) === betActualOutcome(results[m.id])) hits++;
+  });
+  return { picks, hits, rate:(hits + 3) / (picks + 6) };
+}
+
+const clamp01 = x => Math.max(0, Math.min(1, Number(x) || 0));
+function softmax3(z){
+  const mx = Math.max(...z), e = z.map(v => Math.exp(v - mx)), sm = e.reduce((a,b)=>a+b,0) || 1;
+  return e.map(v => v / sm);
+}
+
+/* Apply the small live M3 context adjustment locally. This means an admin can
+   update a major injury or formation/tactical change and Betable reacts
+   immediately; the historical base probabilities remain untouched. */
+function betModelFor(mid){
+  const b = modelPredictions[mid];
+  if (!b || !Number.isFinite(+b.pH) || !Number.isFinite(+b.pD) || !Number.isFinite(+b.pA)) return null;
+  const ctx = modelContext[mid] || {};
+  const cfg = (((modelMeta || {}).m3 || {}).liveAdjustment) || {};
+  const inj = Number.isFinite(+cfg.injury_logit_per_level) ? +cfg.injury_logit_per_level : .075;
+  const tac = Number.isFinite(+cfg.tactical_logit_per_level) ? +cfg.tactical_logit_per_level : .055;
+  const uncT = Number.isFinite(+cfg.uncertainty_temperature) ? +cfg.uncertainty_temperature : .10;
+  const maxShift = Number.isFinite(+cfg.max_abs_logit_shift) ? +cfg.max_abs_logit_shift : .22;
+  const homeAbs = Math.max(0, Math.min(2, +ctx.homeAbsence || 0));
+  const awayAbs = Math.max(0, Math.min(2, +ctx.awayAbsence || 0));
+  const tactical = Math.max(-2, Math.min(2, +ctx.tacticalEdge || 0));
+  const uncertainty = Math.max(0, Math.min(1, +ctx.uncertainty || 0));
+  let shift = inj * (awayAbs - homeAbs) + tac * tactical;
+  shift = Math.max(-maxShift, Math.min(maxShift, shift));
+  const base = [clamp01(b.pH), clamp01(b.pD), clamp01(b.pA)];
+  const temp = 1 + uncT * uncertainty;
+  const live = softmax3([
+    (Math.log(Math.max(base[0],1e-9)) + shift) / temp,
+    Math.log(Math.max(base[1],1e-9)) / temp,
+    (Math.log(Math.max(base[2],1e-9)) - shift) / temp
+  ]);
+  const vals = {H:live[0], D:live[1], A:live[2]};
+  const baseVals = {H:base[0], D:base[1], A:base[2]};
+  const order = ["H","D","A"].sort((a,c)=>vals[c]-vals[a]);
+  const baseOrder = ["H","D","A"].sort((a,c)=>baseVals[c]-baseVals[a]);
+  return {
+    p:vals, base:baseVals, pick:order[0], confidence:vals[order[0]],
+    margin:vals[order[0]]-vals[order[1]],
+    basePick:baseOrder[0], baseConfidence:baseVals[baseOrder[0]],
+    baseMargin:baseVals[baseOrder[0]]-baseVals[baseOrder[1]],
+    model:b.model || modelMeta.selectedModel || "model",
+    ctx, adjusted:Math.abs(shift) > 1e-8 || uncertainty > 0
+  };
+}
+
+function betModelThreshold(){
+  const b = (modelMeta && modelMeta.bettable) || {};
+  return {
+    minProb:Number.isFinite(+b.min_prob) ? +b.min_prob : .62,
+    minMargin:Number.isFinite(+b.min_margin) ? +b.min_margin : .10
+  };
+}
+
+function betAnalysis(m){
+  const pids = Object.keys(players), n = pids.length, leader = betLeaderPid();
+  const raw = {H:0,D:0,A:0}, marginSum={H:0,D:0,A:0}, marginN={H:0,D:0,A:0};
+  const relSum={H:0,D:0,A:0}, relWeight={H:0,D:0,A:0};
+  let submitted=0;
+  pids.forEach(pid=>{
+    const p=predOf(m.id,pid); if(!full(p)) return;
+    const o=betOutcome(p), mg=Math.abs(p.h-p.a), rw=pid===leader?2:1, hist=betHistory(pid);
+    submitted++; raw[o]++; marginSum[o]+=mg; marginN[o]++;
+    relSum[o]+=hist.rate*rw; relWeight[o]+=rw;
+  });
+  const leaderPick=leader?betOutcome(predOf(m.id,leader)):null;
+  const supportUnits={
+    H:raw.H+(leaderPick==="H"?1:0), D:raw.D+(leaderPick==="D"?1:0), A:raw.A+(leaderPick==="A"?1:0)
+  };
+  const best=["H","D","A"].sort((a,b)=>(supportUnits[b]-supportUnits[a])||(raw[b]-raw[a]))[0];
+  const rawSupport=raw[best], weightedSupport=supportUnits[best];
+  const allSubmitted=n>0&&submitted===n;
+  const crowdQualifies=n>=BET_MIN_PLAYERS&&allSubmitted&&weightedSupport>=n;
+  const unanimous=allSubmitted&&rawSupport===n;
+  const leaderRescue=crowdQualifies&&!unanimous&&leaderPick===best;
+  const avgMargin=marginN[best]?marginSum[best]/marginN[best]:0;
+  const reliability=relWeight[best]?relSum[best]/relWeight[best]:.5;
+  const marginSignal=best==="D"?.33:Math.min(1,avgMargin/3);
+
+  const model=betModelFor(m.id), gate=betModelThreshold();
+  /* The historically validated BASE model must qualify first. Live M3 context
+     can only veto/downgrade that qualification; it can never promote a match
+     that the base model did not already support. */
+  const modelAgree=!!model&&model.basePick===best;
+  const baseProb=model?model.base[best]:0;
+  const basePass=modelAgree&&baseProb>=gate.minProb&&model.baseMargin>=gate.minMargin;
+  const liveSafe=!model||!model.adjusted||(
+    model.pick===best&&model.p[best]>=gate.minProb&&model.margin>=gate.minMargin
+  );
+  const modelPass=basePass&&liveSafe;
+  const modelProb=model?Math.min(baseProb,model.p[best]):0;
+  const qualifies=crowdQualifies&&modelPass;
+  const rating=model ? Math.max(0,Math.min(1,.75*modelProb+.15*reliability+.10*marginSignal)) : 0;
+
+  return {m,best,leader,submitted,totalPlayers:n,rawSupport,weightedSupport,allSubmitted,
+    crowdQualifies,unanimous,leaderRescue,avgMargin,reliability,rating,model,modelAgree,
+    baseProb,basePass,liveSafe,modelPass,modelProb,qualifies,gate,
+    pick:submitted?betPickLabel(m,best):"Waiting for picks"};
+}
+
+function betableMW(){
+  for(let i=SCORING_START_MW;i<=TOTAL_MW;i++) if((MW[i-1]||[]).length && !MW[i-1].every(m=>!!results[m.id])) return i;
+  return TOTAL_MW;
+}
+const betPct=x=>Math.round(Math.max(0,Math.min(1,x||0))*100);
+function betConsensusText(a){
+  if(!a.totalPlayers)return "No players";
+  if(!a.allSubmitted)return a.submitted+"/"+a.totalPlayers+" predictions in";
+  if(a.unanimous)return a.totalPlayers+"/"+a.totalPlayers+" users agree";
+  if(a.leaderRescue)return a.rawSupport+" users + #1 bonus = "+a.totalPlayers+"/"+a.totalPlayers;
+  return a.rawSupport+"/"+a.totalPlayers+" users agree";
+}
+function betModelText(a){
+  if(!a.model)return "historical model pending";
+  const p=a.model.p;
+  let txt=(a.model.model||"model")+" · H "+betPct(p.H)+"% · D "+betPct(p.D)+"% · A "+betPct(p.A)+"%";
+  if(a.model.adjusted){
+    txt+=" · base "+betPct(a.model.base[a.best])+"% → live "+betPct(a.model.p[a.best])+"% (veto-only)";
+  }
+  return txt;
+}
+function betLegHtml(a,i){
+  return '<div class="bt-leg"><span class="num">'+(i+1)+'</span><div class="main">'
+    +'<div class="game">'+esc(teamNm(a.m.h))+' v '+esc(teamNm(a.m.a))+'</div>'
+    +'<div class="pick">'+esc(a.pick)+'</div>'
+    +'<div style="font-size:10px;color:var(--txt3);margin-top:2px">Model '+betPct(a.modelProb)+'% · '+esc(betConsensusText(a))+'</div></div>'
+    +'<span class="bt-conf">'+betPct(a.modelProb)+'%</span></div>';
+}
+function betIndividualCard(a,i){
+  return '<div class="bt-card hot"><div class="game">'+esc(teamNm(a.m.h))+' v '+esc(teamNm(a.m.a))+'</div>'
+    +'<div class="pick">'+esc(a.pick)+'</div><div class="meta"><span class="bt-pill">PICK #'+(i+1)+'</span>'
+    +'<span>Model '+betPct(a.modelProb)+'%</span><span>'+esc(betConsensusText(a))+'</span></div></div>';
+}
+
+function betScanRow(a){
+  const game=esc(teamNm(a.m.h))+' v '+esc(teamNm(a.m.a));
+  let modelCls='no', modelLabel='MODEL —';
+  if(a.model){
+    if(a.basePass&&a.liveSafe){modelCls='ok';modelLabel='MODEL ✓';}
+    else if(a.basePass&&!a.liveSafe){modelLabel='VETO';}
+    else if(!a.modelAgree){modelLabel='MODEL ✕';}
+    else{modelLabel='MODEL '+betPct(a.baseProb)+'%';}
+  }
+  const crowdCls=a.crowdQualifies?'ok':'no';
+  const crowdLabel=a.crowdQualifies?'CROWD ✓':(!a.allSubmitted?a.submitted+'/'+a.totalPlayers:'CROWD ✕');
+  const probs=a.model?'H '+betPct(a.model.p.H)+' · D '+betPct(a.model.p.D)+' · A '+betPct(a.model.p.A):'Model pending';
+  return '<div class="bt-row"><div class="game"><b>'+game+'</b><small>'+esc(probs)+'</small></div>'
+    +'<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">'
+    +'<span class="bt-gate '+modelCls+'">'+esc(modelLabel)+'</span>'
+    +'<span class="bt-gate '+crowdCls+'">'+esc(crowdLabel)+'</span></div></div>';
+}
+
+function btOpt(value,label,current){return '<option value="'+value+'"'+(+current===+value?' selected':'')+'>'+label+'</option>';}
+function betContextPanel(week){
+  if(!isAdmin)return '';
+  const games=(MW[week-1]||[]).filter(m=>!results[m.id]&&!locked(m));
+  if(!games.length)return '';
+  return '<div class="panel"><div class="panel-h"><h3>Live model context</h3><small>admin · immediate M3 adjustment</small></div>'
+    +'<div class="prose" style="padding-bottom:6px">Use only when something material changes. Count <b>importance</b>, not number of injuries. Tactical edge includes manager strategy and expected formation.</div>'
+    +'<div class="bt-context">'+games.map(m=>{
+      const c=modelContext[m.id]||{};
+      return '<div class="bt-ctx-row"><div class="bt-ctx-game">'+esc(teamNm(m.h))+' v '+esc(teamNm(m.a))+'</div>'
+        +'<div class="bt-ctx-controls"><label>'+esc(teamNm(m.h))+' absences<select id="ctxH_'+m.id+'">'
+        +btOpt(0,'None / already absorbed',c.homeAbsence)+btOpt(1,'Important',c.homeAbsence)+btOpt(2,'Major / critical',c.homeAbsence)+'</select></label>'
+        +'<label>'+esc(teamNm(m.a))+' absences<select id="ctxA_'+m.id+'">'
+        +btOpt(0,'None / already absorbed',c.awayAbsence)+btOpt(1,'Important',c.awayAbsence)+btOpt(2,'Major / critical',c.awayAbsence)+'</select></label>'
+        +'<label>Tactical / formation edge<select id="ctxT_'+m.id+'">'
+        +btOpt(-2,'Away strong edge',c.tacticalEdge)+btOpt(-1,'Away slight edge',c.tacticalEdge)+btOpt(0,'Even / unknown',c.tacticalEdge)
+        +btOpt(1,'Home slight edge',c.tacticalEdge)+btOpt(2,'Home strong edge',c.tacticalEdge)+'</select></label>'
+        +'<label>Lineup uncertainty<select id="ctxU_'+m.id+'">'+btOpt(0,'Normal',c.uncertainty)+btOpt(1,'High / unresolved',c.uncertainty)+'</select></label>'
+        +'<input id="ctxN_'+m.id+'" maxlength="120" placeholder="Short reason, e.g. starting CB + striker out" value="'+esc(c.note||'')+'"></div>'
+        +'<div class="bt-ctx-actions"><button class="abtn" onclick="saveBetContext(\''+m.id+'\')">Save context</button>'
+        +'<button class="abtn red" onclick="clearBetContext(\''+m.id+'\')">Clear</button></div></div>';
+    }).join('')+'</div></div>';
+}
+function saveBetContext(mid){
+  if(!isAdmin)return;
+  const get=id=>document.getElementById(id);
+  const val=id=>+(get(id)?.value||0);
+  const note=(get('ctxN_'+mid)?.value||'').trim().slice(0,120);
+  ref('modelContext/'+mid).set({homeAbsence:val('ctxH_'+mid),awayAbsence:val('ctxA_'+mid),
+    tacticalEdge:val('ctxT_'+mid),uncertainty:val('ctxU_'+mid),note,at:Date.now()})
+    .then(()=>toast('Live model context updated','good')).catch(()=>toast("Couldn't save model context",'bad'));
+}
+function clearBetContext(mid){
+  if(!isAdmin)return;
+  ref('modelContext/'+mid).remove().then(()=>toast('Model context cleared'));
+}
+
+function viewBetable(){
+  const week=betableMW(), upcoming=(MW[week-1]||[]).filter(m=>!locked(m)&&!results[m.id]);
+  const analyses=upcoming.map(betAnalysis).sort((a,b)=>(Number(b.qualifies)-Number(a.qualifies))||(b.modelProb-a.modelProb)||(b.rating-a.rating));
+  const qualified=analyses.filter(a=>a.qualifies);
+  const comboPool=qualified.filter(a=>a.best!=="D");
+  const combo=comboPool.length>=BET_COMBO_MIN?comboPool.slice(0,BET_COMBO_MAX):[];
+  const individuals=qualified.slice(0,2);
+  const gate=betModelThreshold();
+  const modelName=(modelMeta&&modelMeta.selectedModel)||null;
+  const modelReady=!!modelName&&analyses.some(a=>a.model);
+
+  const comboHtml=combo.length
+    ? '<div class="bt-good"><b>COMBO · '+combo.length+' LEGS</b></div><div class="bt-combo">'+combo.map(betLegHtml).join('')+'</div>'
+    : '<div class="bt-risk"><b>NO COMBO</b><div class="bt-sub">Fewer than 3 matches passed both gates.</div></div>';
+
+  const individualHtml=individuals.length
+    ? '<div class="bt-grid">'+individuals.map(betIndividualCard).join('')+'</div>'
+    : '<div class="bt-empty">No qualifying individual picks.</div>';
+
+  const scanHtml=analyses.length
+    ? '<div class="bt-list">'+analyses.map(betScanRow).join('')+'</div>'
+    : '<div class="bt-empty">No open '+esc(roundName(week))+' fixtures.</div>';
+
+  const modelStatus=modelReady
+    ? esc(modelName)+' · ≥ '+betPct(gate.minProb)+'% · '+betPct(gate.minMargin)+'pt edge'
+    : 'Model pending';
+
+  return '<div class="panel"><div class="bt-hero"><h2>BETABLE · '+esc(roundName(week))+'</h2>'
+    +'<p>Model + crowd consensus</p></div>'
+    +'<div class="bt-model"><b>'+modelStatus+'</b></div>'
+    +'<div class="panel-h"><h3>Combo</h3><small>3–5 wins</small></div>'+comboHtml
+    +'<div class="panel-h"><h3>Individual picks</h3><small>top 2</small></div>'+individualHtml
+    +'<div class="panel-h"><h3>Match scan</h3><small>model · crowd</small></div>'+scanHtml
+    +'</div>'+betContextPanel(week);
+}
+
+/* ══ FANZONE / FAN BATTLES ═══════════════════════════════════════════════
+   Everyone can read and react. Only supporters of the two clubs in a fixture
+   can write in that match thread. Messages are short, chronological, and
+   escaped before rendering. Each user can hold one emoji reaction per post.
+   ════════════════════════════════════════════════════════════════════════ */
+const REACTIONS = ["😂","🔥","👏","😡","💀","❤️"];
+
+const fansOf = code => sortedPids().filter(pid => fans[pid] === code);
+const myClub = () => (me && fans[me]) || null;
+
+/* Fan Battles are strictly round-scoped. Only the current unfinished
+   round is visible, and only fixtures where BOTH clubs have at least one
+   registered supporter become chat battles. The next week's battles open
+   only after every result in the current week has been recorded. */
+function fanBattleMW(){
+  for (let i = 1; i <= TOTAL_MW; i++)
+    if ((MW[i-1]||[]).length && !MW[i-1].every(m => !!results[m.id])) return i;
+  return TOTAL_MW;
+}
+function derbies(){
+  const week = fanBattleMW();
+  return (MW[week-1] || [])
+    .filter(m => fansOf(m.h).length && fansOf(m.a).length)
+    .sort((a, b) => koOf(a) - koOf(b));
+}
+
+function threadOf(mid){
+  return fanThreads[mid] || {};
+}
+function postsFor(mid){
+  const posts = threadOf(mid).posts || {};
+  return Object.keys(posts)
+    .map(id => Object.assign({ id }, posts[id]))
+    .filter(p => p && p.p && p.text && players[p.p])
+    .sort((a, b) => (a.t || 0) - (b.t || 0))
+    .slice(-40);
+}
+function reactionsFor(mid, postId){
+  return (((threadOf(mid).reactions || {})[postId]) || {});
+}
+function reactionCounts(mid, postId){
+  const counts = {};
+  REACTIONS.forEach(e => counts[e] = 0);
+  Object.values(reactionsFor(mid, postId)).forEach(e => {
+    if (REACTIONS.includes(e)) counts[e]++;
+  });
+  return counts;
+}
+function fmtFanTime(ms){
+  if (!ms) return "";
+  const d = new Date(ms);
+  return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+}
+
+/* ══ AUTH ════════════════════════════════════════════════════════════════ */
+let authMode = "in", pickedPid = null;
+let signupColor = null, profileColorDraft = null;
+let showOtherPlayers = false;
+const LAST_PLAYER_KEY = "cl2627_last_player";
+
+function lastPlayerOnDevice(){
+  try { return localStorage.getItem(LAST_PLAYER_KEY); } catch(e) { return null; }
+}
+function rememberPlayerOnDevice(pid){
+  try { localStorage.setItem(LAST_PLAYER_KEY, pid); } catch(e){}
+}
+function forgetMissingLastPlayer(pid){
+  try {
+    if (localStorage.getItem(LAST_PLAYER_KEY) === pid) localStorage.removeItem(LAST_PLAYER_KEY);
+  } catch(e){}
+}
+
+function colorButtons(selected, exceptPid, handlerName){
+  return PAL.map((c, i) => {
+    return '<button type="button" class="color-swatch' + (selected === i ? ' on' : '') + '"'
+      + ' style="--c:' + c + '"'
+      + ' title="Choose this color" onclick="' + handlerName + '(' + i + ')"'
+      + ' aria-label="Player color ' + (i+1) + '"></button>';
+  }).join("");
+}
+
+function renderSignupColors(){
+  const box = document.getElementById("upColorGrid");
+  if (!box) return;
+  if (signupColor === null) signupColor = Object.keys(players).length % PAL.length;
+  box.innerHTML = colorButtons(signupColor, null, "chooseSignupColor");
+}
+function chooseSignupColor(i){
+  signupColor = i;
+  renderSignupColors();
+}
+
+function openColorPicker(){
+  if (!me || !players[me]) return;
+  profileColorDraft = colorIndex(players[me]);
+  renderProfileColors();
+  document.getElementById("ovColor").hidden = false;
+}
+function closeColorPicker(){
+  document.getElementById("ovColor").hidden = true;
+  profileColorDraft = null;
+}
+function renderProfileColors(){
+  const box = document.getElementById("profileColorGrid");
+  if (!box || !me) return;
+  box.innerHTML = colorButtons(profileColorDraft, me, "chooseProfileColor");
+}
+function chooseProfileColor(i){
+  if (!me) return;
+  profileColorDraft = i;
+  renderProfileColors();
+}
+
+function saveMyColor(){
+  if (!me || profileColorDraft === null) return;
+
+  ref("players/" + me + "/ci").set(profileColorDraft)
+    .then(() => {
+      closeColorPicker();
+      toast("Your player color is updated", "good");
+    })
+    .catch(() => toast("Couldn't save your color", "bad"));
+}
+
+function setAuthMode(m){
+  authMode = m; pickedPid = null; showOtherPlayers = false;
+  document.getElementById("segIn").classList.toggle("on", m === "in");
+  document.getElementById("segUp").classList.toggle("on", m === "up");
+  document.getElementById("paneIn").hidden = m !== "in";
+  document.getElementById("paneUp").hidden = m !== "up";
+  document.getElementById("errIn").hidden = true;
+  document.getElementById("errUp").hidden = true;
+  renderWhoList();
+  if (m === "up") renderSignupColors();
+}
+
+function playerLoginButton(pid, label, extraClass){
+  const p = players[pid], t = tallies(), c = colr(p.ci || 0), on = pickedPid === pid;
+  return '<button class="who-b' + (extraClass ? ' ' + extraClass : '') + '" style="'
+    + (on ? "border-color:" + c + ";background:rgba(255,255,255,.06)" : "")
+    + '" onclick="pickPlayer(\'' + pid + '\')">'
+    + '<span class="av" style="--c:' + c + '">' + esc(initials(p.name)) + '</span>'
+    + '<span style="flex:1;font-weight:' + (on ? 700 : 500) + '">'
+    + (label ? esc(label) + ' <b>' + esc(p.name) + '</b>' : esc(p.name)) + '</span>'
+    + '<span class="mono" style="font-size:11px;color:var(--txt3)">' + (t[pid] ? t[pid].pts : 0) + ' pts</span>'
+    + '</button>';
+}
+
+function renderWhoList(){
+  const box = document.getElementById("whoList");
+  if (!box) return;
+  const pids = sortedPids();
+  const hint = document.getElementById("authHint");
+  document.getElementById("fldInName").hidden = pids.length > 0;
+
+  if (!pids.length){
+    box.innerHTML = '<div style="font-size:12.5px;color:var(--txt3);padding:10px 2px">'
+      + 'No players yet — create the first account to start the league.</div>';
+    if (hint) hint.textContent = "Create an account to start playing.";
+    return;
+  }
+
+  let lastPid = lastPlayerOnDevice();
+  if (lastPid && !players[lastPid]){
+    forgetMissingLastPlayer(lastPid);
+    lastPid = null;
+  }
+
+  if (lastPid && !pickedPid) pickedPid = lastPid;
+
+  if (!lastPid){
+    box.innerHTML = pids.map(pid => playerLoginButton(pid, "", "")).join("");
+    if (hint) hint.textContent = "Tap your name above, then enter your password.";
+    return;
+  }
+
+  const others = pids.filter(pid => pid !== lastPid);
+  let html = '<div class="who-last-label">Last used on this device</div>'
+    + playerLoginButton(lastPid, "Continue as", "who-last");
+
+  if (others.length){
+    html += '<button type="button" class="who-change" onclick="showPlayerChooser()">'
+      + (showOtherPlayers ? "Hide other players" : "Choose another player") + '</button>';
+    if (showOtherPlayers){
+      html += '<div class="who-other-label">Choose another player</div>'
+        + others.map(pid => playerLoginButton(pid, "", "")).join("");
+    }
+  }
+
+  box.innerHTML = html;
+  if (hint) hint.textContent = "Your password is still required to sign in.";
+}
+
+function showPlayerChooser(){
+  showOtherPlayers = !showOtherPlayers;
+  renderWhoList();
+}
+
+function pickPlayer(pid){
+  pickedPid = pid;
+  renderWhoList();
+  document.getElementById("errIn").hidden = true;
+  const el = document.getElementById("inPw");
+  el.focus();
+}
+
+function authErr(pane, msg){
+  document.getElementById("err" + pane + "Txt").textContent = msg;
+  document.getElementById("err" + pane).hidden = false;
+}
+
+function doSignIn(){
+  const pids = sortedPids();
+  let pid = pickedPid;
+  if (!pid && pids.length === 0) return authErr("In", "No accounts exist yet — create one first.");
+  if (!pid){
+    const typed = (document.getElementById("inName").value || "").trim().toLowerCase();
+    pid = pids.find(p => players[p].name.toLowerCase() === typed);
+    if (!pid) return authErr("In", "Pick your name from the list above.");
+  }
+  const pw = document.getElementById("inPw").value;
+  if (!pw) return authErr("In", "Enter your password.");
+  if (players[pid].pw !== hashPw(pw)) return authErr("In", "Wrong password. Try again.");
+  enter(pid);
+}
+
+function doSignUp(){
+  const name = (document.getElementById("upName").value || "").trim();
+  const pw   = document.getElementById("upPw").value;
+  const pw2  = document.getElementById("upPw2").value;
+  if (name.length < 2)   return authErr("Up", "Enter a display name.");
+  if (pw.length < 4)     return authErr("Up", "Password must be at least 4 characters.");
+  if (pw !== pw2)        return authErr("Up", "The two passwords don't match.");
+  if (Object.values(players).some(p => p.name.toLowerCase() === name.toLowerCase()))
+    return authErr("Up", "That name is already taken.");
+  if (signupColor === null) signupColor = Object.keys(players).length % PAL.length;
+  const pid = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  ref("players/" + pid).set({ name, pw: hashPw(pw), ci: signupColor, joined: Date.now() })
+    .then(() => enter(pid))
+    .catch(() => authErr("Up", "Could not reach the database. Check your connection."));
+}
+
+function enter(pid){
+  me = pid; ready = true;
+  signupColor = null;
+  rememberPlayerOnDevice(pid);
+  document.getElementById("ovAuth").hidden = true;
+  document.getElementById("app").style.display = "block";
+  document.getElementById("inPw").value = "";
+  document.getElementById("upPw").value = document.getElementById("upPw2").value = "";
+  curMW = liveMW();
+  paint();
+}
+
+function signOut(){
+  me = null; isAdmin = false;
+  document.getElementById("app").style.display = "none";
+  document.getElementById("ovAuth").hidden = false;
+  document.getElementById("btnAdmin").classList.remove("act");
+  pickedPid = null; renderWhoList();
+}
+
+/* admin */
+function openAdmin(){
+  if (isAdmin){
+    isAdmin = false;
+    document.getElementById("btnAdmin").classList.remove("act");
+    toast("Admin mode off");
+    paint(); return;
+  }
+  document.getElementById("ovAdmin").hidden = false;
+  document.getElementById("errAdm").hidden = true;
+  document.getElementById("admPw").value = "";
+  setTimeout(() => document.getElementById("admPw").focus(), 60);
+}
+function closeAdmin(){ document.getElementById("ovAdmin").hidden = true; }
+/* The key itself is never stored anywhere — only its fingerprint, either the
+   one built into this file or a newer one saved in the database. */
+const adminFingerprint = () => (meta && meta.adminHash) || ADMIN_HASH;
+
+function doAdmin(){
+  if (hashAdmin(document.getElementById("admPw").value) !== adminFingerprint()){
+    document.getElementById("errAdm").hidden = false; return;
+  }
+  isAdmin = true;
+  closeAdmin();
+  document.getElementById("btnAdmin").classList.add("act");
+  toast("Admin mode on — you can enter results", "good");
+  paint();
+}
+
+/* ══ the round that matters right now ════════════════════════════════ */
+function liveMW(){
+  if (!TOTAL_MW) return 1;
+  for (let i = 0; i < TOTAL_MW; i++){
+    const week = MW[i] || [];
+    if (!week.length) continue;
+    const last = Math.max(...week.map(koOf));
+    if (now() < last + 8100000) return i + 1;
+  }
+  return TOTAL_MW;
+}
+
+/* ══ paint ═══════════════════════════════════════════════════════════════ */
+function go(v){
+  view = v;
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  paint();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function paint(){
+  if (!me || !players[me]) return;
+  const t = tallies(), rk = rankedPids(), mine = t[me] || {pts:0};
+  const p = players[me], c = colr(p.ci || 0);
+  const av = document.getElementById("uAv");
+  av.textContent = initials(p.name); av.style.setProperty("--c", c);
+  document.getElementById("uName").textContent = p.name + (isAdmin ? " · admin" : "");
+  document.getElementById("uPts").textContent = mine.pts;
+  const pos = rk.indexOf(me) + 1;
+  document.getElementById("uSub").textContent =
+    rk.length > 1 ? ("Rank " + pos + " of " + rk.length + " · " + mine.x3 + " exact") : (mine.x3 + " exact scores");
+
+  renderScoreStrip(t, rk);
+
+  const host = document.getElementById("view");
+
+  /* If this repaint was triggered by the echo of my own keystroke and I'm still
+     in a score box, leave the grid alone — the DOM already shows the change. */
+  const typing = document.activeElement && document.activeElement.classList
+              && document.activeElement.classList.contains("sin");
+  if (view === "fx" && typing && Date.now() - lastWrite < 2000) return;
+
+  const keep = captureFocus();
+  if (view === "fx") host.innerHTML = viewFixtures();
+  if (view === "tb") host.innerHTML = viewTable();
+  if (view === "lb") host.innerHTML = viewBoard();
+  if (view === "bt") host.innerHTML = viewBetable();
+  if (view === "fz") host.innerHTML = viewFanzone();
+  if (view === "ru") host.innerHTML = viewRules();
+  restoreFocus(keep);
+  tick();
+}
+/* A compact live scoreboard that sits above every tab, so points are always
+   on screen as results come in. */
+function renderScoreStrip(t, rk){
+  const el = document.getElementById("sbar");
+  if (!el) return;
+  if (rk.length < 2){ el.innerHTML = ""; return; }
+  el.innerHTML = rk.map((pid, i) => {
+    const p = players[pid], c = colr(p.ci || 0), s = t[pid];
+    const lead = i === 0 && s.pts > 0;
+    return '<div class="sb-card' + (pid === me ? " me" : "") + '" style="--c:' + c + '">'
+      + '<span class="rkn2">' + (lead ? "🏆" : i + 1) + "</span>"
+      + '<span class="av sm" style="--c:' + c + '">' + esc(initials(p.name)) + "</span>"
+      + '<span class="nm2">' + esc(p.name.split(/\s+/)[0]) + "</span>"
+      + '<span class="pt2">' + s.pts + "</span>"
+      + (s.bonus ? '<span class="up">+' + s.bonus + "</span>" : "")
+      + "</div>";
+  }).join("");
+}
+
+function captureFocus(){
+  const el = document.activeElement;
+  if (!el || !el.id || (el.tagName !== "INPUT" && el.tagName !== "TEXTAREA")) return null;
+  return { id: el.id, s: el.selectionStart, e: el.selectionEnd, v: el.value };
+}
+function restoreFocus(k){
+  if (!k) return;
+  const el = document.getElementById(k.id);
+  if (!el) return;
+  if (typeof k.v === "string") el.value = k.v;
+  el.focus({ preventScroll: true });
+  try { el.setSelectionRange(k.s, k.e); } catch(e){}
+}
+
+/* ══ TITLE RACE PANEL ════════════════════════════════════════════════════ */
+function teamOptions(sel, exclude){
+  return Object.keys(TEAMS)
+    .sort((a,b) => teamFull(a).localeCompare(teamFull(b)))
+    .map(c => '<option value="' + c + '"' + (sel === c ? " selected" : "")
+      + (exclude === c ? " disabled" : "") + ">" + esc(teamFull(c)) + "</option>")
+    .join("");
+}
+
+function titlePanel(){
+  const shut = titleLocked(), mine = titles[me] || {}, act = actualTop2();
+  const left = titleDeadline() - now();
+
+  const row = (slot, label, cls) => {
+    const pick = mine[slot] || "";
+    const hit  = act && pick && pick === act[slot];
+    let val = '<span class="tp-val">' + TITLE_POINTS[slot] + "pts</span>";
+    if (act && pick)
+      val = '<span class="tp-val ' + (hit ? "hit" : "miss") + '">'
+          + (hit ? "+" + TITLE_POINTS[slot] : "0") + "</span>";
+    return '<div class="tp-row ' + cls + (shut ? " locked" : "") + '">'
+      + '<span class="tp-rank">' + label + "</span>"
+      + '<span class="tp-sel"><select class="' + (pick ? "set" : "") + '"'
+      + (shut ? " disabled" : "") + ' onchange="setTitle(\'' + slot + '\',this.value)">'
+      + '<option value="">' + (shut ? "— no pick —" : "Choose a club…") + "</option>"
+      + teamOptions(pick, slot === "first" ? mine.second : mine.first)
+      + "</select></span>" + val + "</div>";
+  };
+
+  let dl;
+  if (act){
+    dl = '<div class="tp-dl shut">🏆 Finalists: <b style="color:var(--txt)">'
+       + esc(teamFull(act.first)) + "</b> then <b style=\"color:var(--txt)\">"
+       + esc(teamFull(act.second)) + "</b></div>";
+  } else if (shut){
+    dl = '<div class="tp-dl shut">🔒 Closed at league-phase Matchday 3 · settles after the final</div>';
+  } else {
+    dl = '<div class="tp-dl">⏳ Closes when league-phase Matchday 3 kicks off · <b id="tpCd">'
+       + countdown(left) + "</b> left</div>";
+  }
+
+  /* everyone's calls, revealed once the window shuts */
+  let picks = "";
+  if (shut){
+    const chips = rankedPids().filter(pid => (titles[pid] || {}).first || (titles[pid] || {}).second)
+      .map(pid => {
+        const t = titles[pid] || {}, c = colr(players[pid].ci || 0), s = titleScore(pid);
+        return '<span class="tp-chip" style="--c:' + c + '">'
+          + '<span class="cn">' + esc(players[pid].name) + "</span>"
+          + '<span class="cs">' + esc(t.first ? teamNm(t.first) : "—") + " · "
+          + esc(t.second ? teamNm(t.second) : "—") + "</span>"
+          + (s.settled ? '<span class="cp">+' + s.total + "</span>" : "") + "</span>";
+      }).join("");
+    picks = '<div class="tp-picks">' + (chips
+      || '<span class="foot-note">Nobody entered the Champions League bonus.</span>') + "</div>";
+  }
+
+  let admin = "";
+  if (isAdmin){
+    const a = finalTop || {};
+    admin = '<div class="adm" style="border-radius:0">'
+      + '<span class="lb">Winner</span>'
+      + '<span class="tp-sel" style="flex:1;min-width:120px"><select id="fin1" style="width:100%;height:29px;'
+      + 'background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:7px;padding:0 8px;font-size:11px">'
+      + '<option value="">— auto —</option>' + teamOptions(a.first || "") + "</select></span>"
+      + '<span class="lb">Runner-up</span>'
+      + '<span class="tp-sel" style="flex:1;min-width:120px"><select id="fin2" style="width:100%;height:29px;'
+      + 'background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:7px;padding:0 8px;font-size:11px">'
+      + '<option value="">— auto —</option>' + teamOptions(a.second || "") + "</select></span>"
+      + '<button class="abtn" onclick="saveFinal()">Set</button>'
+      + '<button class="abtn red" onclick="clearFinal()">Auto</button></div>';
+  }
+
+  return '<div class="panel"><div class="panel-h"><h3>Champions League bonus</h3>'
+    + "<small>" + (shut ? "locked" : "open until league-phase MD3") + "</small></div>"
+    + '<div class="tp">' + row("first", "1", "g") + row("second", "2", "s") + dl + picks + "</div>"
+    + admin + "</div>";
+}
+
+/* ══ TOP SCORERS TABLE ═══════════════════════════════════════════════════ */
+function scorersPanel(){
+  const board = scorerBoard(), top = board.slice(0, 5);
+
+  let body;
+  if (!top.length){
+    body = '<div class="empty" style="padding:26px 18px">'
+      + (isAdmin ? "Add the league's scorers below." : "No goals recorded yet.") + "</div>";
+  } else {
+    const rows = top.map((s, i) => {
+      return "<tr><td><div class=\"sc-nm\"><span class=\"rkn\">" + (i + 1) + "</span>"
+        + (s.t && TEAMS[s.t] ? crest(s.t, true) : "")
+        + '<span style="font-weight:600">' + esc(s.n) + "</span></div></td>"
+        + '<td style="color:var(--txt2)">' + (s.t && TEAMS[s.t] ? esc(teamFull(s.t)) : "—") + "</td>"
+        + '<td style="text-align:right"><span class="sc-goals disp">' + (s.g || 0) + "</span></td></tr>";
+    }).join("");
+    body = '<div class="scroller"><table><thead><tr><th>Player</th><th>Club</th>'
+      + '<th style="text-align:right">Goals</th></tr></thead><tbody>' + rows + "</tbody></table></div>";
+  }
+
+  let admin = "";
+  if (isAdmin){
+    admin = board.map(s =>
+      '<div class="sc-edit"><span style="flex:1;min-width:110px;font-size:12px;font-weight:600">'
+      + esc(s.n) + '</span><span style="font-size:11px;color:var(--txt3);min-width:60px">'
+      + (s.t && TEAMS[s.t] ? esc(teamFull(s.t)) : "—") + "</span>"
+      + '<input type="number" min="0" max="99" id="g_' + s.sid + '" value="' + (s.g || 0) + '">'
+      + '<button class="abtn" onclick="saveGoals(\'' + s.sid + '\')">Save</button>'
+      + '<button class="abtn red" onclick="delScorer(\'' + s.sid + '\')">✕</button></div>').join("")
+      + '<div class="sc-edit" style="border-top:1px dashed rgba(255,176,32,.3)">'
+      + '<span class="lb" style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700">Add</span>'
+      + '<input type="text" id="scN" placeholder="Player name" maxlength="40">'
+      + '<select id="scT"><option value="">Club…</option>'
+      + Object.keys(TEAMS).sort((a, b) => teamFull(a).localeCompare(teamFull(b)))
+          .map(c => '<option value="' + c + '">' + esc(teamFull(c)) + "</option>").join("")
+      + "</select>"
+      + '<input type="number" min="0" max="99" id="scG" placeholder="0" value="0">'
+      + '<button class="abtn" onclick="addScorer()">Add</button></div>';
+  }
+
+  return '<div class="panel"><div class="panel-h"><h3>Top scorers</h3>'
+    + "<small>" + (board.length > 5 ? "top 5 of " + board.length : "who is leading") + "</small></div>"
+    + body + admin + "</div>";
+}
+
+/* ══ FIXTURES ════════════════════════════════════════════════════════════ */
+function viewFixtures(){
+  if (!TOTAL_MW) return '<div class="panel"><div class="panel-h"><h3>Champions League fixtures</h3><small>waiting for first sync</small></div><div class="empty">Fixtures will appear after the GitHub Action syncs football-data.org. Run <b>Sync Champions League fixtures and results</b> once after adding the TK2 secret.</div></div>';
+  const week = MW[curMW - 1] || [];
+  const opts = MW.map((w, i) => {
+    if (!w.length) return '';
+    const t0 = Math.min(...w.map(koOf));
+    return '<option value="' + (i+1) + '"' + (i+1 === curMW ? " selected" : "") + '>'
+      + esc(roundName(i+1)) + " · " + new Date(t0).toLocaleDateString([], {day:"numeric", month:"short"}) + "</option>";
+  }).join("");
+
+  const done = week.filter(m => full(predOf(m.id, me))).length;
+  const openN = week.filter(m => !locked(m)).length;
+
+  let html = titleLocked() ? "" : titlePanel();
+  html += '<div class="pager">'
+    + '<button class="arw" onclick="jump(-1)"' + (curMW === 1 ? " disabled" : "") + '>‹</button>'
+    + '<div class="mwsel"><select onchange="jumpTo(this.value)">' + opts + "</select></div>"
+    + '<button class="arw" onclick="jump(1)"' + (curMW === TOTAL_MW ? " disabled" : "") + '>›</button>'
+    + (curMW !== liveMW() ? '<button class="now" onclick="jumpTo(' + liveMW() + ')">NOW</button>' : "")
+    + "</div>"
+    + '<div class="prog"><div class="bar"><i style="width:' + (week.length ? done/week.length*100 : 0) + '%"></i></div>'
+    + '<small>' + done + ' / ' + week.length + ' predicted' + (openN ? '' : ' · round closed') + '</small></div>';
+
+  let lastDay = "";
+  week.slice().sort((a,b) => koOf(a) - koOf(b)).forEach(m => {
+    const day = fmtDay(koOf(m));
+    if (day !== lastDay){ html += '<div class="dday"><span>' + day + '</span><hr></div>'; lastDay = day; }
+    html += matchCard(m);
+  });
+  return html;
+}
+
+function jump(d){
+  const n = curMW + d;
+  if (n >= 1 && n <= TOTAL_MW){ curMW = n; paint(); window.scrollTo({top:0, behavior:"smooth"}); }
+}
+function jumpTo(n){ curMW = +n; paint(); window.scrollTo({top:0, behavior:"smooth"}); }
+
+function statusTag(m){
+  const r = results[m.id], t = koOf(m), left = t - now();
+  if (r) return '<span class="tag ft">Full time</span>';
+  if (isLive(m)) return '<span class="tag lv">● Live</span>';
+  if (left <= 0) return '<span class="tag lk">🔒 Locked</span>';
+  if (left < 3600000) return '<span class="tag soon">Closes in ' + countdown(left) + "</span>";
+  return '<span class="tag op">Open</span>';
+}
+
+function matchCard(m){
+  const r = results[m.id], lk = locked(m), mine = predOf(m.id, me);
+  const state = r ? "done" : (lk ? "shut" : "open");
+
+  const sideH = '<div class="side">' + crest(m.h)
+    + '<span class="nm">' + esc(teamFull(m.h)) + "</span></div>";
+  const sideA = '<div class="side a">' + crest(m.a)
+    + '<span class="nm">' + esc(teamFull(m.a)) + "</span></div>";
+
+  let mid;
+  if (r){
+    mid = '<div class="ft-score disp"><span>' + r.h + "</span><i>–</i><span>" + r.a + "</span></div>";
+  } else {
+    const vh = mine && Number.isInteger(mine.h) ? mine.h : "";
+    const va = mine && Number.isInteger(mine.a) ? mine.a : "";
+    const dis = lk ? " disabled" : "";
+    mid = '<div class="mid">'
+      + '<input class="sin' + (vh !== "" ? " has" : "") + '" id="i_' + m.id + '_h" type="number" min="0" max="99" '
+      + 'inputmode="numeric" placeholder="–" value="' + vh + '" aria-label="' + esc(teamNm(m.h)) + ' goals"'
+      + dis + ' oninput="setPred(\'' + m.id + '\',\'h\',this)">'
+      + '<span class="dash">–</span>'
+      + '<input class="sin' + (va !== "" ? " has" : "") + '" id="i_' + m.id + '_a" type="number" min="0" max="99" '
+      + 'inputmode="numeric" placeholder="–" value="' + va + '" aria-label="' + esc(teamNm(m.a)) + ' goals"'
+      + dis + ' oninput="setPred(\'' + m.id + '\',\'a\',this)">'
+      + "</div>";
+  }
+
+  /* Predictions become visible to other players at kick-off. */
+  let foot = "";
+  if (lk){
+    const pids = rankedPids().filter(pid => full(predOf(m.id, pid)) || (r && pid === me));
+    const chips = pids.map(pid => {
+      const p = predOf(m.id, pid), v = r ? pointsFor(m.id, pid) : null;
+      const c = colr(players[pid].ci || 0);
+      return '<span class="chip' + (v !== null ? " p" + v : "") + (pid === me ? " me" : "") + '" style="--c:' + c + '">'
+        + '<span class="cn">' + esc(players[pid].name) + "</span>"
+        + '<span class="cs">' + (full(p) ? p.h + "–" + p.a : "—") + "</span>"
+        + (v !== null ? '<span class="cp">' + (v > 0 ? "+" + v : "0") + "</span>" : "")
+        + "</span>";
+    }).join("");
+    foot = '<div class="mc-foot">' + (chips ||
+      '<span class="foot-note">Nobody predicted this one.</span>') + "</div>";
+  } else {
+    const n = Object.keys(preds[m.id] || {}).filter(pid => players[pid] && full(preds[m.id][pid])).length;
+    foot = '<div class="mc-foot"><span class="foot-note">🙈 Everyone\'s picks are revealed at kick-off'
+      + (n ? " · " + n + " in so far" : "") + "</span></div>";
+  }
+
+  /* admin controls */
+  let adm = "";
+  if (isAdmin){
+    adm = '<div class="adm">'
+      + '<span class="lb">Result</span>'
+      + '<input type="number" min="0" max="99" id="r_' + m.id + '_h" value="' + (r ? r.h : "") + '" placeholder="–">'
+      + '<span style="color:var(--txt3)">–</span>'
+      + '<input type="number" min="0" max="99" id="r_' + m.id + '_a" value="' + (r ? r.a : "") + '" placeholder="–">'
+      + '<button class="abtn" onclick="saveResult(\'' + m.id + '\')">' + (r ? "Update" : "Save") + "</button>"
+      + (r ? '<button class="abtn red" onclick="clearResult(\'' + m.id + '\')">Clear</button>' : "")
+      + '<input type="datetime-local" id="k_' + m.id + '" value="' + dtLocal(koOf(m)) + '">'
+      + '<button class="abtn" onclick="saveKO(\'' + m.id + '\')">Set KO</button>'
+      + "</div>";
+  }
+
+  return '<article class="mc ' + state + '">'
+    + '<div class="mc-top"><span class="t">' + fmtTime(koOf(m)) + "</span><span class=\"sp\"></span>"
+    + '<span id="st_' + m.id + '">' + statusTag(m) + "</span></div>"
+    + '<div class="mc-body">' + sideH + mid + sideA + "</div>"
+    + foot + adm + "</article>";
+}
+
+/* ══ LEAGUE TABLE ════════════════════════════════════════════════════════ */
+function viewTable(){
+  const rows = leagueTable();
+  const phase = ALL.filter(isLeaguePhase);
+  const played = phase.filter(m => results[m.id]).length;
+  const body = rows.map((r, i) => {
+    const zone = i < 8 ? "zone-ucl" : i < 24 ? "zone-uel" : "zone-rel";
+    const gd = r.gf - r.ga;
+    const form = r.form.slice(-5).map(f =>
+      '<span style="display:inline-block;width:15px;height:15px;line-height:15px;border-radius:4px;font-size:8.5px;'
+      + "font-weight:700;margin-left:2px;background:" + (f === "W" ? "rgba(0,255,135,.18);color:#00ff87"
+        : f === "D" ? "rgba(255,255,255,.09);color:#ab95b5" : "rgba(233,0,82,.2);color:#ff7a95") + '">' + f + "</span>").join("");
+    return '<tr class="' + zone + '"><td><div class="tm-cell"><span class="pos mono">' + (i+1) + '</span>'
+      + crest(r.c, "lg") + '<span style="font-weight:600">' + esc(teamFull(r.c)) + '</span></div></td>'
+      + '<td class="mono">' + r.p + '</td><td class="mono">' + r.w + '</td><td class="mono">' + r.d
+      + '</td><td class="mono">' + r.l + '</td><td class="mono" style="color:var(--txt2)">' + r.gf + '-' + r.ga + '</td>'
+      + '<td class="mono" style="color:' + (gd > 0 ? "var(--green)" : gd < 0 ? "#ff7a95" : "var(--txt2)") + '">'
+      + (gd > 0 ? "+" : "") + gd + '</td><td class="mono" style="font-weight:700">' + r.pts + '</td>'
+      + '<td style="text-align:right">' + form + '</td></tr>';
+  }).join("");
+
+  return '<div class="panel"><div class="panel-h"><h3>Champions League · league phase</h3>'
+    + '<small>' + (phase.length ? played + ' of ' + phase.length + ' played' : 'waiting for fixtures') + '</small></div>'
+    + '<div class="scroller"><table><thead><tr><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th>'
+    + '<th>Goals</th><th>GD</th><th>Pts</th><th style="text-align:right">Form</th></tr></thead><tbody>'
+    + body + '</tbody></table></div>'
+    + '<div class="key"><span><i style="background:#04f5ff"></i>Top 8 · Round of 16</span>'
+    + '<span><i style="background:#b07cff"></i>9–24 · Knockout play-offs</span>'
+    + '<span><i style="background:#e90052"></i>25–36 · Eliminated</span></div></div>'
+    + scorersPanel() + crestPanel();
+}
+
+/* ══ CREST UPLOADER (admin) ══════════════════════════════════════════════
+   Crests go into the database, so uploading them once makes them appear for
+   every player on every device.
+   ════════════════════════════════════════════════════════════════════════ */
+function crestPanel(){
+  if (!isAdmin) return "";
+  const codes = Object.keys(TEAMS).sort((a, b) => teamFull(a).localeCompare(teamFull(b)));
+  const have = codes.filter(c => crestImgs[c]).length;
+
+  const rows = codes.map(c => {
+    const on = !!crestImgs[c];
+    return '<div class="cu-row">' + crest(c, true)
+      + '<span class="cu-nm">' + esc(teamFull(c)) + "</span>"
+      + '<span class="cu-code mono">' + c + "</span>"
+      + (on ? '<button class="abtn red" onclick="removeCrest(\'' + c + '\')">Remove</button>'
+            : '<label class="abtn cu-lbl">Upload'
+              + '<input type="file" accept="image/*" onchange="uploadCrest(\'' + c + '\',this)"></label>')
+      + "</div>";
+  }).join("");
+
+  return '<div class="panel"><div class="panel-h"><h3>Club crests</h3>'
+    + "<small>" + have + " of 20 uploaded</small></div>"
+    + '<div class="prose" style="padding:11px 13px 4px;font-size:12px">'
+    + "Crests are saved to your database, so <b>every player sees them on every device</b> — "
+    + "nothing to host or share. Drop all twenty in at once below, or set them one by one. "
+    + "Files named after the club or its code (<code>arsenal.png</code>, <code>ARS.png</code>) "
+    + "are matched automatically. Anything missing keeps its colour badge."
+    + "</div>"
+    + '<div class="sc-edit" style="border-bottom:1px solid rgba(255,255,255,.05)">'
+    + '<label class="abtn cu-lbl" style="height:32px;line-height:30px">Upload all crests'
+    + '<input type="file" accept="image/*" multiple onchange="uploadManyCrests(this)"></label>'
+    + (have ? '<button class="abtn red" onclick="clearCrests()">Remove all</button>' : "")
+    + '<span style="font-size:11px;color:var(--txt3)">PNG or SVG, square works best</span></div>'
+    + '<div class="cu-grid">' + rows + "</div></div>";
+}
+
+/* ══ STANDINGS (players) ═════════════════════════════════════════════════ */
+function viewBoard(){
+  const t = tallies(), rk = rankedPids(), BD = badgeData();
+  if (!rk.length) return '<div class="panel"><div class="empty">No players yet.</div></div>';
+  const anyResult = ALL.some(m => m.mw >= SCORING_START_MW && results[m.id]);
+
+  const rows = rk.map((pid, i) => {
+    const p = players[pid], c = colr(p.ci || 0), s = t[pid];
+    const acc = s.played ? Math.round((s.played - s.x0) / s.played * 100) : 0;
+    return '<div class="lb-row' + (pid === me ? " mine" : "") + (i === 0 && s.pts > 0 ? " top" : "") + '">'
+      + '<span class="rk disp">' + (i+1) + "</span>"
+      + '<span class="av" style="--c:' + c + '">' + esc(initials(p.name)) + "</span>"
+      + '<div class="who2"><b>' + esc(p.name) + (pid === me ? " · you" : "")
+      + badgeChips(BD[pid]) + "</b>"
+      + "<small>" + s.played + " scored" + (s.played ? " · " + acc + "% on the result" : "")
+      + (s.bonus ? ' · <span class="bonus-tag">+' + s.bonus + " title</span>" : "") + "</small>"
+      + '<span class="tri"><span class="t3">' + s.x3 + "×3</span><span class=\"t2\">" + s.x2
+      + '×2</span><span class="t1">' + s.x1 + '×1</span><span class="t0">' + s.x0 + "×0</span></span></div>"
+      + '<div class="pts disp" style="color:' + c + '">' + s.pts + "<small>PTS</small></div></div>";
+  }).join("");
+
+  let mwTable = "";
+  const playedMW = [];
+  for (let i = SCORING_START_MW; i <= TOTAL_MW; i++) if ((MW[i-1]||[]).some(m => results[m.id])) playedMW.push(i);
+  if (playedMW.length){
+    const anyBonus = rk.some(pid => t[pid].bonus > 0);
+    const head = "<tr><th>Player</th>" + playedMW.map(n => "<th>MW" + n + "</th>").join("")
+      + (anyBonus ? "<th>Title</th>" : "")
+      + '<th style="text-align:right">Total</th></tr>';
+    const body = rk.map(pid => {
+      const c = colr(players[pid].ci || 0), s = t[pid];
+      const cells = playedMW.map(n => {
+        const v = s.mw[n] || 0;
+        const top = Math.max(...rk.map(q => t[q].mw[n] || 0));
+        const win = v === top && v > 0;
+        return '<td class="mono" style="color:' + (win ? c : "var(--txt2)") + ";font-weight:" + (win ? 700 : 400) + '">'
+          + v + "</td>";
+      }).join("");
+      const bcell = anyBonus
+        ? '<td class="mono" style="color:var(--amber);font-weight:700">' + (s.bonus || 0) + "</td>" : "";
+      return '<tr class="' + (pid === me ? "mine" : "") + '"><td><div class="tm-cell">'
+        + '<span class="av sm" style="--c:' + c + '">' + esc(initials(players[pid].name)) + "</span>"
+        + '<span style="font-weight:600">' + esc(players[pid].name) + "</span></div></td>" + cells + bcell
+        + '<td class="mono" style="text-align:right;font-weight:700;color:' + c + '">' + s.pts + "</td></tr>";
+    }).join("");
+    mwTable = '<div class="panel"><div class="panel-h"><h3>Points by round</h3>'
+      + "<small>best each week highlighted</small></div>"
+      + '<div class="scroller"><table><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div></div>";
+  }
+
+  return titlePanel()
+    + '<div class="panel"><div class="panel-h"><h3>Scoreboard</h3><small>'
+    + (anyResult ? "live" : "waiting for results") + "</small></div>" + rows + "</div>"
+    + badgesPanel() + latestFeed(8) + mwTable + playerAdminPanel();
+}
+
+/* ══ LATEST POINTS FEED ══════════════════════════════════════════════════
+   The most recently settled matches, with what every player earned from
+   each one — so you can see the scoreboard move rather than just its total.
+   ════════════════════════════════════════════════════════════════════════ */
+function latestFeed(limit){
+  const settled = ALL.filter(m => m.mw >= SCORING_START_MW && results[m.id]).sort((a, b) => koOf(b) - koOf(a)).slice(0, limit || 8);
+  if (!settled.length) return "";
+  const rk = rankedPids();
+
+  const rows = settled.map(m => {
+    const r = results[m.id];
+    const chips = rk.map(pid => {
+      const v = pointsFor(m.id, pid), c = colr(players[pid].ci || 0);
+      return '<span class="chip p' + v + (pid === me ? " me" : "") + '" style="--c:' + c + '">'
+        + '<span class="cn">' + esc(players[pid].name) + "</span>"
+        + '<span class="cp">' + (v > 0 ? "+" + v : "0") + "</span></span>";
+    }).join("");
+    return '<div class="fd-row"><span class="fd-mw">MW' + m.mw + "</span>"
+      + '<span class="fd-mt">' + crest(m.h, true)
+      + '<span class="fn">' + esc(teamFull(m.h)) + "</span>"
+      + '<span class="fd-sc">' + r.h + "–" + r.a + "</span>"
+      + '<span class="fn">' + esc(teamFull(m.a)) + "</span>"
+      + crest(m.a, true) + "</span>"
+      + '<span class="fd-pts">' + chips + "</span></div>";
+  }).join("");
+
+  return '<div class="panel"><div class="panel-h"><h3>Latest points</h3>'
+    + "<small>most recent results</small></div>"
+    + '<div class="feed">' + rows + "</div></div>";
+}
+
+/* ══ PLAYER ADMIN ════════════════════════════════════════════════════════
+   Passwords are stored only as fingerprints and can't be read back, so a
+   forgotten one is replaced rather than recovered.  Resetting leaves every
+   prediction that player has already made untouched.
+   ════════════════════════════════════════════════════════════════════════ */
+function playerAdminPanel(){
+  if (!isAdmin) return "";
+  const t = tallies();
+  const rows = rankedPids().map(pid => {
+    const p = players[pid], c = colr(p.ci || 0), mine = pid === me;
+    return '<div class="pa-row">'
+      + '<span class="av sm" style="--c:' + c + '">' + esc(initials(p.name)) + "</span>"
+      + '<span class="pa-nm">' + esc(p.name) + (mine ? ' <span class="pa-you">you</span>' : "") + "</span>"
+      + '<span class="pa-pts mono">' + (t[pid] ? t[pid].pts : 0) + "</span>"
+      + '<input type="text" id="np_' + pid + '" placeholder="New password" autocomplete="off">'
+      + '<button class="abtn" onclick="resetPw(\'' + pid + '\')">Set</button>'
+      + (mine ? "" : '<button class="abtn red" onclick="removePlayer(\'' + pid + '\')">✕</button>')
+      + "</div>";
+  }).join("");
+
+  return '<div class="panel"><div class="panel-h"><h3>Players</h3>'
+    + "<small>" + Object.keys(players).length + " signed up</small></div>"
+    + '<div class="prose" style="padding:11px 13px 5px;font-size:12px">'
+    + "Type a new password beside anyone who has forgotten theirs and press <b>Set</b>. "
+    + "Tell them what it is and they can change it themselves later. Their existing "
+    + "predictions and points are not affected."
+    + "</div>"
+    + '<div class="pa-grid">' + rows + "</div>"
+    + '<div class="pa-row" style="border-top:1px dashed rgba(255,176,32,.3)">'
+    + '<span class="lb" style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;'
+    + 'color:var(--amber);font-weight:700;flex:1">Change admin key</span>'
+    + '<input type="text" id="newAdminKey" placeholder="New admin key" autocomplete="off">'
+    + '<button class="abtn" onclick="changeAdminKey()">Set</button></div>'
+    + '<div class="prose" style="padding:4px 13px 12px;font-size:11px;color:var(--txt3)">'
+    + "Only a fingerprint of the key is ever saved — nobody can read the key out of this "
+    + "page or the database. Which also means it can't be recovered, so keep a note of it."
+    + "</div></div>";
+}
+
+/* ══ BADGES ══════════════════════════════════════════════════════════════ */
+function badgeChips(b){
+  if (!b) return "";
+  let out = "";
+  for (let i = 0; i < b.b10; i++) out += '<span class="bdg b10" title="Led the scoreboard for 10 weeks running">10</span>';
+  for (let i = 0; i < b.b5; i++)  out += '<span class="bdg b5" title="Led the scoreboard for 5 weeks running">5</span>';
+  return out ? '<span class="bdg-set">' + out + "</span>" : "";
+}
+
+function badgesPanel(){
+  const B = badgeData(), rk = rankedPids();
+  const weeks = completedMWs().length;
+  const anyone = rk.some(p => B[p].b5 || B[p].b10 || B[p].current);
+
+  if (!weeks){
+    return '<div class="panel"><div class="panel-h"><h3>Streak badges</h3><small>not started</small></div>'
+      + '<div class="prose">Lead the scoreboard for <b>5 rounds running</b> to earn a badge, '
+      + "and <b>10 running</b> to trade it for the bigger one. Nothing counts until a full "
+      + "round has been scored.</div></div>";
+  }
+
+  const rows = rk.filter(p => B[p].b5 || B[p].b10 || B[p].current).map(pid => {
+    const b = B[pid], c = colr(players[pid].ci || 0);
+    const need = nextBadgeIn(b.current);
+    const streak = b.current
+      ? '<span class="bdg-run">On a run of ' + b.current + " · " + need + " more for "
+        + (b.current % BADGE_LONG >= BADGE_SHORT || b.current >= BADGE_SHORT ? "(10)" : "(5)") + "</span>"
+      : '<span class="bdg-run cold">Not leading</span>';
+    return '<div class="bdg-row">'
+      + '<span class="av sm" style="--c:' + c + '">' + esc(initials(players[pid].name)) + "</span>"
+      + '<div class="bdg-who"><b>' + esc(players[pid].name) + "</b>" + streak + "</div>"
+      + (badgeChips(b) || '<span class="bdg-none">—</span>') + "</div>";
+  }).join("");
+
+  return '<div class="panel"><div class="panel-h"><h3>Streak badges</h3>'
+    + "<small>" + weeks + " round" + (weeks === 1 ? "" : "s") + " scored</small></div>"
+    + (anyone ? '<div class="bdg-grid">' + rows + "</div>"
+       : '<div class="prose">Nobody has led for five rounds running yet.</div>') + "</div>";
+}
+
+/* ══ FANZONE / FAN BATTLES ═══════════════════════════════════════════════ */
+function viewFanzone(){
+  const mine = myClub();
+  const codes = Object.keys(TEAMS).sort((a, b) => teamFull(a).localeCompare(teamFull(b)));
+
+  /* pick your club */
+  let head = '<div class="panel"><div class="panel-h"><h3>Your club</h3>'
+    + "<small>" + (mine ? "supporting " + esc(teamFull(mine)) : "not set") + "</small></div>"
+    + '<div class="tp"><div class="tp-row ' + (mine ? "g" : "s") + '">'
+    + (mine ? crest(mine) : '<span class="tp-rank">?</span>')
+    + '<span class="tp-sel"><select class="' + (mine ? "set" : "") + '" onchange="setFanClub(this.value)">'
+    + '<option value="">Choose your club…</option>'
+    + codes.map(c => '<option value="' + c + '"' + (mine === c ? " selected" : "") + ">"
+        + esc(teamFull(c)) + " · " + fansOf(c).length + " fan" + (fansOf(c).length === 1 ? "" : "s")
+        + "</option>").join("")
+    + "</select></span></div>"
+    + '<div class="gb-note">Only supporter-v-supporter fixtures from the current round appear here. Supporters of those two clubs can write; everyone else can read and react.</div>'
+    + "</div></div>";
+
+  /* Only this round's supporter-v-supporter fixtures are open. */
+  const battleWeek = fanBattleMW();
+  const ds = derbies();
+  let clash = "";
+  if (!ds.length){
+    clash = '<div class="panel"><div class="panel-h"><h3>Fan Battles · Round ' + battleWeek + '</h3><small>nothing brewing</small></div>'
+      + '<div class="empty" style="padding:26px 18px">'
+      + (mine ? "No fixture in this round has supporters on both sides yet.<br>Future rounds stay hidden until the current week is fully finished."
+              : "Pick your club above. A battle appears only when both teams in a current-round fixture have supporters here.") + "</div></div>";
+  } else {
+    clash = '<div class="launch-note"><b>Fan Battles · Round ' + battleWeek + '.</b> Only this week is open. Round ' + Math.min(TOTAL_MW, battleWeek + 1) + ' stays hidden until every result from Round ' + battleWeek + ' is in.</div>'
+      + ds.map(m => fanClash(m)).join("");
+  }
+
+  /* who supports who */
+  const withFans = codes.filter(c => fansOf(c).length);
+  let roll = "";
+  if (withFans.length){
+    roll = '<div class="panel"><div class="panel-h"><h3>Who supports who</h3>'
+      + "<small>" + Object.keys(fans).filter(p => players[p]).length + " of "
+      + Object.keys(players).length + " picked</small></div>"
+      + withFans.map(c => '<div class="fz-club">' + crest(c, true)
+        + '<span class="fz-cn">' + esc(teamFull(c)) + "</span>"
+        + '<span class="fz-fans">' + fansOf(c).map(pid =>
+            '<span class="chip" style="--c:' + colr(players[pid].ci || 0) + '">'
+            + '<span class="cn">' + esc(players[pid].name) + "</span></span>").join("")
+        + "</span></div>").join("") + "</div>";
+  }
+
+  return head + clash + roll;
+}
+
+function fanPostHtml(m, post){
+  const author = players[post.p];
+  if (!author) return "";
+  const club = fans[post.p];
+  const c = club && TEAMS[club] ? teamCol(club) : colr(author.ci || 0);
+  const minePost = post.p === me;
+  const canDelete = minePost || isAdmin;
+  const rx = reactionsFor(m.id, post.id);
+  const counts = reactionCounts(m.id, post.id);
+  const mineReaction = rx[me] || "";
+
+  const buttons = REACTIONS.map(e =>
+    '<button class="fz-react' + (mineReaction === e ? " on" : "") + '" '
+      + 'onclick="toggleFanReaction(\'' + m.id + '\',\'' + post.id + '\',\'' + e + '\')" '
+      + 'title="React ' + e + '">' + e
+      + (counts[e] ? '<b>' + counts[e] + "</b>" : "") + "</button>"
+  ).join("");
+
+  return '<div class="fz-post' + (minePost ? " mine" : "") + '" style="--c:' + c + '">'
+    + '<div class="fz-post-top">'
+    + '<span class="av sm" style="--c:' + c + '">' + esc(initials(author.name)) + "</span>"
+    + '<span class="fz-name">' + esc(author.name) + "</span>"
+    + '<span class="fz-team">' + (club && TEAMS[club] ? esc(teamNm(club)) : "fan") + "</span>"
+    + '<span class="fz-time">' + esc(fmtFanTime(post.t)) + "</span>"
+    + (canDelete ? '<button class="fz-del" onclick="deleteFanPost(\'' + m.id + '\',\'' + post.id
+        + '\')" title="Delete message">×</button>' : "")
+    + "</div>"
+    + '<div class="fz-text">' + esc(post.text) + "</div>"
+    + '<div class="fz-reacts">' + buttons + "</div>"
+    + "</div>";
+}
+
+function fanClash(m){
+  const H = fansOf(m.h), A = fansOf(m.a);
+  const lk = locked(m), r = results[m.id];
+  const mine = myClub();
+  const canPost = mine === m.h || mine === m.a;
+
+  const side = (code, list) => '<div class="fz-side">' + crest(code)
+    + '<span class="fz-tn">' + esc(teamFull(code)) + "</span>"
+    + '<span class="fz-list">' + list.map(pid =>
+        '<span class="fz-fan' + (pid === me ? " me" : "") + '" style="--c:' + colr(players[pid].ci || 0) + '">'
+        + esc(players[pid].name) + "</span>").join("") + "</span></div>";
+
+  const posts = postsFor(m.id);
+  const postsHtml = posts.length
+    ? posts.map(p => fanPostHtml(m, p)).join("")
+    : '<div class="fz-empty">No messages yet. Somebody start it.</div>';
+
+  const composer = canPost
+    ? '<div class="fz-compose">'
+      + '<textarea id="fzmsg_' + m.id + '" maxlength="180" placeholder="Say it with your chest… (180 characters)" '
+      + 'onkeydown="fanComposeKey(event,\'' + m.id + '\')"></textarea>'
+      + '<button class="fz-send" onclick="sendFanPost(\'' + m.id + '\')">SEND</button></div>'
+    : '<div class="fz-note">Read &amp; react freely. Only ' + esc(teamNm(m.h)) + " and " + esc(teamNm(m.a))
+      + " supporters can write in this battle.</div>";
+
+  const status = r ? r.h + " – " + r.a : (lk ? "In progress" : fmtShortDay(koOf(m)) + " " + fmtTime(koOf(m)));
+
+  return '<div class="panel fz-match"><div class="panel-h"><h3>Fan Battle · ' + H.length + " v " + A.length + " fans</h3>"
+    + "<small>" + esc(status) + "</small></div>"
+    + '<div class="fz-grid">' + side(m.h, H) + '<span class="fz-vs">VS</span>' + side(m.a, A) + "</div>"
+    + '<div class="fz-thread"><div class="fz-posts">' + postsHtml + "</div>" + composer + "</div></div>";
+}
+
+/* ══ RULES ═══════════════════════════════════════════════════════════════ */
+function viewRules(){
+  return '<div class="panel"><div class="panel-h"><h3>How points work</h3><small>every Champions League fixture</small></div>'
+    + '<div class="rule r3"><div class="n">3</div><div class="bd"><h4>Exact scoreline</h4><p>You called the score exactly.</p></div></div>'
+    + '<div class="rule r2"><div class="n">2</div><div class="bd"><h4>Right result, right goal difference</h4><p>Correct winner and the same winning margin. For draws, a draw within one goal of the real score earns 2.</p></div></div>'
+    + '<div class="rule r1"><div class="n">1</div><div class="bd"><h4>Right winner only</h4><p>You picked the right team or correctly called a draw, but missed the margin.</p></div></div>'
+    + '<div class="rule r0"><div class="n">0</div><div class="bd"><h4>Wrong result</h4><p>Wrong outcome, or no complete prediction before kick-off.</p></div></div></div>'
+
+    + '<div class="panel"><div class="panel-h"><h3>Champions League bonus</h3><small>winner + runner-up</small></div>'
+    + '<div class="rule r3"><div class="n">20</div><div class="bd"><h4>Champion called right</h4><p>Pick the club that wins the Champions League final.</p></div></div>'
+    + '<div class="rule r2"><div class="n">10</div><div class="bd"><h4>Runner-up called right</h4><p>Pick the losing finalist. The two bonuses are scored independently.</p></div></div>'
+    + '<div class="prose"><ul><li><b>Entries close when league-phase Matchday 3 kicks off.</b></li><li>You can change either club freely before that deadline, but they must be different.</li><li>Picks are hidden from other players until the deadline passes.</li><li>The API settles the final winner when available; an admin can override the final two if needed.</li></ul></div></div>'
+
+    + '<div class="panel"><div class="panel-h"><h3>Streak badges</h3><small>for staying on top</small></div>'
+    + '<div class="rule r2"><div class="n">5</div><div class="bd"><h4>Five rounds on top</h4><p>Lead the overall predictor scoreboard after five fully scored rounds in a row.</p></div></div>'
+    + '<div class="rule r1"><div class="n">10</div><div class="bd"><h4>Ten rounds on top</h4><p>Stay top for ten fully scored rounds in a row and the 5 badge upgrades to 10.</p></div></div></div>'
+
+    + '<div class="panel"><div class="panel-h"><h3>Betable</h3><small>crowd + historical model</small></div><div class="prose"><ul>'
+    + '<li>Betable keeps the same two-gate idea: enough player consensus must agree with the historical football model.</li>'
+    + '<li>Admin injury, manager, tactical and formation context can only reduce confidence; it cannot create a recommendation by itself.</li>'
+    + '<li>Recommendations are estimates, not guarantees.</li></ul></div></div>'
+
+    + '<div class="panel"><div class="panel-h"><h3>Fanzone</h3><small>current round only</small></div><div class="prose"><ul>'
+    + '<li>Pick the Champions League club you support. It never changes your predictor points.</li>'
+    + '<li>A Fan Battle appears when both clubs in a current-round fixture have supporters in this predictor.</li>'
+    + '<li>Supporters of those two clubs can write; everyone else can read and react.</li>'
+    + '<li>Messages are limited to 180 characters and admins can delete posts.</li></ul></div></div>'
+
+    + '<div class="panel"><div class="panel-h"><h3>The small print</h3></div><div class="prose"><ul>'
+    + '<li><b>Predictions lock the instant each match kicks off.</b> The lock uses Firebase server time.</li>'
+    + '<li><b>Other players\' picks stay hidden until kick-off.</b></li>'
+    + '<li>You can edit your own score as many times as you want before the lock.</li>'
+    + '<li>Incomplete predictions score zero. Ties on the player scoreboard are broken by exact scores, then 2-pointers.</li>'
+    + '<li>Fixtures, changed kick-off times and finished results are synchronized hourly from football-data.org; admins can still correct a score or time manually.</li>'
+    + '</ul></div></div>';
+}
+
+/* ══ ACTIONS ═════════════════════════════════════════════════════════════ */
+const writeTimers = {};
+
+function setPred(mid, side, el){
+  const m = BY_ID[mid];
+  if (!m) return;
+  if (locked(m)){
+    el.value = "";
+    toast("That match has kicked off — it's locked", "bad");
+    paint(); return;
+  }
+  let raw = el.value.replace(/[^0-9]/g, "").slice(0, 2);
+  if (raw !== el.value) el.value = raw;
+  el.classList.toggle("has", raw !== "");
+  const val = raw === "" ? null : Math.min(99, parseInt(raw, 10));
+
+  const key = mid + side;
+  clearTimeout(writeTimers[key]);
+  writeTimers[key] = setTimeout(() => {
+    if (locked(m)){ toast("Too late — that match has started", "bad"); paint(); return; }
+    lastWrite = Date.now();
+    ref("preds/" + mid + "/" + me + "/" + side).set(val)
+      .then(() => {
+        const live = document.getElementById("i_" + mid + "_" + side);
+        if (live){ live.classList.add("saved"); setTimeout(() => live.classList.remove("saved"), 600); }
+      })
+      .catch(() => toast("Couldn't save — check your connection", "bad"));
+  }, 420);
+}
+
+function setTitle(slot, val){
+  if (titleLocked()){
+    toast("The Champions League bonus closed at league-phase Matchday 3", "bad");
+    paint(); return;
+  }
+  const cur = titles[me] || {};
+  const other = slot === "first" ? cur.second : cur.first;
+  if (val && val === other){
+    toast("Pick two different clubs", "bad");
+    paint(); return;
+  }
+  ref("titles/" + me + "/" + slot).set(val || null)
+    .then(() => toast(val
+      ? (slot === "first" ? "Champion: " : "Runner-up: ") + teamNm(val)
+      : "Pick cleared", "good"))
+    .catch(() => toast("Couldn't save — check your connection", "bad"));
+}
+
+function saveFinal(){
+  if (!isAdmin) return;
+  const a = document.getElementById("fin1").value;
+  const b = document.getElementById("fin2").value;
+  if (a && b && a === b) return toast("Winner and runner-up must differ", "bad");
+  ref("final").set({ first: a || null, second: b || null })
+    .then(() => toast("Final top two set — bonuses awarded", "good"));
+}
+function clearFinal(){
+  if (!isAdmin) return;
+  ref("final").remove().then(() => toast("Back to automatic final result"));
+}
+
+/* ══ FANZONE / FAN BATTLES ═══════════════════════════════════════════════ */
+function setFanClub(code){
+  if (!me) return;
+  ref("fans/" + me).set(code || null)
+    .then(() => toast(code ? "Supporting " + teamFull(code) : "Club cleared", "good"))
+    .catch(() => toast("Couldn't save — check your connection", "bad"));
+}
+
+let lastFanPost = 0;
+function fanComposeKey(event, mid){
+  if (event.key === "Enter" && !event.shiftKey){
+    event.preventDefault();
+    sendFanPost(mid);
+  }
+}
+function sendFanPost(mid){
+  if (!me || !myClub()) return toast("Pick your club first", "bad");
+  const m = BY_ID[mid];
+  if (!m) return;
+  if (myClub() !== m.h && myClub() !== m.a)
+    return toast("Only the two sets of supporters can write here", "bad");
+
+  const el = document.getElementById("fzmsg_" + mid);
+  if (!el) return;
+  const message = (el.value || "").trim().replace(/\s+/g, " ");
+  if (!message) return;
+  if (message.length > 180) return toast("Keep it under 180 characters", "bad");
+  if (Date.now() - lastFanPost < 5000) return toast("Give it a few seconds", "bad");
+
+  /* Clear the composer optimistically before Firebase echoes the new post.
+     Otherwise the realtime repaint could restore the just-sent text. */
+  el.value = "";
+  lastFanPost = Date.now();
+  const postRef = ref("fanzone/" + mid + "/posts").push();
+  postRef.set({ p: me, text: message, t: Date.now() })
+    .catch(() => {
+      lastFanPost = 0;
+      const live = document.getElementById("fzmsg_" + mid);
+      if (live && !live.value) live.value = message;
+      toast("Couldn't post — check your connection", "bad");
+    });
+}
+
+function toggleFanReaction(mid, postId, emoji){
+  if (!me || !REACTIONS.includes(emoji)) return;
+  const current = reactionsFor(mid, postId)[me] || "";
+  const target = ref("fanzone/" + mid + "/reactions/" + postId + "/" + me);
+  if (current === emoji) target.remove();
+  else target.set(emoji);
+}
+
+function deleteFanPost(mid, postId){
+  const post = (((threadOf(mid).posts || {})[postId]) || null);
+  if (!post || (!isAdmin && post.p !== me)) return;
+  if (!confirm("Delete this Fanzone message?")) return;
+  const updates = {};
+  updates["fanzone/" + mid + "/posts/" + postId] = null;
+  updates["fanzone/" + mid + "/reactions/" + postId] = null;
+  db.ref(ROOT).update(updates)
+    .then(() => toast("Message deleted"))
+    .catch(() => toast("Couldn't delete message", "bad"));
+}
+
+/* ══ PLAYER ADMIN ════════════════════════════════════════════════════════ */
+function resetPw(pid){
+  if (!isAdmin || !players[pid]) return;
+  const el = document.getElementById("np_" + pid);
+  const pw = (el.value || "").trim();
+  if (pw.length < 4) return toast("New password needs at least 4 characters", "bad");
+  ref("players/" + pid + "/pw").set(hashPw(pw))
+    .then(() => {
+      el.value = "";
+      toast(players[pid].name + "'s password is now: " + pw, "good");
+    })
+    .catch(() => toast("Couldn't save — check your connection", "bad"));
+}
+
+function removePlayer(pid){
+  // Admin-only account deletion.
+  if (!isAdmin) return toast("Admin access required", "bad");
+  if (!players[pid] || pid === me) return;
+
+  const nm = players[pid].name;
+
+  if (!confirm(
+    "Remove " + nm + " from the league?\n\n" +
+    "Their account, predictions, points and league data will be permanently deleted.\n\n" +
+    "This can't be undone."
+  )) return;
+
+  const updates = {};
+
+  // Account/profile data.
+  updates["players/" + pid] = null;
+  updates["titles/" + pid] = null;
+  updates["boots/" + pid] = null;
+  updates["fans/" + pid] = null;
+
+  // Delete every saved match prediction made by this player, including any
+  // stale fixture that is no longer present in the current API fixture feed.
+  Object.keys(preds || {}).forEach(mid => {
+    updates["preds/" + mid + "/" + pid] = null;
+  });
+
+  // Remove the player's Fan Zone posts and reactions as part of account deletion.
+  // This prevents orphaned messages/reactions after the profile disappears.
+  Object.entries(fanThreads || {}).forEach(([mid, thread]) => {
+    Object.entries((thread && thread.posts) || {}).forEach(([postId, post]) => {
+      if (post && post.p === pid){
+        updates["fanzone/" + mid + "/posts/" + postId] = null;
+        updates["fanzone/" + mid + "/reactions/" + postId] = null;
+      }
+    });
+    Object.keys((thread && thread.reactions) || {}).forEach(postId => {
+      updates["fanzone/" + mid + "/reactions/" + postId + "/" + pid] = null;
+    });
+  });
+
+  db.ref(ROOT).update(updates)
+    .then(() => toast(nm + " completely removed", "good"))
+    .catch(() => toast("Couldn't remove user — check your connection", "bad"));
+}
+
+function changeAdminKey(){
+  if (!isAdmin) return;
+  const el = document.getElementById("newAdminKey");
+  const k = (el.value || "").trim();
+  if (k.length < 6) return toast("Admin key needs at least 6 characters", "bad");
+  ref("meta/adminHash").set(hashAdmin(k))
+    .then(() => {
+      el.value = "";
+      toast("Admin key changed — the old one no longer works", "good");
+    })
+    .catch(() => toast("Couldn't save — check your connection", "bad"));
+}
+
+/* ══ CREST UPLOADS ═══════════════════════════════════════════════════════
+   Images are redrawn onto a 96px canvas before saving, which strips the
+   original file size right down — twenty crests come to roughly 200KB in
+   total, small enough to sync instantly to every player.
+   ════════════════════════════════════════════════════════════════════════ */
+const CREST_PX = 96;
+
+function fileToCrest(file){
+  return new Promise((resolve, reject) => {
+    if (!file.type || file.type.indexOf("image") !== 0) return reject(new Error("not an image"));
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error("could not read the file"));
+    fr.onload = () => {
+      const im = new Image();
+      im.onerror = () => reject(new Error("could not decode the image"));
+      im.onload = () => {
+        const S = CREST_PX;
+        const cv = document.createElement("canvas");
+        cv.width = S; cv.height = S;
+        const cx = cv.getContext("2d");
+        const r = Math.min(S / im.width, S / im.height) || 1;
+        const w = Math.max(1, im.width * r), h = Math.max(1, im.height * r);
+        cx.drawImage(im, (S - w) / 2, (S - h) / 2, w, h);   // fit, keep aspect, stay square
+        try { resolve(cv.toDataURL("image/png")); }
+        catch (e) { reject(new Error("could not convert the image")); }
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function saveCrest(code, dataUrl){
+  if (dataUrl.length > 120000) return Promise.reject(new Error("image too large"));
+  return ref("crests/" + code).set(dataUrl);
+}
+
+function uploadCrest(code, input){
+  if (!isAdmin) return;
+  const file = input.files && input.files[0];
+  if (!file) return;
+  fileToCrest(file)
+    .then(d => saveCrest(code, d))
+    .then(() => toast(teamFull(code) + " crest saved for everyone", "good"))
+    .catch(e => toast("Couldn't use that file — " + e.message, "bad"));
+  input.value = "";
+}
+
+/* Match a filename like "manchester-united.png", "AFC Bournemouth.png" or
+   "MUN.png" to a club.  Both the filename and the club name are squashed the
+   same way — lowercased, punctuation dropped, leading "AFC"/"FC" and any
+   "and" removed — so the two sides always meet in the middle. */
+function crestKey(s){
+  return normName(s).replace(/ /g, "").replace(/^afc/, "").replace(/^fc/, "").replace(/and/g, "");
+}
+function codeFromFilename(name){
+  const raw = normName(String(name).replace(/\.[a-z0-9]+$/i, "")).replace(/ /g, "");
+  if (!raw) return null;
+  const codes = Object.keys(TEAMS);
+  const exact = codes.find(c => c.toLowerCase() === raw);      // "MUN.png"
+  if (exact) return exact;
+  const key = crestKey(name.replace(/\.[a-z0-9]+$/i, ""));
+  if (!key) return null;
+  let best = null, bestLen = 0;
+  codes.forEach(c => {
+    [TEAMS[c][0], TEAMS[c][1]].forEach(nm => {
+      const k = crestKey(nm);
+      if (!k) return;
+      const hit = k === key || (key.length >= 4 && (k.indexOf(key) === 0 || key.indexOf(k) === 0));
+      if (hit && k.length > bestLen){ best = c; bestLen = k.length; }
+    });
+  });
+  return best;
+}
+
+function uploadManyCrests(input){
+  if (!isAdmin) return;
+  const files = Array.prototype.slice.call(input.files || []);
+  input.value = "";
+  if (!files.length) return;
+  const unmatched = [];
+  let done = 0;
+  toast("Uploading " + files.length + " crest" + (files.length > 1 ? "s" : "") + "…");
+  const jobs = files.map(f => {
+    const code = codeFromFilename(f.name);
+    if (!code){ unmatched.push(f.name); return Promise.resolve(); }
+    return fileToCrest(f).then(d => saveCrest(code, d)).then(() => { done++; })
+      .catch(() => { unmatched.push(f.name); });
+  });
+  Promise.all(jobs).then(() => {
+    if (done && !unmatched.length) toast(done + " crests saved for everyone", "good");
+    else if (done) toast(done + " saved · couldn't match: " + unmatched.slice(0, 3).join(", "), "bad");
+    else toast("None matched a club — rename them, or upload one at a time", "bad");
+  });
+}
+
+function removeCrest(code){
+  if (!isAdmin) return;
+  ref("crests/" + code).remove().then(() => toast(teamFull(code) + " back to its colour badge"));
+}
+function clearCrests(){
+  if (!isAdmin) return;
+  ref("crests").remove().then(() => toast("All crests removed"));
+}
+
+function addScorer(){
+  if (!isAdmin) return;
+  const n = (document.getElementById("scN").value || "").trim().replace(/\s+/g, " ");
+  const t = document.getElementById("scT").value;
+  const g = parseInt(document.getElementById("scG").value, 10) || 0;
+  if (n.length < 2) return toast("Enter a player name", "bad");
+  if (scorerBoard().some(s => normName(s.n) === normName(n)))
+    return toast(n + " is already listed", "bad");
+  const sid = "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  ref("scorers/" + sid).set({ n, t: t || null, g: Math.min(99, Math.abs(g)) })
+    .then(() => toast(n + " added", "good"));
+}
+function saveGoals(sid){
+  if (!isAdmin) return;
+  const g = parseInt(document.getElementById("g_" + sid).value, 10);
+  ref("scorers/" + sid + "/g").set(Math.min(99, Math.abs(g || 0)))
+    .then(() => toast("Goals updated", "good"));
+}
+function delScorer(sid){
+  if (!isAdmin) return;
+  ref("scorers/" + sid).remove().then(() => toast("Removed"));
+}
+function saveResult(mid){
+  if (!isAdmin) return;
+  const h = document.getElementById("r_" + mid + "_h").value;
+  const a = document.getElementById("r_" + mid + "_a").value;
+  if (h === "" || a === "") return toast("Enter both scores", "bad");
+  ref("results/" + mid).set({ h: Math.min(99, Math.abs(parseInt(h, 10) || 0)),
+                              a: Math.min(99, Math.abs(parseInt(a, 10) || 0)),
+                              at: Date.now() })
+    .then(() => toast("Result saved — points updated", "good"))
+    .catch(() => toast("Save failed", "bad"));
+}
+function clearResult(mid){
+  if (!isAdmin) return;
+  ref("results/" + mid).remove().then(() => toast("Result cleared"));
+}
+function dtLocal(ms){
+  const d = new Date(ms - new Date(ms).getTimezoneOffset() * 60000);
+  return d.toISOString().slice(0, 16);
+}
+function saveKO(mid){
+  if (!isAdmin) return;
+  const v = document.getElementById("k_" + mid).value;
+  if (!v) return toast("Pick a date and time", "bad");
+  const secs = Math.floor(new Date(v).getTime() / 1000);
+  if (!secs) return toast("That date isn't valid", "bad");
+  ref("kickoffs/" + mid).set(secs).then(() => toast("Kick-off updated — lock time moved", "good"));
+}
+
+/* ══ LIVE TICKER ═════════════════════════════════════════════════════════
+   Refreshes countdowns every second without redrawing the whole view, so
+   typing is never interrupted. A full repaint happens only when a match
+   actually crosses its kick-off and needs to lock.                        */
+let openIds = new Set();
+
+function tick(){
+  if (!me) return;
+
+  /* next kick-off banner */
+  const strip = document.getElementById("dlStrip");
+  const upcoming = ALL.filter(m => koOf(m) > now()).sort((a,b) => koOf(a) - koOf(b))[0];
+  const liveNow = ALL.filter(isLive).sort((a,b) => koOf(a) - koOf(b))[0];
+  if (liveNow){
+    strip.hidden = false; strip.classList.add("live");
+    document.getElementById("dlLbl").textContent = "Playing now · round " + liveNow.mw;
+    document.getElementById("dlName").textContent = teamNm(liveNow.h) + " v " + teamNm(liveNow.a);
+    document.getElementById("dlCd").textContent = "LIVE";
+  } else if (upcoming){
+    strip.hidden = false; strip.classList.remove("live");
+    document.getElementById("dlLbl").textContent = "Next deadline · round " + upcoming.mw;
+    document.getElementById("dlName").textContent =
+      teamNm(upcoming.h) + " v " + teamNm(upcoming.a) + " · " + fmtShortDay(koOf(upcoming)) + " " + fmtTime(koOf(upcoming));
+    document.getElementById("dlCd").textContent = countdown(koOf(upcoming) - now());
+  } else {
+    strip.hidden = true;
+  }
+
+  /* title-race countdown, and a repaint the moment the window shuts */
+  const tpc = document.getElementById("tpCd");
+  if (tpc){
+    const left = titleDeadline() - now();
+    if (left <= 0){ toast("Champions League bonus closed"); paint(); return; }
+    tpc.textContent = countdown(left);
+  }
+
+  if (view !== "fx") return;
+
+  /* per-card status + detect a match locking */
+  const nowOpen = new Set();
+  let flipped = false;
+  (MW[curMW - 1] || []).forEach(m => {
+    if (!locked(m)) nowOpen.add(m.id);
+    else if (openIds.has(m.id)) flipped = true;
+    const el = document.getElementById("st_" + m.id);
+    if (el) el.innerHTML = statusTag(m);
+  });
+  openIds = nowOpen;
+  if (flipped){ toast("Kick-off — predictions locked"); paint(); }
+}
+setInterval(tick, 1000);
+
+/* ══ BOOT ════════════════════════════════════════════════════════════════ */
+document.getElementById("tzName").textContent =
+  Intl.DateTimeFormat().resolvedOptions().timeZone || "local time";
+
+let booted = false;
+Promise.all([ref("players").once("value"), ref("fixtures").once("value"), ref("teams").once("value")]).then(() => {
+  if (booted) return;
+  booted = true;
+  curMW = liveMW();
+  renderWhoList();
+  if (!Object.keys(players).length) setAuthMode("up");
+});
+
+/* keyboard: arrow keys page through rounds */
+document.addEventListener("keydown", e => {
+  if (!me || view !== "fx") return;
+  if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+  if (e.key === "ArrowLeft")  jump(-1);
+  if (e.key === "ArrowRight") jump(1);
+});
+</script>
+</body>
+</html>

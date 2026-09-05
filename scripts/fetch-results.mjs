@@ -26,6 +26,8 @@ function say(...args){ console.log("[ucl-sync]", ...args); }
 function cleanCode(team){
   const tla = String(team?.tla || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (tla.length >= 2 && tla.length <= 5) return tla;
+  // Never use randomness for a team identifier: the same club must resolve to
+  // the same Firebase key on every hourly sync.
   if (team?.id != null) return "T" + String(team.id).replace(/[^0-9A-Za-z]/g, "");
   const seed = String(team?.name || team?.shortName || "TEAM").toUpperCase();
   let h = 2166136261;
@@ -66,7 +68,12 @@ function normalizedStage(match){
 
 function included(match){
   const st = normalizedStage(match);
+  // Keep the main tournament only. Qualification/preliminary stages sometimes
+  // also use matchday numbers 1–8, so a numeric-only fallback can accidentally
+  // publish qualifiers as league-phase games.
   if (!INCLUDE_STAGES.has(st)) return false;
+  // Do not expose a future knockout placeholder until both clubs are assigned.
+  // Otherwise players could predict a "TBD" fixture that changes underneath them.
   return assignedTeam(match?.homeTeam) && assignedTeam(match?.awayTeam);
 }
 
@@ -94,11 +101,16 @@ function fixtureId(match){ return `fd_${match.id}`; }
 function fixturePayload(match){
   const {mw, round} = roundInfo(match);
   return {
-    id: fixtureId(match), apiId: match.id,
-    h: cleanCode(match.homeTeam), a: cleanCode(match.awayTeam),
+    id: fixtureId(match),
+    apiId: match.id,
+    h: cleanCode(match.homeTeam),
+    a: cleanCode(match.awayTeam),
     k: Math.floor(new Date(match.utcDate).getTime()/1000),
-    mw, round, stage: normalizedStage(match),
-    status: match.status || "SCHEDULED", updated: Date.now()
+    mw,
+    round,
+    stage: normalizedStage(match),
+    status: match.status || "SCHEDULED",
+    updated: Date.now()
   };
 }
 
@@ -122,7 +134,9 @@ async function getJson(url, opts={}){
 }
 
 async function main(){
-  const token = (process.env.FOOTBALL_DATA_TOKEN || "").trim();
+  const rawToken = process.env.FOOTBALL_DATA_TOKEN || "";
+const tokenMatches = rawToken.match(/[A-Za-z0-9_-]{20,}/g) || [];
+const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g, "")).trim();
   const dbUrl = (process.env.FIREBASE_DB_URL || "").trim().replace(/\/$/,"");
   const dry = ["1","true"].includes(String(process.env.DRY_RUN || "").toLowerCase());
   if (!token) throw new Error("FOOTBALL_DATA_TOKEN is empty");
@@ -146,7 +160,9 @@ async function main(){
     updates[`teams/${a}`] = teamPayload(m.awayTeam);
     const fx = fixturePayload(m);
     updates[`fixtures/${fx.id}`] = fx;
+
     const rr = resultPayload(m);
+    // Preserve admin-entered scores. Automatic scores may be refreshed if API corrects them.
     const old = existing[fx.id];
     if (rr && (!old || old.src === "auto")){
       updates[`results/${fx.id}`] = rr;
@@ -154,6 +170,9 @@ async function main(){
     }
   }
 
+  // Pull the provider's official table when available so Champions League
+  // tie-break ordering stays authoritative. The site falls back to a locally
+  // calculated P/GD/GF table if this endpoint is unavailable.
   try {
     const stData = await getJson(`https://api.football-data.org/v4/competitions/${COMPETITION}/standings`, {
       headers:{"X-Auth-Token":token,"Accept":"application/json"}
