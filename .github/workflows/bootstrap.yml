@@ -16,26 +16,21 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Wait until complete payload is present
-        id: payload
+      - name: Verify package pieces
         shell: bash
         run: |
-          count=$(find _payload -maxdepth 1 -name '*.part' 2>/dev/null | wc -l)
-          echo "count=$count" >> "$GITHUB_OUTPUT"
-          if [ "$count" -ne 9 ]; then
-            echo "Payload has $count/9 chunks; nothing to publish yet."
-          fi
+          for f in 00 01 02 03 05 06 07 08; do test -s "_payload/${f}.part"; done
+          test -s _payload/04a.part
+          test -s _payload/04b.part
       - name: Reconstruct application
-        if: steps.payload.outputs.count == '9'
         shell: bash
         run: |
-          cat _payload/*.part | base64 -d > /tmp/ucl_payload.tar.gz
+          cat _payload/00.part _payload/01.part _payload/02.part _payload/03.part _payload/04a.part _payload/04b.part _payload/05.part _payload/06.part _payload/07.part _payload/08.part | base64 -d > /tmp/ucl_payload.tar.gz
           tar -xzf /tmp/ucl_payload.tar.gz
           test -s index.html
           test -s scripts/fetch-results.mjs
           test -s scripts/bettable_model.py
       - name: Validate source
-        if: steps.payload.outputs.count == '9'
         shell: bash
         run: |
           node --check scripts/fetch-results.mjs
@@ -43,17 +38,15 @@ jobs:
           grep -q 'const ROOT.*cl2627' index.html
           grep -q 'football-data.org' index.html
       - name: Test real Champions League sync
-        if: steps.payload.outputs.count == '9'
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
           FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
           DRY_RUN: 'true'
         run: node scripts/fetch-results.mjs
       - name: Commit published site
-        if: steps.payload.outputs.count == '9'
         shell: bash
         run: |
-          rm -rf _payload .github/workflows/bootstrap.yml
+          rm -rf _payload .github/workflows/bootstrap.yml app-01.js style-01.css style-02.css style-03.css style-04.css style-05.css bet_pl_model.py
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
