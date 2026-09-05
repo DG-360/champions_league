@@ -1,16 +1,29 @@
-/* UCL FINAL POLISH v10
-   Readability-first presentation layer.
-   PL geometry remains untouched; this file controls contrast, actions,
-   competition hierarchy, subtle purple/silver atmosphere, and UCL-only modules. */
+/* UCL REFINEMENT v11
+   Goal: premium sports product, not a decorated dashboard.
+   PL geometry stays intact. Cyan is functional; purple is atmospheric.
+   Primary copy is white, secondary copy is controlled silver-blue. */
 
-/* ─────────────────────────────────────────────────────────────
-   PAGE CANVAS + SILVER / PURPLE ATMOSPHERE
-   ───────────────────────────────────────────────────────────── */
-html{background:#030B28!important}
+:root{
+  --u-white:#FFFFFF;
+  --u-silver:#D7E0F5;
+  --u-meta:#A8B4D2;
+  --u-dim:#7E8BAE;
+  --u-navy:#06133C;
+  --u-navy2:#091A50;
+  --u-panel:#0B1D59;
+  --u-cyan:#6ABDF4;
+  --u-blue:#557DE8;
+  --u-purple:#B464F1;
+  --u-line:rgba(205,221,255,.105);
+  --u-line2:rgba(205,221,255,.17);
+}
+
+/* ── PAGE / BRAND ATMOSPHERE ───────────────────────────────────── */
+html{background:#02091F!important}
 body{
-  background:linear-gradient(180deg,#071542 0%,#041033 48%,#02091F 100%)!important;
-  color:#fff!important;
   position:relative!important;
+  background:linear-gradient(180deg,#071644 0%,#041033 45%,#02091F 100%)!important;
+  color:var(--u-silver)!important;
 }
 body::before{
   content:""!important;
@@ -19,261 +32,323 @@ body::before{
   pointer-events:none!important;
   z-index:0!important;
   background:
-    radial-gradient(72rem 34rem at 98% -5%,rgba(121,190,255,.12),transparent 58%),
-    radial-gradient(56rem 26rem at 96% 18%,rgba(180,100,241,.085),transparent 63%),
-    linear-gradient(145deg,rgba(231,239,255,.018),transparent 36%)!important;
+    radial-gradient(66rem 28rem at 96% -4%,rgba(106,189,244,.095),transparent 62%),
+    radial-gradient(50rem 24rem at 94% 14%,rgba(180,100,241,.045),transparent 65%),
+    linear-gradient(145deg,rgba(232,239,255,.014),transparent 36%)!important;
 }
+/* very faint silver starball-inspired linework, used as atmosphere rather than illustration */
 body::after{
   content:""!important;
   position:fixed!important;
-  right:-7vw!important;
-  bottom:-8vh!important;
-  width:min(74vw,1050px)!important;
-  height:min(76vh,760px)!important;
+  right:-18vw!important;
+  top:13vh!important;
+  width:min(78vw,1040px)!important;
+  aspect-ratio:1!important;
   pointer-events:none!important;
   z-index:0!important;
-  opacity:.115!important;
-  background:linear-gradient(135deg,
-    rgba(235,242,255,.95) 0%,
-    rgba(182,205,255,.48) 32%,
-    rgba(106,189,244,.30) 55%,
-    rgba(180,100,241,.42) 82%,
-    transparent 100%)!important;
-  clip-path:polygon(7% 25%,94% 0,100% 10%,47% 56%,91% 100%,74% 100%,20% 65%,35% 53%,0 39%)!important;
-  filter:blur(.35px)!important;
+  border-radius:50%!important;
+  opacity:.062!important;
+  background:
+    repeating-conic-gradient(from 7deg,
+      rgba(231,238,255,.95) 0deg .55deg,
+      transparent .8deg 29deg)!important;
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 35%,#000 35.5% 36.2%,transparent 36.8% 49%,#000 49.5% 50.2%,transparent 50.8% 64%,#000 64.5% 65.1%,transparent 65.7%);
+  mask:radial-gradient(circle at 50% 50%,transparent 0 35%,#000 35.5% 36.2%,transparent 36.8% 49%,#000 49.5% 50.2%,transparent 50.8% 64%,#000 64.5% 65.1%,transparent 65.7%);
 }
 .wrap{position:relative!important;z-index:1!important}
+::selection{background:rgba(106,189,244,.30)!important;color:#fff!important}
 
-/* ─────────────────────────────────────────────────────────────
-   ALL TYPE WHITE
-   ───────────────────────────────────────────────────────────── */
-body,
-body button,
-body input,
-body select,
-body textarea,
-body label,
-body small,
-body b,
-body strong,
-body span,
-body p,
-body h1,
-body h2,
-body h3,
-body h4,
-body td,
-body th,
-body a,
-body li{
-  color:#fff!important;
-}
-input::placeholder,textarea::placeholder{color:rgba(255,255,255,.58)!important}
+/* ── TYPOGRAPHIC HIERARCHY ─────────────────────────────────────── */
+body{color:var(--u-silver)!important}
+h1,h2,h3,h4,.side .nm,.ucl-next-team,.ucl-tie-team .name,.lb-row .who2 b,.bt-row .game b,.bt-card .pick,.bt-leg .pick{color:var(--u-white)!important}
+.prose,.rule p,.fz-text,.bt-hero p,.bt-sub,.ucl-key span{color:var(--u-silver)!important}
+small,.mc-top .t,.foot-note,.ucl-card-h b,.ucl-stat small,.ucl-next-mid,.ucl-next-mid b,.panel-h small,.bt-card .meta,.bt-row .game small,.bt-hero p,.bt-model b,.ucl-tie-meta,.ucl-br-title span,.prog small,.dday span,.ubar .idn small,.ubar .tot small{color:var(--u-meta)!important}
+.empty,.bt-empty,.hint,.color-note,.fz-empty,.fz-note{color:var(--u-dim)!important}
+th{color:#AEBBDD!important}
+input::placeholder,textarea::placeholder{color:rgba(215,224,245,.48)!important}
 
-/* remove information footer and Road to Final module everywhere */
+/* Road module and old info footer remain removed. */
 .foot,.ucl-road{display:none!important}
 
-/* ─────────────────────────────────────────────────────────────
-   SURFACES — dark navy, subtle silver border, purple only as shadow
-   ───────────────────────────────────────────────────────────── */
+/* ── GLOBAL MATERIALS: FEWER BOXES, QUIETER SHADOWS ───────────── */
 .panel,.mc,.sheet,.ubar,.sb-card,.ucl-card,.fz-post,.bt-card,.bt-model{
-  border-color:rgba(205,221,255,.12)!important;
+  border-color:var(--u-line)!important;
+}
+.panel,.mc,.sheet,.ucl-card{
   box-shadow:
-    0 18px 42px -30px rgba(0,0,0,.92),
-    0 0 0 1px rgba(255,255,255,.018) inset,
-    0 10px 34px -30px rgba(180,100,241,.30)!important;
+    0 18px 45px -34px rgba(0,0,0,.95),
+    0 10px 34px -32px rgba(180,100,241,.16)!important;
 }
 .panel,.mc,.ucl-card{
-  background:linear-gradient(150deg,rgba(14,31,89,.97),rgba(7,20,62,.99))!important;
+  background:linear-gradient(150deg,rgba(13,31,89,.97),rgba(6,20,62,.99))!important;
 }
 .panel-h,.mc-top,.ucl-card-h{
-  background:rgba(255,255,255,.035)!important;
-  border-bottom-color:rgba(205,221,255,.10)!important;
+  background:transparent!important;
+  border-bottom-color:rgba(205,221,255,.075)!important;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   HOME ACTIONS — SAME COLOR, SMALLER, MORE SPACE BETWEEN
-   ───────────────────────────────────────────────────────────── */
+/* ── NAV: QUIET UNTIL ACTIVE ───────────────────────────────────── */
+.nav{background:rgba(2,9,31,.58)!important;border-color:rgba(205,221,255,.09)!important}
+.nav button{color:#CBD5EE!important}
+.nav button:hover{background:rgba(106,189,244,.055)!important;color:#fff!important}
+.nav button.on{
+  background:rgba(106,189,244,.095)!important;
+  color:#fff!important;
+  box-shadow:inset 0 -2px var(--u-cyan)!important;
+}
+
+/* ── HOME: ONE REAL CARD + ONE FLAT CAMPAIGN SUMMARY ─────────── */
+.ucl-dashboard-grid{gap:26px!important;margin-bottom:28px!important;align-items:stretch!important}
+.ucl-dashboard-grid>.ucl-card:first-child{
+  border-top:2px solid rgba(106,189,244,.68)!important;
+}
+.ucl-dashboard-grid>.ucl-card:nth-child(2){
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid rgba(180,100,241,.26)!important;
+  border-bottom:1px solid rgba(205,221,255,.085)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.ucl-dashboard-grid>.ucl-card:nth-child(2) .ucl-card-h{
+  padding-left:0!important;
+  padding-right:0!important;
+  border-bottom:0!important;
+}
+.ucl-dashboard-grid>.ucl-card:nth-child(2) .ucl-stat-row{padding-left:0!important;padding-right:0!important}
+.ucl-stat strong{color:#fff!important}
+.ucl-card-h span{color:#fff!important}
+.ucl-next-row{border-top-color:rgba(205,221,255,.075)!important}
+
+/* Same cyan action language; smaller with deliberate breathing room. */
 .ucl-cta-row{
   display:flex!important;
   justify-content:flex-start!important;
-  gap:22px!important;
-  padding:12px 16px 15px!important;
+  gap:26px!important;
+  padding:14px 16px 16px!important;
 }
-.ucl-cta,
-.ucl-cta.primary,
-.ucl-cta:not(.primary){
+.ucl-cta,.ucl-cta.primary,.ucl-cta:not(.primary){
   flex:0 0 auto!important;
-  width:178px!important;
-  min-width:178px!important;
-  min-height:36px!important;
-  padding:0 13px!important;
+  width:168px!important;
+  min-width:168px!important;
+  min-height:37px!important;
+  padding:0 14px!important;
   border-radius:9px!important;
-  background:linear-gradient(180deg,rgba(106,189,244,.24),rgba(106,189,244,.11))!important;
-  border:1px solid rgba(106,189,244,.36)!important;
+  background:rgba(106,189,244,.105)!important;
+  border:1px solid rgba(106,189,244,.34)!important;
   color:#fff!important;
   font-size:11px!important;
   font-weight:800!important;
-  letter-spacing:.01em!important;
-  box-shadow:
-    0 8px 22px -18px rgba(106,189,244,.55),
-    0 8px 25px -23px rgba(180,100,241,.65)!important;
+  letter-spacing:.015em!important;
+  box-shadow:0 9px 25px -22px rgba(180,100,241,.65)!important;
 }
-.ucl-cta:hover,
-.ucl-cta.primary:hover,
-.ucl-cta:not(.primary):hover{
-  background:linear-gradient(180deg,rgba(106,189,244,.31),rgba(106,189,244,.15))!important;
-  border-color:rgba(139,208,249,.60)!important;
+.ucl-cta:hover,.ucl-cta.primary:hover,.ucl-cta:not(.primary):hover{
+  background:rgba(106,189,244,.18)!important;
+  border-color:rgba(133,204,247,.58)!important;
 }
-.ucl-dashboard-grid>.ucl-card:first-child{border-top:2px solid rgba(106,189,244,.72)!important}
-.ucl-dashboard-grid>.ucl-card:nth-child(2){border-top:2px solid rgba(180,100,241,.42)!important}
 
-/* ─────────────────────────────────────────────────────────────
-   FIXTURE NAVIGATION BUTTONS — OBVIOUS CYAN / PURPLE CONTROLS
-   ───────────────────────────────────────────────────────────── */
-.pager button.arw,
-.pager .now,
-.pager select{
-  color:#fff!important;
-  border:1px solid rgba(205,221,255,.16)!important;
-}
+/* ── FIXTURES: SCORE ENTRY IS THE HERO INTERACTION ───────────── */
+.pager button.arw,.pager .now,.pager select{color:#fff!important}
 .pager button.arw{
-  background:linear-gradient(180deg,rgba(180,100,241,.20),rgba(180,100,241,.10))!important;
-  border-color:rgba(180,100,241,.35)!important;
+  background:rgba(180,100,241,.075)!important;
+  border-color:rgba(180,100,241,.25)!important;
 }
 .pager button.arw:hover:not(:disabled){
-  background:linear-gradient(180deg,rgba(180,100,241,.30),rgba(180,100,241,.15))!important;
-  border-color:rgba(210,147,250,.70)!important;
+  background:rgba(180,100,241,.14)!important;
+  border-color:rgba(203,139,247,.48)!important;
 }
 .pager .now{
-  background:linear-gradient(180deg,rgba(106,189,244,.27),rgba(106,189,244,.12))!important;
-  border-color:rgba(106,189,244,.48)!important;
+  background:rgba(106,189,244,.13)!important;
+  border-color:rgba(106,189,244,.42)!important;
+  color:#fff!important;
   font-weight:800!important;
 }
 .pager select{
-  background:rgba(13,29,85,.96)!important;
-  border-color:rgba(106,189,244,.22)!important;
+  background:rgba(10,27,80,.92)!important;
+  border-color:rgba(205,221,255,.13)!important;
 }
-.prog .bar{background:rgba(255,255,255,.08)!important}
-.prog .bar i{background:linear-gradient(90deg,#6ABDF4,#86A9FF)!important}
-
-/* score entry itself remains highly legible */
+.prog .bar{background:rgba(255,255,255,.07)!important}
+.prog .bar i{background:linear-gradient(90deg,var(--u-blue),var(--u-cyan))!important}
+.mc{border-color:rgba(205,221,255,.095)!important}
+.mc:hover{border-color:rgba(106,189,244,.20)!important;box-shadow:0 20px 48px -35px rgba(0,0,0,.96),0 12px 34px -32px rgba(180,100,241,.26)!important}
+.mid{background:rgba(2,10,37,.42)!important;border-color:rgba(106,189,244,.12)!important}
 .sin{
-  background:rgba(2,9,34,.82)!important;
-  border-color:rgba(205,221,255,.20)!important;
+  background:#030C31!important;
+  border-color:rgba(106,189,244,.26)!important;
   color:#fff!important;
 }
-.sin:hover{border-color:rgba(106,189,244,.38)!important}
+.sin:hover{border-color:rgba(106,189,244,.48)!important}
 .sin:focus,.sin.has{
-  border-color:#6ABDF4!important;
+  border-color:var(--u-cyan)!important;
   color:#fff!important;
-  background:rgba(106,189,244,.055)!important;
-  box-shadow:0 0 0 3px rgba(106,189,244,.15),0 10px 26px -22px rgba(180,100,241,.7)!important;
+  background:rgba(106,189,244,.06)!important;
+  box-shadow:0 0 0 3px rgba(106,189,244,.14),0 12px 28px -23px rgba(180,100,241,.55)!important;
 }
-.tag.op,.tag.ft{background:rgba(106,189,244,.16)!important;color:#fff!important}
-.tag.lv,.tag.soon,.tag.warm{background:rgba(180,100,241,.16)!important;color:#fff!important}
+.tag.op,.tag.ft{background:rgba(106,189,244,.13)!important;color:#EAF7FF!important}
+.tag.lv,.tag.soon,.tag.warm{background:rgba(180,100,241,.11)!important;color:#F0D9FB!important}
 
-/* ─────────────────────────────────────────────────────────────
-   BETABLE — READABLE TYPOGRAPHY
-   ───────────────────────────────────────────────────────────── */
-.bt-hero{padding:20px 18px 17px!important}
-.bt-hero h2{font-size:34px!important;line-height:1!important}
-.bt-hero p{font-size:13px!important;line-height:1.58!important}
-.bt-model{margin:12px 14px!important;padding:12px 13px!important}
-.bt-model b{font-size:11.5px!important;line-height:1.4!important}
-.bt-good,.bt-risk{padding:12px 14px!important}
-.bt-good b,.bt-risk b{font-size:13px!important;letter-spacing:.035em!important}
-.bt-sub{font-size:12px!important;line-height:1.55!important}
-.bt-leg{padding:12px 14px!important;gap:11px!important}
-.bt-leg .num{width:29px!important;height:29px!important;font-size:11px!important}
-.bt-leg .game{font-size:12px!important;line-height:1.45!important}
-.bt-leg .pick{font-size:15px!important;line-height:1.25!important}
-.bt-conf{font-size:12.5px!important}
-.bt-grid{gap:10px!important;padding:12px 14px 15px!important}
-.bt-card{padding:14px!important}
-.bt-card .game{font-size:12px!important;line-height:1.4!important}
-.bt-card .pick{font-size:15px!important;line-height:1.25!important}
-.bt-card .meta{font-size:11px!important;line-height:1.45!important}
-.bt-row{padding:11px 14px!important;gap:11px!important}
-.bt-row .game b{font-size:13px!important;line-height:1.35!important}
-.bt-row .game small{font-size:10.5px!important;line-height:1.45!important}
-.bt-gate{padding:4px 8px!important;border-radius:7px!important;font-size:9px!important}
-.bt-ctx-row{padding:13px 14px!important}
-.bt-ctx-game{font-size:13px!important}
-.bt-ctx-controls select,.bt-ctx-controls input{
-  height:38px!important;
-  font-size:13px!important;
-  color:#fff!important;
-}
-.bt-good{background:rgba(106,189,244,.075)!important;border-color:rgba(106,189,244,.23)!important}
-.bt-risk{background:rgba(180,100,241,.075)!important;border-color:rgba(180,100,241,.23)!important}
-.bt-card.hot{border-color:rgba(106,189,244,.24)!important;box-shadow:0 12px 30px -26px rgba(180,100,241,.65)!important}
-
-/* ─────────────────────────────────────────────────────────────
-   COMPETITION TABLE — DISTINGUISHABLE WITHOUT COLORED TEXT
-   ───────────────────────────────────────────────────────────── */
-.ucl-table thead th{background:#0E205F!important;color:#fff!important}
+/* ── COMPETITION: TABLE FIRST; BRACKET AS CONTENT, NOT A BOX ─── */
+#view>.panel:has(.ucl-table-wrap){box-shadow:none!important;border-color:rgba(205,221,255,.09)!important}
+#view>.panel:has(.ucl-table-wrap)>.panel-h{padding-top:18px!important;padding-bottom:14px!important}
+.ucl-table thead th{background:rgba(255,255,255,.025)!important;color:#AEBBDD!important}
 .ucl-zone-head td{
-  color:#fff!important;
+  color:#F5F8FF!important;
   font-size:11.5px!important;
-  letter-spacing:.045em!important;
+  letter-spacing:.035em!important;
   padding-top:11px!important;
   padding-bottom:11px!important;
 }
-.ucl-zone-head.direct td{
-  background:rgba(106,189,244,.15)!important;
-  box-shadow:inset 4px 0 #6ABDF4!important;
-}
-.ucl-zone-head.playoff td{
-  background:rgba(83,122,235,.15)!important;
-  box-shadow:inset 4px 0 #5E86F4!important;
-}
-.ucl-zone-head.out td{
-  background:rgba(180,100,241,.115)!important;
-  box-shadow:inset 4px 0 rgba(180,100,241,.76)!important;
-}
-.ucl-row-direct{background:rgba(106,189,244,.024)!important;box-shadow:inset 3px 0 #6ABDF4!important}
-.ucl-row-playoff{background:rgba(83,122,235,.020)!important;box-shadow:inset 3px 0 #5E86F4!important}
-.ucl-row-out{background:rgba(180,100,241,.016)!important;box-shadow:inset 3px 0 rgba(180,100,241,.74)!important;opacity:.84!important}
-.ucl-key{
-  gap:10px!important;
-  padding:10px!important;
-  background:rgba(3,10,37,.42)!important;
-}
+.ucl-zone-head.direct td{background:rgba(106,189,244,.105)!important;box-shadow:inset 4px 0 var(--u-cyan)!important}
+.ucl-zone-head.playoff td{background:rgba(85,125,232,.095)!important;box-shadow:inset 4px 0 var(--u-blue)!important}
+.ucl-zone-head.out td{background:rgba(180,100,241,.065)!important;box-shadow:inset 4px 0 rgba(180,100,241,.58)!important}
+.ucl-row-direct{background:rgba(106,189,244,.018)!important;box-shadow:inset 3px 0 rgba(106,189,244,.72)!important}
+.ucl-row-playoff{background:rgba(85,125,232,.014)!important;box-shadow:inset 3px 0 rgba(85,125,232,.68)!important}
+.ucl-row-out{background:transparent!important;box-shadow:inset 3px 0 rgba(180,100,241,.48)!important;opacity:.79!important}
+.ucl-key{gap:12px!important;padding:12px!important;background:rgba(2,9,31,.28)!important}
 .ucl-key span{
   padding:10px 12px!important;
-  color:#fff!important;
-  border:1px solid rgba(205,221,255,.12)!important;
-  border-radius:9px!important;
-  background:rgba(10,25,75,.88)!important;
+  border:0!important;
+  border-top:2px solid rgba(205,221,255,.13)!important;
+  border-radius:0!important;
+  background:transparent!important;
 }
-.ucl-key span:nth-child(1){border-top:3px solid #6ABDF4!important}
-.ucl-key span:nth-child(2){border-top:3px solid #5E86F4!important}
-.ucl-key span:nth-child(3){border-top:3px solid rgba(180,100,241,.76)!important}
+.ucl-key span:nth-child(1){border-top-color:var(--u-cyan)!important}
+.ucl-key span:nth-child(2){border-top-color:var(--u-blue)!important}
+.ucl-key span:nth-child(3){border-top-color:rgba(180,100,241,.56)!important}
+.ucl-key b{color:#fff!important}
 
-/* Knockout chart keeps purple only as late-stage accent/shadow */
-.ucl-br-col:nth-child(1) .ucl-tie{border-left:3px solid rgba(106,189,244,.70)!important}
-.ucl-br-col:nth-child(2) .ucl-tie,.ucl-br-col:nth-child(3) .ucl-tie{border-left:3px solid rgba(94,134,244,.70)!important}
-.ucl-br-col:nth-child(4) .ucl-tie,.ucl-br-col:nth-child(5) .ucl-tie{border-left:3px solid rgba(180,100,241,.58)!important}
-.ucl-br-final .ucl-tie{box-shadow:0 10px 28px -24px rgba(180,100,241,.75)!important}
-
-/* generic nav remains white; active uses cyan, not purple */
-.nav button{color:#fff!important}
-.nav button:hover{background:rgba(106,189,244,.08)!important;color:#fff!important}
-.nav button.on{
-  background:linear-gradient(180deg,rgba(106,189,244,.20),rgba(106,189,244,.10))!important;
-  color:#fff!important;
-  box-shadow:inset 0 -2px #6ABDF4!important;
+/* Knockout stage loses the large outer card; ties themselves remain scannable. */
+#view>.panel:has(.ucl-bracket){
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid rgba(205,221,255,.09)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  margin-top:34px!important;
+  padding-top:8px!important;
+  overflow:visible!important;
 }
+#view>.panel:has(.ucl-bracket)>.panel-h{padding-left:0!important;padding-right:0!important;border-bottom:0!important}
+.ucl-bracket{padding-left:0!important;padding-right:0!important}
+.ucl-tie{
+  background:rgba(8,24,71,.66)!important;
+  border-color:rgba(205,221,255,.09)!important;
+  box-shadow:none!important;
+}
+.ucl-br-col:nth-child(1) .ucl-tie{border-left:2px solid rgba(106,189,244,.58)!important}
+.ucl-br-col:nth-child(2) .ucl-tie,.ucl-br-col:nth-child(3) .ucl-tie{border-left:2px solid rgba(85,125,232,.55)!important}
+.ucl-br-col:nth-child(4) .ucl-tie,.ucl-br-col:nth-child(5) .ucl-tie{border-left:2px solid rgba(180,100,241,.40)!important}
+.ucl-br-final .ucl-tie{box-shadow:0 13px 32px -29px rgba(180,100,241,.65)!important}
+.ucl-br-title b{color:#fff!important}
+
+/* ── BETABLE: DECISION PRODUCT, NOT DIAGNOSTIC DASHBOARD ─────── */
+#view>.panel:has(.bt-hero){
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.bt-hero{
+  background:transparent!important;
+  border:0!important;
+  border-left:2px solid var(--u-cyan)!important;
+  padding:4px 0 4px 16px!important;
+  margin:8px 0 12px!important;
+}
+.bt-hero h2{font-size:35px!important;line-height:1!important;color:#fff!important}
+.bt-hero p{margin-top:6px!important;font-size:13px!important;line-height:1.5!important;color:var(--u-meta)!important}
+.bt-model{
+  display:inline-flex!important;
+  width:auto!important;
+  margin:6px 0 20px!important;
+  padding:7px 10px!important;
+  background:rgba(106,189,244,.055)!important;
+  border:1px solid rgba(106,189,244,.13)!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+.bt-model b{font-size:11px!important;color:var(--u-meta)!important;font-weight:600!important}
+#view>.panel:has(.bt-hero)>.panel-h{
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid rgba(205,221,255,.085)!important;
+  padding:20px 0 9px!important;
+}
+#view>.panel:has(.bt-hero)>.panel-h h3{font-size:18px!important;color:#fff!important}
+#view>.panel:has(.bt-hero)>.panel-h small{font-size:11px!important;color:var(--u-meta)!important}
+.bt-good,.bt-risk{
+  margin:0 0 8px!important;
+  padding:9px 11px!important;
+  border-radius:8px!important;
+}
+.bt-good{background:rgba(106,189,244,.07)!important;border-color:rgba(106,189,244,.18)!important}
+.bt-risk{background:rgba(180,100,241,.045)!important;border-color:rgba(180,100,241,.14)!important}
+.bt-good b,.bt-risk b{font-size:13px!important;color:#fff!important}
+.bt-sub{font-size:12px!important;color:var(--u-meta)!important}
+.bt-combo{background:transparent!important}
+.bt-leg{
+  padding:13px 2px!important;
+  border-bottom:1px solid rgba(205,221,255,.075)!important;
+  gap:12px!important;
+}
+.bt-leg .num{width:28px!important;height:28px!important;font-size:11px!important}
+.bt-leg .game{font-size:12px!important;color:var(--u-silver)!important}
+.bt-leg .pick{font-size:15px!important;color:#fff!important}
+.bt-conf{font-size:12.5px!important;color:var(--u-silver)!important}
+.bt-grid{gap:14px!important;padding:2px 0 8px!important}
+.bt-card{
+  padding:15px!important;
+  background:rgba(9,27,80,.60)!important;
+  border-color:rgba(106,189,244,.14)!important;
+  box-shadow:none!important;
+}
+.bt-card.hot{border-color:rgba(106,189,244,.27)!important;box-shadow:0 14px 30px -28px rgba(180,100,241,.62)!important}
+.bt-card .game{font-size:12px!important;color:var(--u-silver)!important}
+.bt-card .pick{font-size:15px!important;color:#fff!important}
+.bt-card .meta{font-size:11px!important;color:var(--u-meta)!important}
+/* Match scan is intentionally quieter than recommendations. */
+.bt-list{border-top:0!important;background:transparent!important}
+.bt-row{
+  padding:11px 2px!important;
+  gap:12px!important;
+  background:transparent!important;
+  border-bottom:1px solid rgba(205,221,255,.065)!important;
+}
+.bt-row .game b{font-size:13px!important;color:#F7F9FF!important}
+.bt-row .game small{font-size:10.5px!important;color:var(--u-dim)!important}
+.bt-gate{padding:4px 8px!important;border-radius:7px!important;font-size:9px!important}
+.bt-gate.ok{background:rgba(106,189,244,.095)!important;color:#EAF7FF!important}
+.bt-gate.no{background:rgba(255,255,255,.035)!important;color:var(--u-meta)!important}
+.bt-context{background:transparent!important}
+.bt-ctx-row{padding:14px 0!important;border-bottom:1px solid rgba(205,221,255,.075)!important}
+.bt-ctx-game{font-size:13px!important;color:#fff!important}
+.bt-ctx-controls label{color:var(--u-meta)!important}
+.bt-ctx-controls select,.bt-ctx-controls input{height:38px!important;font-size:13px!important;color:#fff!important}
+
+/* ── SCOREBOARD / RULES / FANZONE: REINFORCE TEXT LEVELS ─────── */
+.lb-row .rk{color:var(--u-meta)!important}
+.lb-row.top .rk{color:var(--u-cyan)!important}
+.lb-row .who2 small{color:var(--u-meta)!important}
+.rule .bd p{color:var(--u-silver)!important}
+.fz-post-top,.fz-post-top span,.fz-time{color:var(--u-meta)!important}
 
 @media(max-width:700px){
-  .ucl-cta-row{gap:10px!important}
+  body::after{right:-46vw!important;top:22vh!important;width:145vw!important;opacity:.045!important}
+  .ucl-dashboard-grid{gap:18px!important}
+  .ucl-cta-row{gap:12px!important}
   .ucl-cta,.ucl-cta.primary,.ucl-cta:not(.primary){
     width:auto!important;
     min-width:0!important;
     flex:1 1 0!important;
-    min-height:38px!important;
+    min-height:39px!important;
     font-size:11px!important;
   }
+  .bt-hero h2{font-size:31px!important}
   .bt-hero p,.bt-sub,.bt-card .game,.bt-card .meta,.bt-row .game b,.bt-row .game small,.bt-ctx-game{font-size:12px!important}
+  #view>.panel:has(.ucl-bracket){margin-top:25px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
 }
