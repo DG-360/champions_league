@@ -1,0 +1,33 @@
+name: Remove competition intro
+
+on:
+  push:
+    paths:
+      - 'assets/.remove-competition-intro'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Remove competition explainer box
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('assets/ucl-experience.js')
+          s = p.read_text(encoding='utf-8')
+          old = '''  function viewCompetitionUCL(){\n    return '<section class="ucl-card ucl-comp-intro"><span class="ey">Competition</span><h2>One table. Then every round becomes a knockout night.</h2>'\n      + '<p>The 36-club league phase determines who goes straight to the Round of 16, who enters the play-offs, and whose European campaign ends. The knockout chart below fills itself as the competition progresses.</p></section>'\n      + uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel();\n  }'''
+          new = '''  function viewCompetitionUCL(){\n    return uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel();\n  }'''
+          if old not in s:
+              raise SystemExit('Target competition intro block not found')
+          p.write_text(s.replace(old,new,1), encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/ucl-experience.js
+          git commit -m 'Remove competition intro box'
+          git push
