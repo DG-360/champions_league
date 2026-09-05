@@ -1,0 +1,36 @@
+name: Apply UCL v2 theme
+
+on:
+  push:
+    paths:
+      - 'assets/ucl-theme-v2-overrides.css'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Merge UCL v2 and bump cache version
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          theme = Path('assets/ucl-theme.css')
+          override = Path('assets/ucl-theme-v2-overrides.css').read_text(encoding='utf-8')
+          text = theme.read_text(encoding='utf-8')
+          marker = '/* UCL NIGHT V2 FINAL OVERRIDES */'
+          if marker not in text:
+              theme.write_text(text.rstrip() + '\n\n' + override.rstrip() + '\n', encoding='utf-8')
+          idx = Path('index.html')
+          html = idx.read_text(encoding='utf-8')
+          html = html.replace('assets/ucl-theme.css?v=1', 'assets/ucl-theme.css?v=2')
+          idx.write_text(html, encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/ucl-theme.css index.html
+          git commit -m 'Apply UCL midnight v2 theme' || exit 0
+          git push
