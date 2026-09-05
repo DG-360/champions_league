@@ -140,7 +140,7 @@ def main():
     root=Path(args.repo_root)
     rows=load_history(root/"model_cache")
     X,y,state=build_dataset(rows)
-    model=Pipeline([("scale",StandardScaler()),("lr",LogisticRegression(max_iter=1500,C=.7,multi_class="auto"))])
+    model=Pipeline([("scale",StandardScaler()),("lr",LogisticRegression(max_iter=1500,C=.7))])
     model.fit(X,y)
 
     feed=http_json(f"{db}/{ROOT}.json") or {}
