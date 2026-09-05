@@ -2,14 +2,13 @@ name: Apply UCL tonal hierarchy v12
 
 on:
   push:
-    paths:
-      - 'assets/.apply-tonal-v12'
 
 permissions:
   contents: write
 
 jobs:
   apply:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,97 +37,37 @@ jobs:
   --u-raised-2:#123071;
 }
 
-/* Material contrast: make the page decisively darker than the cards. */
 html{background:var(--u-canvas)!important}
-body{
-  background:linear-gradient(180deg,#020B25 0%,var(--u-canvas-2) 42%,var(--u-canvas) 100%)!important;
-}
-body::before{
-  background:
-    radial-gradient(70rem 30rem at 98% -7%,rgba(106,189,244,.075),transparent 63%),
-    radial-gradient(50rem 25rem at 96% 15%,rgba(180,100,241,.032),transparent 66%)!important;
-}
+body{background:linear-gradient(180deg,#020B25 0%,var(--u-canvas-2) 42%,var(--u-canvas) 100%)!important}
+body::before{background:radial-gradient(70rem 30rem at 98% -7%,rgba(106,189,244,.075),transparent 63%),radial-gradient(50rem 25rem at 96% 15%,rgba(180,100,241,.032),transparent 66%)!important}
 body::after{opacity:.052!important}
 
-/* Primary surfaces: clearly distinct from canvas without becoming bright blue blocks. */
-.panel,.mc,.ucl-card,.sheet{
-  background:linear-gradient(150deg,var(--u-card-2),var(--u-card) 78%)!important;
-  border-color:rgba(205,221,255,.115)!important;
-}
-.ubar,.sb-card{
-  background:linear-gradient(145deg,#0B1D56,#071642)!important;
-}
+.panel,.mc,.ucl-card,.sheet{background:linear-gradient(150deg,var(--u-card-2),var(--u-card) 78%)!important;border-color:rgba(205,221,255,.115)!important}
+.ubar,.sb-card{background:linear-gradient(145deg,#0B1D56,#071642)!important}
 .nav{background:rgba(1,7,26,.78)!important}
 
-/* Interactive/raised layer: intentionally one tonal step brighter than cards. */
-.mid{
-  background:linear-gradient(180deg,rgba(16,40,102,.92),rgba(12,31,83,.92))!important;
-  border-color:rgba(106,189,244,.22)!important;
-}
-.sin{
-  background:linear-gradient(180deg,var(--u-raised-2),var(--u-raised))!important;
-  border-color:rgba(106,189,244,.42)!important;
-  color:#fff!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
-}
-.sin:hover{
-  border-color:rgba(106,189,244,.68)!important;
-  background:linear-gradient(180deg,#16367A,#112B6C)!important;
-}
-.sin:focus,.sin.has{
-  background:linear-gradient(180deg,#173C85,#123071)!important;
-  border-color:#6ABDF4!important;
-  box-shadow:0 0 0 3px rgba(106,189,244,.16),0 13px 30px -24px rgba(180,100,241,.48)!important;
-}
+.mid{background:linear-gradient(180deg,rgba(16,40,102,.92),rgba(12,31,83,.92))!important;border-color:rgba(106,189,244,.22)!important}
+.sin{background:linear-gradient(180deg,var(--u-raised-2),var(--u-raised))!important;border-color:rgba(106,189,244,.42)!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important}
+.sin:hover{border-color:rgba(106,189,244,.68)!important;background:linear-gradient(180deg,#16367A,#112B6C)!important}
+.sin:focus,.sin.has{background:linear-gradient(180deg,#173C85,#123071)!important;border-color:#6ABDF4!important;box-shadow:0 0 0 3px rgba(106,189,244,.16),0 13px 30px -24px rgba(180,100,241,.48)!important}
 
-/* Current round is cyan; arrows remain restrained atmospheric purple. */
-.pager .now{
-  background:linear-gradient(180deg,rgba(106,189,244,.23),rgba(106,189,244,.11))!important;
-  border-color:rgba(106,189,244,.56)!important;
-}
-.pager button.arw{
-  background:rgba(180,100,241,.055)!important;
-  border-color:rgba(180,100,241,.19)!important;
-}
+.pager .now{background:linear-gradient(180deg,rgba(106,189,244,.23),rgba(106,189,244,.11))!important;border-color:rgba(106,189,244,.56)!important}
+.pager button.arw{background:rgba(180,100,241,.055)!important;border-color:rgba(180,100,241,.19)!important}
+.ucl-cta,.ucl-cta.primary,.ucl-cta:not(.primary){background:linear-gradient(180deg,rgba(106,189,244,.17),rgba(106,189,244,.08))!important;border-color:rgba(106,189,244,.40)!important}
 
-/* Home actions sit on a slightly raised surface but remain cyan-only. */
-.ucl-cta,.ucl-cta.primary,.ucl-cta:not(.primary){
-  background:linear-gradient(180deg,rgba(106,189,244,.17),rgba(106,189,244,.08))!important;
-  border-color:rgba(106,189,244,.40)!important;
-}
-
-/* Never fade standings content. Dim the material, not the text/crest. */
 .ucl-row-out{opacity:1!important;background:rgba(180,100,241,.010)!important}
-.ucl-row-out td,
-.ucl-row-out .pos,
-.ucl-row-out .tm-cell,
-.ucl-row-out .tm-cell span{opacity:1!important}
-
-/* Qualification rows retain full readability while zones remain visually distinct. */
+.ucl-row-out td,.ucl-row-out .pos,.ucl-row-out .tm-cell,.ucl-row-out .tm-cell span{opacity:1!important}
 .ucl-row-direct,.ucl-row-playoff,.ucl-row-out{color:var(--u-silver)!important}
 .ucl-zone-head.out td{background:rgba(180,100,241,.048)!important}
 
-/* Betable: recommendation surfaces should read above the base page. */
-.bt-card{
-  background:linear-gradient(150deg,rgba(16,40,102,.62),rgba(8,25,75,.72))!important;
-  border-color:rgba(106,189,244,.16)!important;
-}
-.bt-card.hot{
-  background:linear-gradient(150deg,rgba(18,48,113,.78),rgba(9,29,80,.82))!important;
-  border-color:rgba(106,189,244,.32)!important;
-}
+.bt-card{background:linear-gradient(150deg,rgba(16,40,102,.62),rgba(8,25,75,.72))!important;border-color:rgba(106,189,244,.16)!important}
+.bt-card.hot{background:linear-gradient(150deg,rgba(18,48,113,.78),rgba(9,29,80,.82))!important;border-color:rgba(106,189,244,.32)!important}
 .bt-gate.ok{background:rgba(106,189,244,.12)!important}
 .bt-gate.no{background:rgba(255,255,255,.028)!important}
 
-/* Keep purple as reflected light, never a foreground block. */
-.panel,.mc,.sheet,.ucl-card{
-  box-shadow:0 18px 45px -34px rgba(0,0,0,.96),0 12px 36px -34px rgba(180,100,241,.13)!important;
-}
+.panel,.mc,.sheet,.ucl-card{box-shadow:0 18px 45px -34px rgba(0,0,0,.96),0 12px 36px -34px rgba(180,100,241,.13)!important}
 
-@media(max-width:700px){
-  body::after{opacity:.036!important}
-  .mid{background:linear-gradient(180deg,rgba(16,40,102,.94),rgba(10,28,76,.94))!important}
-}
+@media(max-width:700px){body::after{opacity:.036!important}.mid{background:linear-gradient(180deg,rgba(16,40,102,.94),rgba(10,28,76,.94))!important}}
 '''
           if marker in s:
               s = s.split(marker,1)[0].rstrip() + '\n' + block
