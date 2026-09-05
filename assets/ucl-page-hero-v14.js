@@ -12,11 +12,13 @@
     ru: "Rules"
   };
 
+  const mobileMq = window.matchMedia('(max-width:700px)');
+
   function ensureCss(){
     if(document.querySelector('link[data-ucl-page-hero]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'assets/ucl-page-hero-v14.css?v=1';
+    link.href = 'assets/ucl-page-hero-v14.css?v=2';
     link.dataset.uclPageHero = '1';
     document.head.appendChild(link);
   }
@@ -56,21 +58,29 @@
     return active && PAGE_TITLES[active.dataset.v] ? active.dataset.v : 'home';
   }
 
+  function removeSharedHeroes(app, host){
+    app.querySelectorAll(':scope > .ucl-page-hero').forEach(el => el.remove());
+    host.querySelectorAll(':scope > .ucl-page-hero').forEach(el => el.remove());
+  }
+
   function applyHero(){
     ensureCss();
+    const app = document.getElementById('app');
     const host = document.getElementById('view');
-    if(!host) return;
-    const page = currentPage();
-    const existingShared = host.querySelector(':scope > .ucl-page-hero');
-    if(existingShared) existingShared.remove();
+    if(!app || !host) return;
 
-    if(page === 'home'){
-      const oldHomeHero = host.querySelector(':scope > .ucl-hero');
-      if(oldHomeHero) oldHomeHero.outerHTML = heroHtml('home');
-      else host.insertAdjacentHTML('afterbegin', heroHtml('home'));
+    const page = currentPage();
+    removeSharedHeroes(app, host);
+
+    const legacyHero = host.querySelector(':scope > .ucl-hero');
+    if(legacyHero) legacyHero.remove();
+
+    if(mobileMq.matches){
+      /* Mobile product order: Champions League identity first, then only the
+         signed-in player's profile. The all-player strip is hidden in CSS. */
+      app.insertAdjacentHTML('afterbegin', heroHtml(page));
     } else {
-      const legacyHero = host.querySelector(':scope > .ucl-hero');
-      if(legacyHero) legacyHero.remove();
+      /* Desktop keeps the hero inside the active page content. */
       host.insertAdjacentHTML('afterbegin', heroHtml(page));
     }
   }
@@ -83,6 +93,14 @@
       return out;
     };
   }
+
+  let resizeTimer = 0;
+  function onViewportChange(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(applyHero, 80);
+  }
+  if(typeof mobileMq.addEventListener === 'function') mobileMq.addEventListener('change', onViewportChange);
+  else if(typeof mobileMq.addListener === 'function') mobileMq.addListener(onViewportChange);
 
   ensureCss();
   requestAnimationFrame(applyHero);
