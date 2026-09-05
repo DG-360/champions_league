@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'assets/ucl-theme.css'
+      - '.github/workflows/bump-ucl-v6.yml'
 
 permissions:
   contents: write
