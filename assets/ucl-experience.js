@@ -187,9 +187,7 @@
   }
 
   function viewCompetitionUCL(){
-    return '<section class="ucl-card ucl-comp-intro"><span class="ey">Competition</span><h2>One table. Then every round becomes a knockout night.</h2>'
-      + '<p>The 36-club league phase determines who goes straight to the Round of 16, who enters the play-offs, and whose European campaign ends. The knockout chart below fills itself as the competition progresses.</p></section>'
-      + uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel();
+    return uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel();
   }
 
   function uclBuildChrome(){
