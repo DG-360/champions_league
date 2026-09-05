@@ -1,0 +1,40 @@
+name: Update Champions League Betable model
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '37 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: champions-league-betable-model
+  cancel-in-progress: false
+
+jobs:
+  train-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install model dependencies
+        run: python -m pip install --upgrade numpy scikit-learn
+      - name: Train and publish Champions League probabilities
+        env:
+          FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
+        run: python scripts/bettable_model.py --repo-root . --publish
+      - name: Upload cached historical data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ucl-betable-cache
+          path: model_cache/
+          if-no-files-found: warn
