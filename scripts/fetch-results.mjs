@@ -42,7 +42,17 @@ const BARCA_FALLBACK = [
 
 function say(...args){ console.log("[ucl-sync]", ...args); }
 
+function isBarcelonaIdentity(team){
+  if (!team) return false;
+  if (Number(team.id) === 81) return true;
+  const name = String(team.name || team.shortName || "").toLowerCase();
+  return name === "fc barcelona" || name === "barcelona";
+}
+
 function cleanCode(team){
+  /* Barcelona and Bayern can share an FCB-style abbreviation in provider
+     data. Never let that collapse two clubs into one Firebase team key. */
+  if (isBarcelonaIdentity(team)) return "BAR";
   const tla = String(team?.tla || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (tla.length >= 2 && tla.length <= 5) return tla;
   if (team?.id != null) return "T" + String(team.id).replace(/[^0-9A-Za-z]/g, "");
@@ -106,7 +116,7 @@ function isBarcelonaTeam(team){
   if (Number(team.id) === 81) return true;
   const n = norm(team.name || team.shortName);
   const tla = String(team.tla || "").toUpperCase();
-  return n === "fc barcelona" || n === "barcelona" || tla === "FCB" || tla === "BAR";
+  return n === "fc barcelona" || n === "barcelona" || tla === "BAR";
 }
 function sameTeam(a,b){
   if (!a || !b) return false;
@@ -150,10 +160,6 @@ function findProviderTeam(pool, aliases){
   }) || null;
 }
 
-/* The provider feed currently has all 144 league-phase slots but only 35
-   distinct clubs: Barcelona's eight slots are occupied by a duplicate club.
-   Repair the affected slot in-place by matchday + known opponent, which keeps
-   the competition at 144 fixtures. If a slot is genuinely absent, add it. */
 function repairBarcelona(matches){
   const pool = providerTeams(matches);
   let repaired = 0, added = 0;
@@ -165,8 +171,6 @@ function repairBarcelona(matches){
     const already = matches.find(m => Number(m.matchday)===spec.md && (isBarcelonaTeam(m.homeTeam)||isBarcelonaTeam(m.awayTeam)) && (sameTeam(m.homeTeam,opp)||sameTeam(m.awayTeam,opp)));
     if (already) continue;
 
-    /* Match the official opponent on its known home/away side. The other side
-       is the malformed participant that must be Barcelona. */
     const slot = matches.find(m => Number(m.matchday)===spec.md && (spec.home ? sameTeam(m.awayTeam,opp) : sameTeam(m.homeTeam,opp)));
     if (slot){
       if (spec.home) slot.homeTeam = BARCELONA;
