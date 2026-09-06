@@ -21,13 +21,34 @@ const STAGE_ORDER = {
   FINAL: 13
 };
 
+const BARCELONA = {
+  id:81,
+  name:"FC Barcelona",
+  shortName:"Barcelona",
+  tla:"FCB",
+  crest:"https://crests.football-data.org/81.svg"
+};
+
+/* football-data.org currently omits Barcelona from the CL feed for this
+   season. UEFA's published league-phase schedule is used only as a fallback.
+   Stable IDs are kept so predictions survive if the provider later restores
+   Barcelona and begins serving these matches itself. */
+const BARCA_FALLBACK = [
+  {md:1, home:true,  opponent:["feyenoord"],             utc:"2026-09-09T16:45:00Z"},
+  {md:2, home:false, opponent:["galatasaray"],           utc:"2026-10-13T19:00:00Z"},
+  {md:3, home:false, opponent:["paris saint germain","paris"], utc:"2026-10-20T19:00:00Z"},
+  {md:4, home:true,  opponent:["aston villa"],           utc:"2026-11-03T20:00:00Z"},
+  {md:5, home:false, opponent:["sabah"],                 utc:"2026-11-25T17:45:00Z"},
+  {md:6, home:true,  opponent:["manchester city","man city"], utc:"2026-12-08T20:00:00Z"},
+  {md:7, home:false, opponent:["sporting cp","sporting"], utc:"2027-01-20T20:00:00Z"},
+  {md:8, home:true,  opponent:["como"],                  utc:"2027-01-27T20:00:00Z"}
+];
+
 function say(...args){ console.log("[ucl-sync]", ...args); }
 
 function cleanCode(team){
   const tla = String(team?.tla || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (tla.length >= 2 && tla.length <= 5) return tla;
-  // Never use randomness for a team identifier: the same club must resolve to
-  // the same Firebase key on every hourly sync.
   if (team?.id != null) return "T" + String(team.id).replace(/[^0-9A-Za-z]/g, "");
   const seed = String(team?.name || team?.shortName || "TEAM").toUpperCase();
   let h = 2166136261;
@@ -59,7 +80,9 @@ function teamPayload(team){
   const short = team?.shortName || full;
   const base = hashColor(team?.id || full, 0);
   const accent = hashColor(team?.id || full, 67);
-  return [full, short, base, base, accent, "solid", 0];
+  /* Item 7 is the provider crest URL. Existing clients ignore extra items;
+     the current UI uses it as the automatic transparent-logo fallback. */
+  return [full, short, base, base, accent, "solid", 0, team?.crest || null];
 }
 
 function normalizedStage(match){
@@ -68,12 +91,7 @@ function normalizedStage(match){
 
 function included(match){
   const st = normalizedStage(match);
-  // Keep the main tournament only. Qualification/preliminary stages sometimes
-  // also use matchday numbers 1–8, so a numeric-only fallback can accidentally
-  // publish qualifiers as league-phase games.
   if (!INCLUDE_STAGES.has(st)) return false;
-  // Do not expose a future knockout placeholder until both clubs are assigned.
-  // Otherwise players could predict a "TBD" fixture that changes underneath them.
   return assignedTeam(match?.homeTeam) && assignedTeam(match?.awayTeam);
 }
 
@@ -96,7 +114,21 @@ function roundInfo(match){
   return { mw, round: label || `Round ${mw}` };
 }
 
-function fixtureId(match){ return `fd_${match.id}`; }
+function isBarcelonaTeam(team){
+  if (!team) return false;
+  if (Number(team.id) === 81) return true;
+  const code = cleanCode(team);
+  if (code === "FCB" || code === "BAR") return true;
+  return /barcelona/i.test(String(team.name || team.shortName || ""));
+}
+
+/* Barcelona gets canonical IDs even after the provider fixes its feed. */
+function fixtureId(match){
+  const md = Number(match?.matchday);
+  if (md >= 1 && md <= 8 && (isBarcelonaTeam(match?.homeTeam) || isBarcelonaTeam(match?.awayTeam)))
+    return `ucl_fcb_md${md}`;
+  return `fd_${match.id}`;
+}
 
 function fixturePayload(match){
   const {mw, round} = roundInfo(match);
@@ -126,6 +158,51 @@ function resultPayload(match){
   return out;
 }
 
+function norm(s){
+  return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g," ").trim();
+}
+
+function providerTeams(matches){
+  const out = [];
+  for (const m of matches){
+    if (assignedTeam(m.homeTeam)) out.push(m.homeTeam);
+    if (assignedTeam(m.awayTeam)) out.push(m.awayTeam);
+  }
+  return out;
+}
+
+function findProviderTeam(pool, aliases){
+  const keys = aliases.map(norm);
+  return pool.find(t => {
+    const names = [norm(t?.name), norm(t?.shortName), norm(t?.tla)];
+    return keys.some(k => names.some(n => n === k || n.includes(k) || k.includes(n)));
+  }) || null;
+}
+
+function withBarcelonaFallback(matches){
+  if (matches.some(m => isBarcelonaTeam(m.homeTeam) || isBarcelonaTeam(m.awayTeam))) return matches;
+
+  const pool = providerTeams(matches);
+  const extra = [];
+  for (const spec of BARCA_FALLBACK){
+    const opp = findProviderTeam(pool, spec.opponent);
+    if (!opp) throw new Error(`Barcelona fallback could not resolve opponent for MD${spec.md}: ${spec.opponent.join("/")}`);
+    extra.push({
+      id:`fallback_fcb_md${spec.md}`,
+      utcDate:spec.utc,
+      status:"SCHEDULED",
+      matchday:spec.md,
+      stage:"LEAGUE_STAGE",
+      homeTeam:spec.home ? BARCELONA : opp,
+      awayTeam:spec.home ? opp : BARCELONA,
+      score:{fullTime:{home:null,away:null},winner:null},
+      _fallback:true
+    });
+  }
+  say("football-data omitted Barcelona — injected 8 official UEFA league-phase fixtures");
+  return matches.concat(extra);
+}
+
 async function getJson(url, opts={}){
   const r = await fetch(url, opts);
   const txt = await r.text();
@@ -135,8 +212,8 @@ async function getJson(url, opts={}){
 
 async function main(){
   const rawToken = process.env.FOOTBALL_DATA_TOKEN || "";
-const tokenMatches = rawToken.match(/[A-Za-z0-9_-]{20,}/g) || [];
-const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g, "")).trim();
+  const tokenMatches = rawToken.match(/[A-Za-z0-9_-]{20,}/g) || [];
+  const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g, "")).trim();
   const dbUrl = (process.env.FIREBASE_DB_URL || "").trim().replace(/\/$/,"");
   const dry = ["1","true"].includes(String(process.env.DRY_RUN || "").toLowerCase());
   if (!token) throw new Error("FOOTBALL_DATA_TOKEN is empty");
@@ -145,8 +222,9 @@ const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g,
   const url = `https://api.football-data.org/v4/competitions/${COMPETITION}/matches`;
   say("requesting active Champions League season");
   const data = await getJson(url, {headers:{"X-Auth-Token":token,"Accept":"application/json"}});
-  const matches = (Array.isArray(data?.matches) ? data.matches : []).filter(included);
+  let matches = (Array.isArray(data?.matches) ? data.matches : []).filter(included);
   if (!matches.length) throw new Error("football-data returned no main-tournament Champions League matches");
+  matches = withBarcelonaFallback(matches);
 
   const existing = await getJson(`${dbUrl}/${ROOT}/results.json`).catch(()=>({})) || {};
   const updates = {};
@@ -162,7 +240,6 @@ const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g,
     updates[`fixtures/${fx.id}`] = fx;
 
     const rr = resultPayload(m);
-    // Preserve admin-entered scores. Automatic scores may be refreshed if API corrects them.
     const old = existing[fx.id];
     if (rr && (!old || old.src === "auto")){
       updates[`results/${fx.id}`] = rr;
@@ -170,9 +247,6 @@ const token = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g,
     }
   }
 
-  // Pull the provider's official table when available so Champions League
-  // tie-break ordering stays authoritative. The site falls back to a locally
-  // calculated P/GD/GF table if this endpoint is unavailable.
   try {
     const stData = await getJson(`https://api.football-data.org/v4/competitions/${COMPETITION}/standings`, {
       headers:{"X-Auth-Token":token,"Accept":"application/json"}
