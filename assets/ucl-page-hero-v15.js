@@ -12,11 +12,29 @@
     ru: "Rules"
   };
 
+  /* Prefer an uploaded crest. Otherwise use the transparent provider crest
+     saved in TEAMS[][7] by the sync script. This removes the square fallback
+     colour badges from the league table, including positions 25–36. */
+  const CORE_CREST = window.crest;
+  if(typeof CORE_CREST === 'function'){
+    window.crest = function(code, size){
+      let html = CORE_CREST(code, size);
+      try{
+        const provider = window.TEAMS && TEAMS[code] && TEAMS[code][7];
+        const uploaded = window.crestImgs && crestImgs[code];
+        if(provider && !uploaded){
+          html = html.replace(/src="crests\/[^"]+"/, 'src="' + String(provider).replace(/"/g,'&quot;') + '"');
+        }
+      }catch(e){}
+      return html;
+    };
+  }
+
   function ensureCss(){
     if(document.querySelector('link[data-ucl-page-hero-v15]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'assets/ucl-page-hero-v15.css?v=1';
+    link.href = 'assets/ucl-page-hero-v15.css?v=2';
     link.dataset.uclPageHeroV15 = '1';
     document.head.appendChild(link);
   }
@@ -59,17 +77,8 @@
     if(!app || !host) return;
 
     const page = currentPage();
-
-    /* Remove any previous shared/legacy page hero, wherever an earlier layer put it. */
     app.querySelectorAll('.ucl-page-hero').forEach(el => el.remove());
     host.querySelectorAll(':scope > .ucl-hero').forEach(el => el.remove());
-
-    /* Required product order on every screen:
-       1. UEFA Champions League hero / starball
-       2. signed-in profile bar
-       3. next deadline
-       4. navigation
-       5. tab content */
     app.insertAdjacentHTML('afterbegin', heroHtml(page));
   }
 
