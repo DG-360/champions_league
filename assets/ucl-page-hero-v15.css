@@ -40,6 +40,27 @@
 #app>.dl{margin-bottom:11px!important}
 #app>.nav{margin-bottom:16px!important}
 
+/* Real provider/uploaded club crests must look like transparent artwork, not
+   square colour tiles. This applies equally to rows 1–36. */
+.crest.img{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  border-radius:0!important;
+}
+.crest.img .cimg{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  border-radius:0!important;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.24));
+}
+.ucl-table .crest,.ucl-table .crest.lg{
+  flex:0 0 auto!important;
+}
+
 @media(max-width:900px){
   .ucl-page-hero{min-height:164px;padding:22px 24px 20px}
   .ucl-page-hero--home{min-height:220px;padding:25px 26px 22px}
@@ -63,10 +84,8 @@
   .ucl-page-hero__art img{opacity:.32}
   .ucl-page-hero--home .ucl-page-hero__art img{opacity:.38}
 
-  /* Profile directly below hero */
   #app>.ubar{margin-bottom:10px!important}
 
-  /* Home upcoming fixtures: both clubs use identical crest/name alignment. */
   .ucl-next-row{grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr)!important;align-items:center!important;column-gap:8px!important}
   .ucl-next-team{display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;align-items:center!important;gap:7px!important;min-width:0!important;text-align:left!important}
   .ucl-next-team.a{grid-template-columns:minmax(0,1fr) 32px!important;text-align:right!important}
