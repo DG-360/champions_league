@@ -22,4 +22,4 @@ jobs:
         env:
           FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
-        run: node scripts/weekly-spotlight.mjs
+        run: node scripts/weekly-spotlight-v6.mjs
