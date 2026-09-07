@@ -1,13 +1,14 @@
 /* Weekly home-page spotlight generator.
-   Runs once for each league-phase matchday, about one day before the first
-   kickoff. It ranks the week's matches using recent Google News volume plus
-   recent English-Wikipedia pageviews as a transparent interest proxy, then
-   publishes the top three cards to Firebase. No extra API key is required. */
+   About one day before the first kickoff of each league-phase matchday, rank
+   the week's fixtures by public interest, then publish three concise football
+   notes. Ranking signals stay internal; the UI only receives human-readable
+   matchup facts/news snippets. No extra API key is required. */
 
 const ROOT = "cl2627";
 const DB = (process.env.FIREBASE_DB_URL || "").trim().replace(/\/$/,"");
 const FORCE = ["1","true"].includes(String(process.env.FORCE_SPOTLIGHT||"").toLowerCase());
-const USER_AGENT = "ChampionsLeaguePredictor/1.0 (weekly home-page spotlight)";
+const USER_AGENT = "ChampionsLeaguePredictor/2.0 (weekly home-page spotlight)";
+const SPOTLIGHT_VERSION = 2;
 
 if(!DB.startsWith("https://")) throw new Error("FIREBASE_DB_URL is missing");
 
@@ -18,7 +19,10 @@ async function getText(url){
 }
 async function getJson(url){ return JSON.parse(await getText(url)); }
 
-const norm = s => String(s||"").replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,"").trim();
+const cleanHtml = s => String(s||"")
+  .replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"')
+  .replace(/&#x27;/g,"'").replace(/&nbsp;/g," ").replace(/<[^>]+>/g,"")
+  .replace(/\s+/g," ").trim();
 const teamName = (teams,c) => (teams[c] && (teams[c][0] || teams[c][1])) || c;
 
 function isoDate(d){ return d.toISOString().slice(0,10).replaceAll("-",""); }
@@ -52,23 +56,81 @@ async function pageviews(name){
 function rssItems(xml){
   const blocks=[...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(x=>x[1]);
   return blocks.map(b=>({
-    title:norm((b.match(/<title>([\s\S]*?)<\/title>/i)||[])[1]),
-    link:norm((b.match(/<link>([\s\S]*?)<\/link>/i)||[])[1]),
-    source:norm((b.match(/<source[^>]*>([\s\S]*?)<\/source>/i)||[])[1]),
-    date:norm((b.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)||[])[1])
+    title:cleanHtml((b.match(/<title>([\s\S]*?)<\/title>/i)||[])[1]),
+    source:cleanHtml((b.match(/<source[^>]*>([\s\S]*?)<\/source>/i)||[])[1]),
+    date:cleanHtml((b.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)||[])[1])
   })).filter(x=>x.title);
 }
 
-async function newsFor(home,away){
+async function newsQuery(q){
   try{
-    const q=encodeURIComponent(`"${home}" "${away}" Champions League when:7d`);
-    const xml=await getText(`https://news.google.com/rss/search?q=${q}&hl=en-US&gl=US&ceid=US:en`);
+    const xml=await getText(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`);
     return rssItems(xml).slice(0,30);
   }catch(e){ return []; }
 }
 
-function scoreMatch(newsCount,views){
-  return newsCount*8 + Math.log10(Math.max(10,views))*12;
+async function newsFor(home,away){
+  const base=`"${home}" "${away}" Champions League`;
+  const [general,teamNews,history]=await Promise.all([
+    newsQuery(`${base} when:7d`),
+    newsQuery(`${base} injury OR injured OR doubt OR suspended OR bench OR lineup OR manager OR rumour OR rumor when:7d`),
+    newsQuery(`${base} head-to-head OR history OR record OR unbeaten OR wins when:30d`)
+  ]);
+  const seen=new Set(), out=[];
+  for(const x of [...teamNews,...history,...general]){
+    const k=x.title.toLowerCase();
+    if(!seen.has(k)){seen.add(k);out.push(x);}
+  }
+  return out;
+}
+
+function scoreMatch(newsCount,views){ return newsCount*8 + Math.log10(Math.max(10,views))*12; }
+
+function humanFact(item){
+  if(!item?.title) return "";
+  let s=cleanHtml(item.title);
+  if(item.source){
+    const src=item.source.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    s=s.replace(new RegExp(`\\s*[-–—|:]\\s*${src}\\s*$`,`i`),"");
+  }
+  s=s
+    .replace(/^UEFA Champions League\s*[:\-–—]\s*/i,"")
+    .replace(/^Champions League\s*[:\-–—]\s*/i,"")
+    .replace(/\s*[-–—|]\s*(live|latest|updates?)\s*$/i,"")
+    .replace(/\s+/g," ").trim();
+
+  /* Turn obvious rumor wording into a natural, properly qualified note. */
+  if(/\b(rumou?r|reportedly|reports? say|linked with|could|may|might)\b/i.test(s) && !/^Reports?:/i.test(s))
+    s=`Reports: ${s.charAt(0).toLowerCase()+s.slice(1)}`;
+
+  if(s.length>145){
+    s=s.slice(0,142).replace(/\s+\S*$/,"").trim()+"…";
+  }
+  if(s && !/[.!?…]$/.test(s)) s+=".";
+  return s;
+}
+
+function usefulTitle(title){
+  const s=String(title||"").toLowerCase();
+  if(!s) return false;
+  const lowValue=/how to watch|live stream|tv channel|kick.?off time|tickets|odds|betting|prediction|predicted lineup|where to watch/;
+  return !lowValue.test(s);
+}
+
+function selectFacts(news){
+  const priority=/injur|doubt|suspend|bench|manager|coach|rumou?r|report|record|history|head.?to.?head|unbeaten|won|lost|winless|return|miss|available|lineup|captain|milestone/i;
+  const ranked=[...news].sort((a,b)=>Number(priority.test(b.title))-Number(priority.test(a.title)));
+  const out=[], fingerprints=new Set();
+  for(const item of ranked){
+    if(!usefulTitle(item.title)) continue;
+    const fact=humanFact(item);
+    if(!fact) continue;
+    const fp=fact.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,70);
+    if(fingerprints.has(fp)) continue;
+    fingerprints.add(fp); out.push(fact);
+    if(out.length===3) break;
+  }
+  return out;
 }
 
 async function main(){
@@ -88,7 +150,9 @@ async function main(){
   if(!FORCE && (hours<18 || hours>30)){
     console.log(`[spotlight] MD${md} starts in ${hours.toFixed(1)}h; outside 18–30h update window`); return;
   }
-  if(!FORCE && Number(old?.matchday)===md){ console.log(`[spotlight] MD${md} already published`); return; }
+  if(!FORCE && Number(old?.matchday)===md && Number(old?.version)>=SPOTLIGHT_VERSION){
+    console.log(`[spotlight] MD${md} v${SPOTLIGHT_VERSION} already published`); return;
+  }
 
   console.log(`[spotlight] building MD${md} from ${week.length} matches`);
   const candidates=[];
@@ -96,21 +160,16 @@ async function main(){
     const home=teamName(teams,m.h), away=teamName(teams,m.a);
     const [news,hv,av]=await Promise.all([newsFor(home,away),pageviews(home),pageviews(away)]);
     const views=hv+av;
-    const lead=news[0]||null;
+    const facts=selectFacts(news);
     candidates.push({
-      mid:m.id,home,away,k:m.k,newsCount:news.length,pageviews:views,
+      mid:m.id,home,away,k:m.k,
       score:scoreMatch(news.length,views),
-      headline:lead?.title||"A European night worth watching",
-      source:lead?.source||"Champions League spotlight",
-      url:lead?.link||"",
-      why:news.length
-        ? `${news.length} recent news stories and ${views.toLocaleString("en-US")} combined Wikipedia views this week.`
-        : `${views.toLocaleString("en-US")} combined Wikipedia views this week make this one of the matchday's higher-interest pairings.`
+      facts:facts.length?facts:[`${home} and ${away} meet in this week's Champions League league phase.`]
     });
   }
   candidates.sort((a,b)=>b.score-a.score);
   const items=candidates.slice(0,3).map(({score,...x})=>x);
-  const payload={matchday:md,generatedAt:Date.now(),firstKickoff:first,method:"Recent Google News volume + 7-day English Wikipedia pageviews",items};
+  const payload={version:SPOTLIGHT_VERSION,matchday:md,generatedAt:Date.now(),firstKickoff:first,items};
   const r=await fetch(`${DB}/${ROOT}/weeklySpotlight.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   if(!r.ok) throw new Error(`Firebase write failed ${r.status}: ${(await r.text()).slice(0,300)}`);
   console.log(`[spotlight] published MD${md}: ${items.map(x=>x.home+" v "+x.away).join(" · ")}`);
