@@ -1,0 +1,32 @@
+name: Bump profile photo UI cache
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump social UI assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('assets/ucl-social-v1.css?v=1','assets/ucl-social-v1.css?v=2')
+          s=s.replace('assets/ucl-social-v1.js?v=1','assets/ucl-social-v1.js?v=2')
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Bump profile photo UI cache to v2'
+          git push
