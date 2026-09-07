@@ -1,14 +1,18 @@
 /* Weekly home-page spotlight generator.
    About one day before the first kickoff of each league-phase matchday, rank
    the week's fixtures by public interest and publish three concise, matchup-
-   relevant football notes. Ranking signals stay internal; the UI only receives
-   human-readable facts/news. No extra API key is required. */
+   relevant football notes. The first note on every selected match is recorded
+   head-to-head history from football-data.org; current news fills the rest. */
 
 const ROOT = "cl2627";
 const DB = (process.env.FIREBASE_DB_URL || "").trim().replace(/\/$/,"");
 const FORCE = ["1","true"].includes(String(process.env.FORCE_SPOTLIGHT||"").toLowerCase());
-const USER_AGENT = "ChampionsLeaguePredictor/3.0 (weekly home-page spotlight)";
-const SPOTLIGHT_VERSION = 3;
+const USER_AGENT = "ChampionsLeaguePredictor/4.0 (weekly home-page spotlight)";
+const SPOTLIGHT_VERSION = 4;
+
+const rawToken = process.env.FOOTBALL_DATA_TOKEN || "";
+const tokenMatches = rawToken.match(/[A-Za-z0-9_-]{20,}/g) || [];
+const FOOTBALL_TOKEN = (tokenMatches[tokenMatches.length - 1] || rawToken.replace(/\s+/g, "")).trim();
 
 if(!DB.startsWith("https://")) throw new Error("FIREBASE_DB_URL is missing");
 
@@ -18,6 +22,13 @@ async function getText(url){
   return await r.text();
 }
 async function getJson(url){ return JSON.parse(await getText(url)); }
+async function getFootballJson(url){
+  if(!FOOTBALL_TOKEN) throw new Error("FOOTBALL_DATA_TOKEN is missing");
+  const r = await fetch(url,{headers:{"X-Auth-Token":FOOTBALL_TOKEN,"Accept":"application/json","User-Agent":USER_AGENT}});
+  const txt = await r.text();
+  if(!r.ok) throw new Error(`${r.status} ${txt.slice(0,250)}`);
+  return txt ? JSON.parse(txt) : null;
+}
 
 const cleanHtml = s => String(s||"")
   .replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"')
@@ -140,20 +151,44 @@ function selectFacts(news,home,away){
   const out=[], fingerprints=new Set();
   for(const item of ranked){
     if(!usefulTitle(item.title)) continue;
-
-    /* Be strict: a spotlight note must clearly be about THIS pairing.
-       This intentionally rejects generic SEO headlines and stories about a
-       different domestic opponent, even if Google returned them for the query. */
     if(!(titleMentions(item.title,home) && titleMentions(item.title,away))) continue;
-
     const fact=humanFact(item);
     if(!fact) continue;
     const fp=fact.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,70);
     if(fingerprints.has(fp)) continue;
     fingerprints.add(fp); out.push(fact);
-    if(out.length===3) break;
+    if(out.length===2) break;
   }
   return out;
+}
+
+function countWord(n,singular,plural){ return `${n} ${n===1?singular:plural}`; }
+
+async function headToHeadFact(match,home,away){
+  const apiId = String(match?.apiId ?? "").trim();
+  if(!/^\d+$/.test(apiId) || !FOOTBALL_TOKEN) return "";
+  try{
+    const j = await getFootballJson(`https://api.football-data.org/v4/matches/${apiId}/head2head?limit=100`);
+    const ag = j?.aggregates;
+    if(!ag) return "";
+
+    const n = Number(ag.numberOfMatches)||0;
+    const homeAgg = ag.homeTeam || {};
+    const awayAgg = ag.awayTeam || {};
+    const hw = Number(homeAgg.wins)||0;
+    const aw = Number(awayAgg.wins)||0;
+    let draws = Number(homeAgg.draws);
+    if(!Number.isFinite(draws)) draws = Number(awayAgg.draws);
+    if(!Number.isFinite(draws)) draws = Math.max(0,n-hw-aw);
+
+    if(n===0) return `${home} and ${away} have no previous meeting in the recorded head-to-head.`;
+
+    const drawPart = draws>0 ? `, with ${countWord(draws,"draw","draws")}` : ", with no draws";
+    return `${home} and ${away} have met ${countWord(n,"time","times")}: ${home} won ${hw}, ${away} ${aw}${drawPart}.`;
+  }catch(e){
+    console.log(`[spotlight] H2H unavailable for ${home} v ${away}: ${e?.message||e}`);
+    return "";
+  }
 }
 
 async function main(){
@@ -183,18 +218,25 @@ async function main(){
     const home=teamName(teams,m.h), away=teamName(teams,m.a);
     const [news,hv,av]=await Promise.all([newsFor(home,away),pageviews(home),pageviews(away)]);
     const views=hv+av;
-    const facts=selectFacts(news,home,away);
-    candidates.push({mid:m.id,home,away,k:m.k,score:scoreMatch(news.length,views),facts});
+    const currentFacts=selectFacts(news,home,away);
+    candidates.push({match:m,mid:m.id,home,away,k:m.k,score:scoreMatch(news.length,views),currentFacts});
   }
 
-  /* Prefer interesting fixtures that also have at least one genuinely useful
-     matchup-specific note. Empty cards are not published just to fill space. */
-  candidates.sort((a,b)=>(Number(b.facts.length>0)-Number(a.facts.length>0))||(b.score-a.score));
-  const items=candidates.filter(x=>x.facts.length).slice(0,3).map(({score,...x})=>x);
+  /* Select the three most interesting fixtures first. H2H then guarantees an
+     evergreen football fact whenever the provider has recorded history. */
+  candidates.sort((a,b)=>(Number(b.currentFacts.length>0)-Number(a.currentFacts.length>0))||(b.score-a.score));
+  const chosen=candidates.slice(0,3);
+  const items=[];
+  for(const x of chosen){
+    const h2h=await headToHeadFact(x.match,x.home,x.away);
+    const facts=[h2h,...x.currentFacts].filter(Boolean).slice(0,3);
+    items.push({mid:x.mid,home:x.home,away:x.away,k:x.k,facts});
+  }
+
   const payload={version:SPOTLIGHT_VERSION,matchday:md,generatedAt:Date.now(),firstKickoff:first,items};
   const r=await fetch(`${DB}/${ROOT}/weeklySpotlight.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   if(!r.ok) throw new Error(`Firebase write failed ${r.status}: ${(await r.text()).slice(0,300)}`);
-  console.log(`[spotlight] published MD${md}: ${items.map(x=>x.home+" v "+x.away).join(" · ")||"no high-quality cards"}`);
+  console.log(`[spotlight] published MD${md}: ${items.map(x=>x.home+" v "+x.away).join(" · ")}`);
 }
 
 main().catch(e=>{console.error("[spotlight]",e?.message||e);process.exit(1);});
