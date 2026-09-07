@@ -49,6 +49,7 @@
   overflow:visible!important;
   border-radius:0!important;
 }
+.crest.img .bg,.crest.img .lbl{opacity:0!important}
 .crest.img .cimg{
   width:100%!important;
   height:100%!important;
@@ -57,9 +58,86 @@
   border-radius:0!important;
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.24));
 }
-.ucl-table .crest,.ucl-table .crest.lg{
-  flex:0 0 auto!important;
+.ucl-table .crest,.ucl-table .crest.lg{flex:0 0 auto!important}
+
+/* FIXTURES — use the same reading direction on both sides. Right-side clubs
+   no longer right-align their name into the score box, which looked awkward
+   on desktop and caused long names to break oddly on phones. */
+.mc-body .side,
+.mc-body .side.a{
+  flex-direction:row!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  min-width:0!important;
 }
+.mc-body .side.a .nm,
+.mc-body .side .nm{
+  text-align:left!important;
+  direction:ltr!important;
+  unicode-bidi:plaintext!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  max-width:none!important;
+}
+.mc-body .side.a .crest{order:0!important}
+.mc-body .side.a .nm{order:1!important}
+
+/* COMPETITION — give the qualification key real breathing room. */
+.ucl-key,.key{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:10px 18px!important;
+}
+.ucl-key span,.key span{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  white-space:nowrap!important;
+}
+.ucl-key span b{margin-right:1px!important}
+
+/* Sticky competition essentials: header row, club and points. This keeps the
+   two most useful fields visible when the table is horizontally scrolled. */
+.ucl-table-wrap{
+  overflow:auto!important;
+  position:relative!important;
+  isolation:isolate!important;
+}
+.ucl-table{border-collapse:separate!important;border-spacing:0!important}
+.ucl-table thead th{
+  position:sticky!important;
+  top:0!important;
+  z-index:7!important;
+  background:#0B1D59!important;
+  box-shadow:0 1px 0 rgba(140,183,255,.15)!important;
+}
+.ucl-table th:first-child,
+.ucl-table td:first-child{
+  position:sticky!important;
+  left:0!important;
+  z-index:5!important;
+  min-width:250px!important;
+  background:#091A50!important;
+  box-shadow:8px 0 14px -14px rgba(0,0,0,.95),1px 0 0 rgba(140,183,255,.10)!important;
+}
+.ucl-table thead th:first-child{z-index:9!important;background:#0B1D59!important}
+.ucl-table th:nth-child(8),
+.ucl-table td:nth-child(8){
+  position:sticky!important;
+  right:0!important;
+  z-index:5!important;
+  min-width:58px!important;
+  background:#091A50!important;
+  box-shadow:-8px 0 14px -14px rgba(0,0,0,.95),-1px 0 0 rgba(140,183,255,.10)!important;
+  font-weight:800!important;
+  color:#fff!important;
+}
+.ucl-table thead th:nth-child(8){z-index:9!important;background:#0B1D59!important}
+.ucl-table tr.ucl-row-direct td:first-child,.ucl-table tr.ucl-row-direct td:nth-child(8){background:#0A2058!important}
+.ucl-table tr.ucl-row-playoff td:first-child,.ucl-table tr.ucl-row-playoff td:nth-child(8){background:#091D54!important}
+.ucl-table tr.ucl-row-out td:first-child,.ucl-table tr.ucl-row-out td:nth-child(8){background:#09194B!important}
 
 @media(max-width:900px){
   .ucl-page-hero{min-height:164px;padding:22px 24px 20px}
@@ -86,14 +164,49 @@
 
   #app>.ubar{margin-bottom:10px!important}
 
+  /* Home upcoming fixtures */
   .ucl-next-row{grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr)!important;align-items:center!important;column-gap:8px!important}
   .ucl-next-team{display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;align-items:center!important;gap:7px!important;min-width:0!important;text-align:left!important}
-  .ucl-next-team.a{grid-template-columns:minmax(0,1fr) 32px!important;text-align:right!important}
+  .ucl-next-team.a{grid-template-columns:32px minmax(0,1fr)!important;text-align:left!important}
   .ucl-next-team .crest{width:32px!important;height:32px!important;margin:0!important;align-self:center!important}
   .ucl-next-team span{min-width:0!important;line-height:1.2!important}
-  .ucl-next-team.a .crest{grid-column:2!important;grid-row:1!important}
-  .ucl-next-team.a span{grid-column:1!important;grid-row:1!important}
+  .ucl-next-team.a .crest{grid-column:1!important;grid-row:1!important}
+  .ucl-next-team.a span{grid-column:2!important;grid-row:1!important;text-align:left!important}
   .ucl-next-mid{min-width:0!important;text-align:center!important}
+
+  /* Fixture cards remain horizontal on phones instead of moving both crests
+     above the club names. Long names may wrap naturally to two lines. */
+  .mc-body{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+    gap:6px!important;
+    padding:14px 10px!important;
+  }
+  .mc-body .side,.mc-body .side.a{
+    flex-direction:row!important;
+    align-items:center!important;
+    gap:6px!important;
+    text-align:left!important;
+    min-width:0!important;
+  }
+  .mc-body .side .crest,.mc-body .side.a .crest{
+    width:34px!important;
+    height:34px!important;
+    flex:0 0 34px!important;
+    margin:0!important;
+  }
+  .mc-body .side .nm,.mc-body .side.a .nm{
+    display:-webkit-box!important;
+    -webkit-line-clamp:2!important;
+    -webkit-box-orient:vertical!important;
+    overflow:hidden!important;
+    max-width:none!important;
+    font-size:11px!important;
+    line-height:1.18!important;
+    text-align:left!important;
+  }
+  .ucl-table th:first-child,.ucl-table td:first-child{min-width:205px!important}
+  .ucl-key,.key{gap:8px 12px!important}
+  .ucl-key span,.key span{white-space:normal!important}
 }
 
 @media(max-width:480px){
@@ -102,10 +215,18 @@
   .ucl-page-hero--home h1{font-size:33px}
   .ucl-page-hero__art{right:0;width:46vw;min-width:136px}
   .ucl-page-hero--home .ucl-page-hero__art{right:0;width:50vw}
-  .ucl-next-row{grid-template-columns:minmax(0,1fr) 86px minmax(0,1fr)!important;column-gap:5px!important}
-  .ucl-next-team{grid-template-columns:28px minmax(0,1fr)!important;gap:5px!important;font-size:10.5px!important}
-  .ucl-next-team.a{grid-template-columns:minmax(0,1fr) 28px!important}
-  .ucl-next-team .crest{width:28px!important;height:28px!important}
-  .ucl-next-mid{font-size:8.5px!important}
-  .ucl-next-mid b{font-size:9px!important}
+  .ucl-next-row{grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr)!important;column-gap:5px!important}
+  .ucl-next-team{grid-template-columns:27px minmax(0,1fr)!important;gap:5px!important;font-size:10px!important}
+  .ucl-next-team.a{grid-template-columns:27px minmax(0,1fr)!important}
+  .ucl-next-team .crest{width:27px!important;height:27px!important}
+  .ucl-next-mid{font-size:8px!important}
+  .ucl-next-mid b{font-size:8.5px!important}
+
+  .mc-body{gap:4px!important;padding:12px 7px!important}
+  .mc-body .side,.mc-body .side.a{gap:4px!important}
+  .mc-body .side .crest,.mc-body .side.a .crest{width:29px!important;height:29px!important;flex-basis:29px!important}
+  .mc-body .side .nm,.mc-body .side.a .nm{font-size:9.8px!important;line-height:1.15!important}
+  .mc-body .mid{gap:3px!important}
+  .mc-body .sin{width:38px!important;height:46px!important;font-size:17px!important}
+  .ucl-table th:first-child,.ucl-table td:first-child{min-width:180px!important}
 }
