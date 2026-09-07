@@ -1,0 +1,22 @@
+/* Betable v3 recommendation polish */
+.bt-good-compact,.bt-risk-compact{margin-bottom:10px!important}
+.bt-good-compact .bt-sub,.bt-risk-compact .bt-sub{display:none!important}
+.bt-empty-quiet{display:none!important}
+.bt-grid-single{grid-template-columns:1fr!important}
+.bt-leg-team{display:grid!important;grid-template-columns:34px 42px minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important}
+.bt-pick-crest{width:38px;height:38px;display:grid;place-items:center;flex:0 0 auto}
+.bt-pick-crest.large{width:54px;height:54px}
+.bt-pick-crest .crest{width:34px!important;height:34px!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+.bt-pick-crest.large .crest{width:48px!important;height:48px!important}
+.bt-pick-crest .crest img{width:100%!important;height:100%!important;object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important}
+.bt-individual-team{display:flex!important;align-items:center!important;gap:16px!important}
+.bt-individual-copy{min-width:0;flex:1}
+.bt-individual-team .pick{font-size:18px!important;margin-top:2px!important}
+@media(max-width:620px){
+  .bt-leg-team{grid-template-columns:30px 34px minmax(0,1fr) auto!important;gap:8px!important}
+  .bt-pick-crest{width:32px;height:32px}
+  .bt-pick-crest .crest{width:30px!important;height:30px!important}
+  .bt-pick-crest.large{width:44px;height:44px}
+  .bt-pick-crest.large .crest{width:40px!important;height:40px!important}
+  .bt-individual-team{gap:12px!important}
+}
