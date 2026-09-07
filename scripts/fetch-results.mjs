@@ -32,8 +32,9 @@ const BARCELONA = {
   crest:"https://crests.football-data.org/81.svg"
 };
 
-/* UEFA-confirmed Barcelona slots. These are only used to repair a malformed
-   provider slot; they do not add extra fixtures when the provider is correct. */
+/* UEFA-confirmed Barcelona slots. These are only used to repair a genuinely
+   incomplete provider feed; if the provider already has Barcelona's eight
+   league-phase matches, no repair is attempted. */
 const BARCA_FALLBACK = [
   {md:1, home:true,  opponent:["feyenoord"],                       utc:"2026-09-09T16:45:00Z"},
   {md:2, home:false, opponent:["galatasaray"],                     utc:"2026-10-13T19:00:00Z"},
@@ -45,8 +46,6 @@ const BARCA_FALLBACK = [
   {md:8, home:true,  opponent:["como"],                            utc:"2027-01-27T20:00:00Z"}
 ];
 
-/* Canonical names mirror UEFA's fixture list. Aliases cover the naming used by
-   football-data.org so the validation is about the actual club, not spelling. */
 const UEFA_TEAM_ALIASES = {
   "AEK Athens":["aek athens","pae aek","aek"],
   "LASK":["lask","lask linz"],
@@ -83,10 +82,9 @@ const UEFA_TEAM_ALIASES = {
   "Manchester United":["manchester united","manchester united fc","man utd","mun"],
   "Sabah":["sabah","sabah masazir","sabah fk","sbh"],
   "Slavia Praha":["slavia praha","slavia prague","sk slavia praha","sla"],
-  "Lens":["lens","rc lens","racing club de lens","racing club de lens","rcl"]
+  "Lens":["lens","rc lens","racing club de lens","rcl"]
 };
 
-/* Concise product labels: readable in fixture cards on laptop and phone. */
 const DISPLAY_NAME = {
   "AEK Athens":"AEK Athens",
   "LASK":"LASK",
@@ -154,7 +152,6 @@ function canonicalName(team){
 function isBarcelonaIdentity(team){ return canonicalName(team) === "Barcelona"; }
 
 function cleanCode(team){
-  /* Barcelona must never share Bayern's FCB-style provider abbreviation. */
   if (isBarcelonaIdentity(team)) return "BAR";
   const tla = String(team?.tla || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (tla.length >= 2 && tla.length <= 5) return tla;
@@ -186,8 +183,6 @@ function teamPayload(team){
   const label = DISPLAY_NAME[canonical] || team?.shortName || team?.name || code;
   const base = hashColor(team?.id || canonical || label, 0);
   const accent = hashColor(team?.id || canonical || label, 67);
-  /* T[7] is the transparent provider crest URL; the UI prefers an admin-uploaded
-     crest but now uses this instead of the old square colour badge fallback. */
   return [label,label,base,base,accent,"solid",0,team?.crest || null];
 }
 
@@ -255,16 +250,19 @@ function findProviderTeam(pool,aliases){
 }
 
 function repairBarcelona(matches){
+  const sourceBarca = matches.filter(m => isLeagueStage(m) && (isBarcelonaTeam(m.homeTeam) || isBarcelonaTeam(m.awayTeam)));
+  if (sourceBarca.length >= 8){
+    say(`Barcelona provider feed already complete: ${sourceBarca.length} league-phase fixtures; fallback skipped`);
+    return matches;
+  }
+
   const pool = providerTeams(matches);
   let repaired = 0, added = 0;
   for (const spec of BARCA_FALLBACK){
     const opp = findProviderTeam(pool,spec.opponent);
     if (!opp) throw new Error(`Barcelona repair could not resolve opponent for MD${spec.md}: ${spec.opponent.join("/")}`);
     const already = matches.find(m => Number(m.matchday)===spec.md && isLeagueStage(m) && (isBarcelonaTeam(m.homeTeam)||isBarcelonaTeam(m.awayTeam)) && (sameTeam(m.homeTeam,opp)||sameTeam(m.awayTeam,opp)));
-    if (already){
-      already.utcDate = spec.utc;
-      continue;
-    }
+    if (already){ already.utcDate = spec.utc; continue; }
     const slot = matches.find(m => Number(m.matchday)===spec.md && isLeagueStage(m) && (spec.home ? sameTeam(m.awayTeam,opp) : sameTeam(m.homeTeam,opp)));
     if (slot){
       if (spec.home) slot.homeTeam = BARCELONA; else slot.awayTeam = BARCELONA;
@@ -354,9 +352,6 @@ async function main(){
     if(rr&&(!old||old.src==="auto")){updates[`results/${fx.id}`]=rr;resultWrites++;}
   }
 
-  /* Remove obsolete keys from the earlier Barcelona/Bayern collision. If a
-     fixture changed only because its canonical ID changed, carry predictions,
-     manual result and kickoff override across by API id before deleting it. */
   for (const [oldId,oldFx] of Object.entries(fixtures0)){
     if (!oldFx || Number(oldFx.mw)>8 || currentFixtureIds.has(oldId)) continue;
     const replacement = oldFx.apiId != null ? byApiId.get(String(oldFx.apiId)) : null;
