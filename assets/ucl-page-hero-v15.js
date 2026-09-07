@@ -12,29 +12,51 @@
     ru: "Rules"
   };
 
-  /* Prefer an uploaded crest. Otherwise use the transparent provider crest
-     saved in TEAMS[][7] by the sync script. This removes the square fallback
-     colour badges from the league table, including positions 25–36. */
+  /* Prefer an admin-uploaded crest, then the transparent provider crest saved
+     in TEAMS[][7]. Keep the colour badge underneath only as an image-error
+     fallback. This removes the square-looking logo tiles in Competition. */
   const CORE_CREST = window.crest;
   if(typeof CORE_CREST === 'function'){
     window.crest = function(code, size){
-      let html = CORE_CREST(code, size);
       try{
-        const provider = window.TEAMS && TEAMS[code] && TEAMS[code][7];
+        const T = window.TEAMS && TEAMS[code];
+        if(!T) return CORE_CREST(code, size);
         const uploaded = window.crestImgs && crestImgs[code];
-        if(provider && !uploaded){
-          html = html.replace(/src="crests\/[^"]+"/, 'src="' + String(provider).replace(/"/g,'&quot;') + '"');
-        }
-      }catch(e){}
-      return html;
+        const provider = T[7];
+        const src = uploaded || provider;
+        if(!src) return CORE_CREST(code, size);
+
+        const cls = size === 'lg' ? ' lg' : size ? ' sm' : '';
+        const dark = T[6] ? ' dk' : '';
+        const base = T[3] || '#233761';
+        const accent = T[4] || '#6ABDF4';
+        const pattern = T[5];
+        const bg = pattern === 'stripes'
+          ? 'repeating-linear-gradient(90deg,' + base + ' 0 5px,' + accent + ' 5px 10px)'
+          : 'linear-gradient(150deg,' + base + ',' + (typeof shade === 'function' ? shade(base,-18) : base) + ')';
+        const safeSrc = String(src).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+        const title = typeof esc === 'function' ? esc(T[0]) : String(T[0] || code);
+        return '<span class="crest' + cls + dark + '" title="' + title + '" aria-label="' + title + '">'
+          + '<span class="bg" style="background:' + bg + '"></span>'
+          + '<span class="lbl">' + code + '</span>'
+          + '<img class="cimg" src="' + safeSrc + '" alt="" '
+          + 'onload="this.parentNode.classList.add(\'img\')" '
+          + 'onerror="this.remove()"></span>';
+      }catch(e){
+        return CORE_CREST(code, size);
+      }
     };
   }
 
   function ensureCss(){
-    if(document.querySelector('link[data-ucl-page-hero-v15]')) return;
-    const link = document.createElement('link');
+    let link = document.querySelector('link[data-ucl-page-hero-v15]');
+    if(link){
+      if(!/v=3(?:$|&)/.test(link.href)) link.href = 'assets/ucl-page-hero-v15.css?v=3';
+      return;
+    }
+    link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'assets/ucl-page-hero-v15.css?v=2';
+    link.href = 'assets/ucl-page-hero-v15.css?v=3';
     link.dataset.uclPageHeroV15 = '1';
     document.head.appendChild(link);
   }
@@ -92,5 +114,10 @@
   }
 
   ensureCss();
-  requestAnimationFrame(applyHero);
+  requestAnimationFrame(() => {
+    applyHero();
+    /* repaint once so any crests rendered before this layer loaded are rebuilt
+       with the provider-image preference above. */
+    if(typeof window.paint === 'function' && window.me) window.paint();
+  });
 })();
