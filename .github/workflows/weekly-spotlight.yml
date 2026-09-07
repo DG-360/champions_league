@@ -8,32 +8,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   spotlight:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Load Spotlight v3 and Betable v3 presentation
-        if: github.actor != 'github-actions[bot]'
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          if 'assets/ucl-betable-v3.css?v=1' not in s:
-              s=s.replace('</head>','<link rel="stylesheet" href="assets/ucl-betable-v3.css?v=1">\n</head>')
-          if 'assets/ucl-spotlight-v3.js?v=1' not in s:
-              s=s.replace('</body>','<script src="assets/ucl-spotlight-v3.js?v=1"></script>\n</body>')
-          s=s.replace('assets/ucl-betable-v2.js?v=1','assets/ucl-betable-v2.js?v=2')
-          p.write_text(s,encoding='utf-8')
-          PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git diff --cached --quiet || (git commit -m 'Load Spotlight v3 and Betable v3 presentation' && git push)
       - uses: actions/setup-node@v4
         with:
           node-version: 24
