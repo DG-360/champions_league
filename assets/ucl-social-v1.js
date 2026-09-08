@@ -1,19 +1,13 @@
-/* Profile photos + weekly home spotlight. Presentation/data-extension layer only. */
+/* Profile photos only. Spotlight rendering moved out of this layer. */
 (() => {
   "use strict";
-  let spotlight = {};
   let cameraStream = null;
 
   const currentPlayerId = () => (typeof me !== "undefined" ? me : null);
-  const currentView = () => (typeof view !== "undefined" ? view : null);
 
-  if (typeof ref === "function") ref("weeklySpotlight").on("value", s => {
-    spotlight = s.val() || {};
-    if (currentPlayerId() && typeof paint === "function") paint();
-  });
-
-  const escAttr = s => String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  function playerByName(name){ return Object.entries(typeof players!=="undefined"?players:{}).find(([,p]) => p && p.name === name); }
+  function playerByName(name){
+    return Object.entries(typeof players!=="undefined"?players:{}).find(([,p]) => p && p.name === name);
+  }
 
   function putPhoto(el,p){
     if(!el||!p) return;
@@ -148,10 +142,7 @@
     const stage=document.getElementById('uclCameraStage');
     const video=document.getElementById('uclCameraVideo');
     const hint=document.getElementById('uclCameraHint');
-    if(!navigator.mediaDevices?.getUserMedia){
-      chooseCameraFile();
-      return;
-    }
+    if(!navigator.mediaDevices?.getUserMedia){ chooseCameraFile(); return; }
     try{
       stopCamera();
       cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
@@ -167,10 +158,7 @@
   }
 
   function stopCamera(){
-    if(cameraStream){
-      cameraStream.getTracks().forEach(t=>t.stop());
-      cameraStream=null;
-    }
+    if(cameraStream){ cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
     const video=document.getElementById('uclCameraVideo');
     if(video) video.srcObject=null;
   }
@@ -182,7 +170,7 @@
       return;
     }
     try{
-      const data=cropVideoToDataUrl(video,256,.84);
+      const data=cropVideoToDataUrl(video,192,.78);
       await saveProfilePhoto(data);
       closePhotoChooser();
     }catch(e){
@@ -195,23 +183,18 @@
 
   function chooseFile(useCamera){
     const input=document.createElement('input');
-    input.type='file';
-    input.accept='image/*';
+    input.type='file'; input.accept='image/*';
     if(useCamera) input.setAttribute('capture','user');
-    input.style.position='fixed';
-    input.style.left='-10000px';
+    input.style.position='fixed'; input.style.left='-10000px';
     document.body.appendChild(input);
     input.addEventListener('change',async()=>{
-      const f=input.files&&input.files[0];
-      input.remove();
+      const f=input.files&&input.files[0]; input.remove();
       if(!f) return;
       try{
-        const data=await compressSquare(f,256,.84);
+        const data=await compressSquare(f,192,.78);
         await saveProfilePhoto(data);
         closePhotoChooser();
-      }catch(e){
-        if(typeof toast==='function') toast('Could not save profile photo','bad');
-      }
+      }catch(e){ if(typeof toast==='function') toast('Could not save profile photo','bad'); }
     },{once:true});
     input.click();
   }
@@ -227,24 +210,20 @@
     const sw=video.videoWidth, sh=video.videoHeight;
     const side=Math.min(sw,sh), sx=(sw-side)/2, sy=(sh-side)/2;
     const c=document.createElement('canvas'); c.width=size; c.height=size;
-    const x=c.getContext('2d');
-    /* Mirror the saved selfie to match the familiar front-camera preview. */
-    x.translate(size,0); x.scale(-1,1);
+    const x=c.getContext('2d'); x.translate(size,0); x.scale(-1,1);
     x.drawImage(video,sx,sy,side,side,0,0,size,size);
     return c.toDataURL('image/jpeg',q);
   }
 
   function compressSquare(file,size,q){
     return new Promise((resolve,reject)=>{
-      const fr=new FileReader();
-      fr.onerror=reject;
+      const fr=new FileReader(); fr.onerror=reject;
       fr.onload=()=>{
-        const im=new Image();
-        im.onerror=reject;
+        const im=new Image(); im.onerror=reject;
         im.onload=()=>{
           const side=Math.min(im.width,im.height), sx=(im.width-side)/2, sy=(im.height-side)/2;
           const c=document.createElement('canvas'); c.width=size; c.height=size;
-          const x=c.getContext('2d'); x.drawImage(im,sx,sy,side,side,0,0,size,size);
+          c.getContext('2d').drawImage(im,sx,sy,side,side,0,0,size,size);
           resolve(c.toDataURL('image/jpeg',q));
         };
         im.src=fr.result;
@@ -253,36 +232,13 @@
     });
   }
 
-  function spotlightHtml(){
-    const items=Array.isArray(spotlight.items)?spotlight.items:Object.values(spotlight.items||{});
-    if(!items.length) return '';
-    return '<section class="ucl-card ucl-spotlight"><div class="ucl-card-h"><span>Matchday Spotlight</span><b>What everyone is talking about</b></div>'
-      + '<div class="ucl-spotlight-grid">' + items.slice(0,3).map((x,i)=>'<article class="ucl-fact">'
-      + '<div class="ucl-fact-no">0'+(i+1)+'</div><div class="ucl-fact-match">'+escAttr(x.home)+' <span>vs</span> '+escAttr(x.away)+'</div>'
-      + '<h3>'+escAttr(x.headline||'A European night worth watching')+'</h3>'
-      + '<p>'+escAttr(x.why||'One of this matchday’s most-followed fixtures.')+'</p>'
-      + (x.source?'<small>'+escAttr(x.source)+'</small>':'')+'</article>').join('') + '</div>'
-      + '<div class="ucl-spotlight-foot">Updated once per matchweek, the day before the first kickoff · based on recent news volume and public interest.</div></section>';
-  }
-
-  function injectSpotlight(){
-    if(currentView()!=="home") return;
-    const host=document.getElementById('view');
-    if(!host||host.querySelector('.ucl-spotlight')) return;
-    const html=spotlightHtml();
-    if(!html) return;
-    const dash=host.querySelector('.ucl-dashboard-grid');
-    if(dash) dash.insertAdjacentHTML('afterend',html);
-  }
-
+  /* Run only after a real application paint. No whole-document observer. */
   const BASE=typeof paint==='function'?paint:null;
   if(typeof BASE==='function') paint=function(){
     const out=BASE.apply(this,arguments);
-    requestAnimationFrame(()=>{ensurePhotoControl();decorateAvatars();injectSpotlight();});
+    requestAnimationFrame(()=>{ensurePhotoControl();decorateAvatars();});
     return out;
   };
 
-  const mo=new MutationObserver(()=>{ensurePhotoControl();decorateAvatars();injectSpotlight();});
-  mo.observe(document.documentElement,{subtree:true,childList:true});
-  requestAnimationFrame(()=>{ensurePhotoControl();ensurePhotoDialog();decorateAvatars();injectSpotlight();});
+  requestAnimationFrame(()=>{ensurePhotoControl();ensurePhotoDialog();decorateAvatars();});
 })();
