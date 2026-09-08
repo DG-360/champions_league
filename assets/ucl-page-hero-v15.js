@@ -12,9 +12,6 @@
     ru: "Rules"
   };
 
-  /* Prefer an admin-uploaded crest, then the transparent provider crest saved
-     in TEAMS[][7]. Keep the colour badge underneath only as an image-error
-     fallback. This removes the square-looking logo tiles in Competition. */
   const CORE_CREST = window.crest;
   if(typeof CORE_CREST === 'function'){
     window.crest = function(code, size){
@@ -80,13 +77,13 @@
     return active && PAGE_TITLES[active.dataset.v] ? active.dataset.v : 'home';
   }
 
-  function heroHtml(page){
+  function heroHtml(page, phase){
     const title = PAGE_TITLES[page] || 'Prediction League';
-    return '<section class="ucl-page-hero ucl-page-hero--' + page + '" aria-label="UEFA Champions League ' + title + '">'
+    return '<section class="ucl-page-hero ucl-page-hero--' + page + '" data-ucl-page="'+page+'" data-ucl-phase="'+phase+'" aria-label="UEFA Champions League ' + title + '">'
       + '<div class="ucl-page-hero__copy">'
       + '<div class="ucl-page-hero__kicker">UEFA Champions League</div>'
       + '<h1><span>UEFA Champions League</span><strong>' + title + '</strong></h1>'
-      + '<div class="ucl-page-hero__meta"><span class="ucl-page-hero__dot"></span><span>' + phaseName() + '</span><em class="ucl-page-hero__season">2026/27</em></div>'
+      + '<div class="ucl-page-hero__meta"><span class="ucl-page-hero__dot"></span><span>' + phase + '</span><em class="ucl-page-hero__season">2026/27</em></div>'
       + '</div>'
       + '<div class="ucl-page-hero__art" aria-hidden="true"><img src="assets/ucl-starball.svg?v=1" alt=""></div>'
       + '</section>';
@@ -99,9 +96,19 @@
     if(!app || !host) return;
 
     const page = currentPage();
-    app.querySelectorAll('.ucl-page-hero').forEach(el => el.remove());
-    host.querySelectorAll(':scope > .ucl-hero').forEach(el => el.remove());
-    app.insertAdjacentHTML('afterbegin', heroHtml(page));
+    const phase = phaseName();
+    const existing = app.querySelector(':scope > .ucl-page-hero');
+
+    /* The hero sits outside #view, so most paints do not affect it. Do nothing
+       unless the active tab or competition phase actually changed. */
+    if(existing && existing.dataset.uclPage===page && existing.dataset.uclPhase===phase){
+      host.querySelectorAll(':scope > .ucl-hero').forEach(el=>el.remove());
+      return;
+    }
+
+    app.querySelectorAll(':scope > .ucl-page-hero').forEach(el=>el.remove());
+    host.querySelectorAll(':scope > .ucl-hero').forEach(el=>el.remove());
+    app.insertAdjacentHTML('afterbegin', heroHtml(page,phase));
   }
 
   const BASE_PAINT = window.paint;
@@ -114,10 +121,5 @@
   }
 
   ensureCss();
-  requestAnimationFrame(() => {
-    applyHero();
-    /* repaint once so any crests rendered before this layer loaded are rebuilt
-       with the provider-image preference above. */
-    if(typeof window.paint === 'function' && window.me) window.paint();
-  });
+  requestAnimationFrame(applyHero);
 })();
