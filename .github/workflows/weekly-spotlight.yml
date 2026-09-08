@@ -1,8 +1,9 @@
 name: Update weekly UCL spotlight
 
 on:
-  push:
-    branches: [main]
+  # Wake once per day. The generator exits before any external research unless
+  # the next matchday is 24–48h away and that matchday/version is not already
+  # cached in Firebase. Result: one actual web-research pass per matchweek.
   schedule:
     - cron: '15 15 * * *'
   workflow_dispatch:
@@ -10,15 +11,20 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: weekly-ucl-spotlight
+  cancel-in-progress: false
+
 jobs:
   spotlight:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Build weekly match spotlight
+      - name: Build weekly match spotlight only when due
         env:
           FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
