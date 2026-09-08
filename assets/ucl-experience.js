@@ -27,14 +27,7 @@
   }
 
   function uclRoad(){
-    const names = [
-      ["LP","League Phase"],
-      ["PO","Play-offs"],
-      ["R16","Round of 16"],
-      ["QF","Quarter-finals"],
-      ["SF","Semi-finals"],
-      ["F","Final"]
-    ];
+    const names = [["LP","League Phase"],["PO","Play-offs"],["R16","Round of 16"],["QF","Quarter-finals"],["SF","Semi-finals"],["F","Final"]];
     const active = uclPhaseIndex();
     return '<section class="ucl-card ucl-road">'
       + '<div class="ucl-road-top"><div><small>Competition journey</small><h2>Road to the Final</h2></div>'
@@ -58,8 +51,7 @@
   }
 
   function uclNextMatches(limit){
-    return ALL.filter(m => !results[m.id] && koOf(m) > now())
-      .sort((a,b)=>koOf(a)-koOf(b)).slice(0,limit||3);
+    return ALL.filter(m => !results[m.id] && koOf(m) > now()).sort((a,b)=>koOf(a)-koOf(b)).slice(0,limit||3);
   }
 
   function uclMiniFixture(m){
@@ -74,17 +66,14 @@
   function uclHero(){
     const idx = uclPhaseIndex();
     return '<section class="ucl-hero" aria-label="UEFA Champions League predictor">'
-      + '<div class="ucl-hero-inner">'
-      + '<div class="ucl-eyebrow"><span>UEFA Champions League</span></div>'
+      + '<div class="ucl-hero-inner"><div class="ucl-eyebrow"><span>UEFA Champions League</span></div>'
       + '<h1 class="ucl-hero-title">UEFA Champions League<strong>Prediction League</strong></h1>'
       + '<div class="ucl-hero-sub"><span class="ucl-live-dot"></span><span>' + esc(uclPhaseName(idx)) + '</span><span class="ucl-season">2026/27</span></div>'
       + '</div></section>';
   }
 
   function viewHomeUCL(){
-    const st = uclRankInfo();
-    const pr = uclPredictionProgress();
-    const next = uclNextMatches(3);
+    const st = uclRankInfo(), pr = uclPredictionProgress(), next = uclNextMatches(3);
     const nextPanel = '<section class="ucl-card">'
       + '<div class="ucl-card-h"><span>Next European nights</span><b>' + esc(uclPhaseName(uclPhaseIndex())) + '</b></div>'
       + '<div class="ucl-next">' + (next.length ? next.map(uclMiniFixture).join("") : '<div class="empty">No upcoming fixture is available yet.</div>') + '</div>'
@@ -102,32 +91,24 @@
 
   function uclFormCells(r){
     return r.form.slice(-5).map(f => {
-      const style = f==="W"
-        ? "background:rgba(44,155,255,.15);color:#74dfff"
-        : f==="D"
-          ? "background:rgba(255,255,255,.075);color:#aabada"
-          : "background:rgba(91,71,139,.18);color:#a89bd0";
+      const style = f==="W" ? "background:rgba(44,155,255,.15);color:#74dfff" : f==="D" ? "background:rgba(255,255,255,.075);color:#aabada" : "background:rgba(91,71,139,.18);color:#a89bd0";
       return '<span style="display:inline-block;width:16px;height:16px;line-height:16px;border-radius:5px;font-size:8px;font-weight:700;margin-left:2px;' + style + '">' + f + '</span>';
     }).join("");
   }
 
   function uclLeagueTablePanel(){
-    const rows = leagueTable();
-    const phase = ALL.filter(isLeaguePhase);
-    const played = phase.filter(m => results[m.id]).length;
+    const rows = leagueTable(), phase = ALL.filter(isLeaguePhase), played = phase.filter(m => results[m.id]).length;
     let body = "";
     rows.forEach((r,i) => {
       if(i===0) body += '<tr class="ucl-zone-head direct"><td colspan="9">1–8 · Direct qualification to the Round of 16</td></tr>';
       if(i===8) body += '<tr class="ucl-zone-head playoff"><td colspan="9">9–24 · Knockout play-off places</td></tr>';
       if(i===24) body += '<tr class="ucl-zone-head out"><td colspan="9">25–36 · Eliminated</td></tr>';
-      const gd = r.gf-r.ga;
-      const cls = i<8 ? "ucl-row-direct" : i<24 ? "ucl-row-playoff" : "ucl-row-out";
+      const gd = r.gf-r.ga, cls = i<8 ? "ucl-row-direct" : i<24 ? "ucl-row-playoff" : "ucl-row-out";
       body += '<tr class="' + cls + '"><td><div class="tm-cell"><span class="pos mono">' + (i+1) + '</span>'
         + crest(r.c,"lg") + '<span style="font-weight:650">' + esc(teamFull(r.c)) + '</span></div></td>'
         + '<td class="mono">' + r.p + '</td><td class="mono">' + r.w + '</td><td class="mono">' + r.d + '</td><td class="mono">' + r.l + '</td>'
-        + '<td class="mono" style="color:var(--txt2)">' + r.gf + '-' + r.ga + '</td>'
-        + '<td class="mono">' + (gd>0?"+":"") + gd + '</td><td class="mono" style="font-weight:800;color:#dbe9ff">' + r.pts + '</td>'
-        + '<td style="text-align:right">' + uclFormCells(r) + '</td></tr>';
+        + '<td class="mono" style="color:var(--txt2)">' + r.gf + '-' + r.ga + '</td><td class="mono">' + (gd>0?"+":"") + gd + '</td>'
+        + '<td class="mono" style="font-weight:800;color:#dbe9ff">' + r.pts + '</td><td style="text-align:right">' + uclFormCells(r) + '</td></tr>';
     });
     return '<section class="panel"><div class="panel-h"><h3>League Phase</h3><small>'
       + (phase.length ? played + ' of ' + phase.length + ' matches played' : 'waiting for fixtures') + '</small></div>'
@@ -137,29 +118,16 @@
   }
 
   function uclRoundGroups(mw){
-    const items = ALL.filter(m => Number(m.mw)===mw);
-    const groups = new Map();
-    items.forEach(m => {
-      const key = [m.h,m.a].sort().join("|");
-      if(!groups.has(key)) groups.set(key,[]);
-      groups.get(key).push(m);
-    });
+    const items = ALL.filter(m => Number(m.mw)===mw), groups = new Map();
+    items.forEach(m => { const key=[m.h,m.a].sort().join("|"); if(!groups.has(key)) groups.set(key,[]); groups.get(key).push(m); });
     return Array.from(groups.values()).sort((a,b)=>koOf(a[0])-koOf(b[0]));
   }
 
   function uclTie(group){
     if(!group || !group.length) return '<div class="ucl-tie empty">Awaiting qualified teams</div>';
-    const a = group[0];
-    const codes = [a.h,a.a];
-    const totals = {[codes[0]]:0,[codes[1]]:0};
+    const a = group[0], codes = [a.h,a.a], totals = {[codes[0]]:0,[codes[1]]:0};
     let settled = 0;
-    group.forEach(m => {
-      const r = results[m.id];
-      if(!r) return;
-      settled++;
-      totals[m.h] = (totals[m.h]||0) + Number(r.h||0);
-      totals[m.a] = (totals[m.a]||0) + Number(r.a||0);
-    });
+    group.forEach(m => { const r=results[m.id]; if(!r)return; settled++; totals[m.h]=(totals[m.h]||0)+Number(r.h||0); totals[m.a]=(totals[m.a]||0)+Number(r.a||0); });
     const score = c => settled ? String(totals[c]||0) : "–";
     return '<div class="ucl-tie">'
       + '<div class="ucl-tie-team">' + crest(codes[0],true) + '<span class="name">' + esc(teamFull(codes[0])) + '</span><span class="ucl-tie-score">' + score(codes[0]) + '</span></div>'
@@ -168,57 +136,54 @@
   }
 
   function uclBracket(){
-    const rounds = [
-      {mw:9,label:"Play-offs",slots:8},
-      {mw:10,label:"Round of 16",slots:8},
-      {mw:11,label:"Quarter-finals",slots:4},
-      {mw:12,label:"Semi-finals",slots:2},
-      {mw:13,label:"Final",slots:1}
-    ];
-    const cols = rounds.map((r,idx) => {
-      const groups = uclRoundGroups(r.mw);
-      const n = Math.max(groups.length, groups.length?0:r.slots);
-      let cards = "";
-      for(let i=0;i<n;i++) cards += uclTie(groups[i]);
+    const rounds=[{mw:9,label:"Play-offs",slots:8},{mw:10,label:"Round of 16",slots:8},{mw:11,label:"Quarter-finals",slots:4},{mw:12,label:"Semi-finals",slots:2},{mw:13,label:"Final",slots:1}];
+    const cols=rounds.map((r,idx)=>{
+      const groups=uclRoundGroups(r.mw),n=Math.max(groups.length,groups.length?0:r.slots);let cards="";
+      for(let i=0;i<n;i++) cards+=uclTie(groups[i]);
       return '<div class="ucl-br-col' + (idx===4?' ucl-br-final':'') + '"><div class="ucl-br-title"><b>' + r.label + '</b><span>' + (groups.length?groups.length+' ties':'TBD') + '</span></div>' + cards + '</div>';
     }).join("");
     return '<section class="panel"><div class="panel-h"><h3>Road to Final · Knockout Chart</h3><small>fills automatically as ties are published</small></div>'
       + '<div class="ucl-bracket"><div class="ucl-bracket-scroll"><div class="ucl-bracket-grid">' + cols + '</div></div></div></section>';
   }
 
-  function viewCompetitionUCL(){
-    return uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel();
-  }
+  function viewCompetitionUCL(){ return uclRoad() + uclLeagueTablePanel() + uclBracket() + scorersPanel() + crestPanel(); }
 
   function uclBuildChrome(){
-    const app = document.getElementById("app");
-    if(!app) return;
-    const oldHdr = app.querySelector(".hdr");
-    if(oldHdr) oldHdr.style.display = "none";
-
-    let nav = app.querySelector(".nav");
+    const app=document.getElementById("app"); if(!app)return;
+    const oldHdr=app.querySelector(".hdr"); if(oldHdr)oldHdr.style.display="none";
+    let nav=app.querySelector(".nav");
     if(nav && !nav.dataset.uclBuilt){
-      nav.dataset.uclBuilt = "1";
-      nav.innerHTML = [
-        ["home","Home"],
-        ["fx","Fixtures"],
-        ["competition","Competition"],
-        ["lb","Scoreboard"],
-        ["bt","Betable"],
-        ["fz","Fanzone"],
-        ["ru","Rules"]
-      ].map(x => '<button data-v="' + x[0] + '" onclick="go(\'' + x[0] + '\')">' + x[1] + '</button>').join("");
+      nav.dataset.uclBuilt="1";
+      nav.innerHTML=[["home","Home"],["fx","Fixtures"],["competition","Competition"],["lb","Scoreboard"],["bt","Betable"],["fz","Fanzone"],["ru","Rules"]]
+        .map(x=>'<button data-v="'+x[0]+'" onclick="go(\''+x[0]+'\')">'+x[1]+'</button>').join("");
     }
+    const authMark=document.querySelector("#ovAuth .mark"),authTitle=document.querySelector("#ovAuth h2");
+    if(authMark)authMark.textContent="UEFA Champions League · 2026/27";
+    if(authTitle)authTitle.textContent="Prediction League";
+  }
 
-    const authMark = document.querySelector("#ovAuth .mark");
-    const authTitle = document.querySelector("#ovAuth h2");
-    if(authMark) authMark.textContent = "UEFA Champions League · 2026/27";
-    if(authTitle) authTitle.textContent = "Prediction League";
+  /* Home/Competition only need the persistent profile/score chrome from the
+     core renderer. Updating that directly avoids rendering all 18 Fixtures
+     cards and immediately discarding them on every Firebase update. */
+  function uclRefreshPersistentChrome(){
+    if(!me || !players[me]) return;
+    const t=tallies(),rk=rankedPids(),mine=t[me]||{pts:0,x3:0};
+    const p=players[me],c=colr(p.ci||0),av=document.getElementById("uAv");
+    if(av){
+      if(!p.photo) av.textContent=initials(p.name);
+      av.style.setProperty("--c",c);
+    }
+    const name=document.getElementById("uName"),pts=document.getElementById("uPts"),sub=document.getElementById("uSub");
+    if(name)name.textContent=p.name+(isAdmin?" · admin":"");
+    if(pts)pts.textContent=mine.pts||0;
+    const pos=rk.indexOf(me)+1;
+    if(sub)sub.textContent=rk.length>1?("Rank "+pos+" of "+rk.length+" · "+(mine.x3||0)+" exact"):((mine.x3||0)+" exact scores");
+    renderScoreStrip(t,rk);
   }
 
   go = function(v){
-    view = v;
-    document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v===v));
+    view=v;
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
     paint();
     window.scrollTo({top:0,behavior:"smooth"});
   };
@@ -228,21 +193,20 @@
     uclSetPhaseTheme();
 
     if(view === "home" || view === "competition"){
-      const wanted = view;
-      view = "fx";
-      CORE_PAINT();
-      view = wanted;
-      const host = document.getElementById("view");
-      if(host) host.innerHTML = wanted==="home" ? viewHomeUCL() : viewCompetitionUCL();
-      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v===wanted));
+      const wanted=view;
+      uclRefreshPersistentChrome();
+      const host=document.getElementById("view");
+      if(host) host.innerHTML=wanted==="home"?viewHomeUCL():viewCompetitionUCL();
+      document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===wanted));
       tick();
       return;
     }
+
     CORE_PAINT();
-    document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v===view));
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
   };
 
   uclBuildChrome();
-  view = "home";
+  view="home";
   uclSetPhaseTheme();
 })();
