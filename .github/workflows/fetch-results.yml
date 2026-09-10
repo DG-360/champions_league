@@ -14,7 +14,7 @@ on:
         default: false
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: champions-league-sync
@@ -31,30 +31,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Wire admin point-adjustment layer once
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          old='<script src="assets/ucl-social-v1.js?v=2"></script>'
-          new='<script src="assets/ucl-social-v1.js?v=3"></script>\n<script src="assets/ucl-admin-points-v1.js?v=1"></script>'
-          if 'assets/ucl-admin-points-v1.js' not in s:
-              s=s.replace(old,new)
-          else:
-              s=s.replace('assets/ucl-social-v1.js?v=2','assets/ucl-social-v1.js?v=3')
-          p.write_text(s,encoding='utf-8')
-          PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load one-time admin point adjustment UI' || true
-          git push || true
-      - name: Seed Sadegh fairness adjustment once
-        env:
-          FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
-        run: node scripts/seed-sadegh-adjustment.mjs
       - name: Sync fixtures, teams and results
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
