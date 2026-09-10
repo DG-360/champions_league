@@ -31,6 +31,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Seed Sadegh fairness adjustment once
+        env:
+          FIREBASE_DB_URL: https://world-cup-2026-predictio-7c7b2-default-rtdb.firebaseio.com
+        run: node scripts/seed-sadegh-adjustment.mjs
       - name: Sync fixtures, teams and results
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.TK2 }}
